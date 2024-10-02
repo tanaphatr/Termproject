@@ -57,7 +57,7 @@ const Products = () => {
       {/* Main content */}
       <Box sx={{ flexGrow: 1, p: 3 }}>
       <Typography variant="h4" gutterBottom sx={{ textAlign: 'left', color: 'darkblue', fontWeight: 'bold' }}>Product</Typography>
-        {/* <Typography variant="h4" gutterBottom>Product</Typography> */}
+        {/* <Typography variant="h4" gutterBottom>Product</Typography> ใ*/}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h6">Product List</Typography>
         </Box>
