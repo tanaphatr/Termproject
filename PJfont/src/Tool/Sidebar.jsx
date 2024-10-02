@@ -37,10 +37,10 @@ function Sidebar() {
                     <List>
                         {/* icon and name tool  */}
                         {[
-                            { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-                            { text: 'Products', icon: <ShoppingCart />, path: '/products' },
-                            { text: 'Employees', icon: <People />, path: '/employees' },
-                            { text: 'Reports', icon: <Assessment />, path: '/reports' },
+                            { text: 'Dashboard', icon: <DashboardIcon />, path: '/Dashboard' },
+                            { text: 'Products', icon: <ShoppingCart />, path: '/Products' },
+                            { text: 'Employees', icon: <People />, path: '/Employees' },
+                            { text: 'Reports', icon: <Assessment />, path: '/Reports' },
                         ].map(({ text, icon, path }) => (
                             // set color when select 
                             <ListItem
