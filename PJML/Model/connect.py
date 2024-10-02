@@ -18,8 +18,3 @@ try:
 
 except Error as e:
     print("เกิดข้อผิดพลาดในการเชื่อมต่อ:", e)
-
-finally:
-    if 'connection' in locals() and connection.is_connected():
-        connection.close()
-        print("เชื่อมต่อฐานข้อมูลถูกปิดแล้ว")

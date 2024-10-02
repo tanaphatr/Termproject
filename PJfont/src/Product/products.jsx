@@ -46,7 +46,7 @@ const Products = () => {
 
   const handleAddMore = () => {
     console.log("Add more product");
-    // Add new product, you might want to open a form or add a new row to the products
+    // Add new product, you might want to open a form or add a new row to the products....
     const newId = products.length + 1;
     setProducts([
       ...products,
