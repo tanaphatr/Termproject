@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import './App.css'
-import Sidebar from './Tool/Sidebar'
-import Dashboard from './Dashboard/Dashboard'
-
-function App() {
+import React from 'react'
+import { Container, Typography } from "@mui/material";
+function Home() {
   return (
-    <div className="App">
-      <Dashboard/>
+    <div>
+        <Container>
+            <Typography>Wellcome Manager</Typography>
+            <Typography>Lom Cha-am Shop</Typography>
+        </Container>
     </div>
   )
 }
 
-export default App
+export default Home
