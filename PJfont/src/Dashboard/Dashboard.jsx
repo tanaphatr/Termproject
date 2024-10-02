@@ -31,7 +31,7 @@ const productList = [
     { name: 'P5', price: 250 },
 ];
 
-const Index = () => {
+const dashboard = () => {
     return (
         <div style={{ display: 'flex' }}>
             <Sidebar />
@@ -54,4 +54,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default dashboard;
