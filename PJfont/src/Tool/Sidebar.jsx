@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Typography } from '@mui/material';
 import { Dashboard as DashboardIcon, ShoppingCart, People, Assessment, ExitToApp } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Sidebar() {
     const drawerWidth = 220;
     const navigate = useNavigate();
-    const [selectedItem, setSelectedItem] = useState('/dashboard'); // Default selected path
+    const location = useLocation();
+    const [selectedItem, setSelectedItem] = useState('/dashboard');
+
+    useEffect(() => {
+        setSelectedItem(location.pathname);
+    }, [location]);
 
     const DrawerStyled = styled(Drawer)(() => ({
         width: drawerWidth,
@@ -35,14 +40,12 @@ function Sidebar() {
                 </Box>
                 <Box sx={{ flexGrow: 1, marginTop: 1 }}>
                     <List>
-                        {/* icon and name tool  */}
                         {[
-                            { text: 'Dashboard', icon: <DashboardIcon />, path: '/Dashboard' },
-                            { text: 'Products', icon: <ShoppingCart />, path: '/Products' },
-                            { text: 'Employees', icon: <People />, path: '/Employees' },
-                            { text: 'Reports', icon: <Assessment />, path: '/Reports' },
+                            { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+                            { text: 'Products', icon: <ShoppingCart />, path: '/products' },
+                            { text: 'Employees', icon: <People />, path: '/employees' },
+                            { text: 'Reports', icon: <Assessment />, path: '/reports' },
                         ].map(({ text, icon, path }) => (
-                            // set color when select 
                             <ListItem
                                 button
                                 key={text}
@@ -53,7 +56,6 @@ function Sidebar() {
                                         color: selectedItem === path ? 'blue' : 'inherit',
                                     },
                                     '&:hover': {
-                                        // Optional: You can define a hover effect here
                                     },
                                     borderLeft: selectedItem === path ? '4px solid blue' : 'none',
                                 }}
@@ -64,7 +66,6 @@ function Sidebar() {
                         ))}
                     </List>
                 </Box>
-                {/* Logout button */}
                 <List>
                     <ListItem button key="Logout" sx={{ marginBottom: 5 }}>
                         <ListItemIcon><ExitToApp /></ListItemIcon>
