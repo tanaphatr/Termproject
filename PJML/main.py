@@ -14,9 +14,6 @@ def main():
     # ประมวลผลข้อมูล
     df = preprocess_data(df)
 
-    # ตรวจสอบคอลัมน์ใน DataFrame ที่ถูกประมวลผล
-    # print("Columns after preprocessing:", df.columns.tolist())
-
     # กำหนดฟีเจอร์และตัวแปรเป้าหมายตามชื่อคอลัมน์ที่แท้จริง
     features = ['is_weekend', 
                 'event_Normal Day',  # ปรับตามชื่อคอลัมน์ที่แท้จริง
