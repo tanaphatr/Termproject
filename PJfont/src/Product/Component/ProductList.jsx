@@ -19,30 +19,31 @@ import {
 
 const ProductList = () => {
   const [products, setProducts] = useState([
-    { id: 1, name: "สินค้า01", price: "-", quantity: 0 },
-    { id: 2, name: "สินค้า02", price: "-", quantity: 0 },
-    { id: 3, name: "สินค้า03", price: "-", quantity: 0 },
-    { id: 4, name: "สินค้า04", price: "-", quantity: 0 },
-    { id: 5, name: "สินค้า05", price: "-", quantity: 0 },
-    { id: 6, name: "สินค้า06", price: "-", quantity: 0 },
+    { id: 1, name: "สินค้า01", price: "-", quantity: 0, date: "2024-10-10" },
+    { id: 2, name: "สินค้า02", price: "-", quantity: 0, date: "2024-10-11" },
+    { id: 3, name: "สินค้า03", price: "-", quantity: 0, date: "2024-10-12" },
+    { id: 4, name: "สินค้า04", price: "-", quantity: 0, date: "2024-10-13" },
+    { id: 5, name: "สินค้า05", price: "-", quantity: 0, date: "2024-10-14" },
+    { id: 6, name: "สินค้า06", price: "-", quantity: 0, date: "2024-10-15" },
   ]);
   const [open, setOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editedPrice, setEditedPrice] = useState("");
-  const [editedQuantity, setEditedQuantity] = useState(0); // สถานะใหม่สำหรับจำนวนสินค้า
+  const [editedQuantity, setEditedQuantity] = useState(0);
+  const [editedDate, setEditedDate] = useState(""); // สถานะใหม่สำหรับวันที่
 
   const handleEdit = (id) => {
     const product = products.find((product) => product.id === id);
     setCurrentProduct(product);
     setEditedName(product.name);
     setEditedPrice(product.price);
-    setEditedQuantity(product.quantity); // โหลดจำนวนสินค้าลงในฟิลด์แก้ไข
+    setEditedQuantity(product.quantity);
+    setEditedDate(product.date); // โหลดวันที่ลงในฟิลด์แก้ไข
     setOpen(true);
   };
 
   const handleDelete = (id) => {
-    console.log("Delete product", id);
     setProducts(products.filter((product) => product.id !== id));
   };
 
@@ -50,7 +51,7 @@ const ProductList = () => {
     setProducts((prevProducts) =>
       prevProducts.map((product) =>
         product.id === currentProduct.id
-          ? { ...product, name: editedName, price: editedPrice, quantity: editedQuantity } // อัปเดตจำนวนสินค้า
+          ? { ...product, name: editedName, price: editedPrice, quantity: editedQuantity, date: editedDate }
           : product
       )
     );
@@ -58,7 +59,8 @@ const ProductList = () => {
     setCurrentProduct(null);
     setEditedName("");
     setEditedPrice("");
-    setEditedQuantity(0); // รีเซ็ตค่าจำนวนสินค้า
+    setEditedQuantity(0);
+    setEditedDate("");
   };
 
   return (
@@ -75,7 +77,8 @@ const ProductList = () => {
             <TableRow>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>Product</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>Price</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Quantity</TableCell> {/* คอลัมน์ Quantity ใหม่ */}
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>Quantity</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>Date</TableCell> {/* คอลัมน์ Date ใหม่ */}
               <TableCell align="center" sx={{ fontWeight: "bold" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -84,7 +87,8 @@ const ProductList = () => {
               <TableRow key={product.id}>
                 <TableCell align="center">{product.name}</TableCell>
                 <TableCell align="center">{product.price}</TableCell>
-                <TableCell align="center">{product.quantity}</TableCell> {/* แสดงจำนวนสินค้า */}
+                <TableCell align="center">{product.quantity}</TableCell>
+                <TableCell align="center">{product.date}</TableCell> {/* แสดงวันที่ */}
                 <TableCell align="center">
                   <Button variant="outlined" sx={{ mr: 1 }} onClick={() => handleEdit(product.id)}>
                     EDIT
@@ -114,22 +118,34 @@ const ProductList = () => {
           <TextField
             margin="dense"
             label="Price"
-            type="number" // เปลี่ยนเป็น type="number"
+            type="number"
             fullWidth
             variant="outlined"
             value={editedPrice}
             onChange={(e) => setEditedPrice(e.target.value)}
-            inputProps={{ min: 0, pattern: "[0-9]*", inputMode: "numeric" }} // จำกัดการป้อนให้เป็นตัวเลขจำนวนเต็ม
+            inputProps={{ min: 0, pattern: "[0-9]*", inputMode: "numeric" }}
           />
           <TextField
             margin="dense"
             label="Quantity"
-            type="number" // ฟิลด์จำนวน
+            type="number"
             fullWidth
             variant="outlined"
             value={editedQuantity}
-            onChange={(e) => setEditedQuantity(Number(e.target.value))} // แปลงค่าจาก string เป็น number
-            inputProps={{ min: 0 }} // จำกัดค่าต่ำสุดให้เป็น 0
+            onChange={(e) => setEditedQuantity(Number(e.target.value))}
+            inputProps={{ min: 0 }}
+          />
+          <TextField
+            margin="dense"
+            label="Date"
+            type="date" // ฟิลด์วันที่
+            fullWidth
+            variant="outlined"
+            value={editedDate}
+            onChange={(e) => setEditedDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </DialogContent>
         <DialogActions>

@@ -11,7 +11,6 @@ import {
 
 const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
   const [formData, setFormData] = useState({
-    dailySales: '',
     date: '',
     name: '',
     price: '',
@@ -36,16 +35,6 @@ const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
       <DialogTitle>Add New Product</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Daily sales"
-              name="dailySales"
-              value={formData.dailySales}
-              onChange={handleChange}
-              margin="normal"
-            />
-          </Grid>
           <Grid item xs={6}>
             <TextField
               fullWidth
@@ -75,6 +64,7 @@ const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
               fullWidth
               label="Price"
               name="price"
+              type="number" // รับเฉพาะตัวเลข
               value={formData.price}
               onChange={handleChange}
               margin="normal"
@@ -85,6 +75,7 @@ const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
               fullWidth
               label="Quantity"
               name="quantity"
+              type="number" // รับเฉพาะตัวเลข
               value={formData.quantity}
               onChange={handleChange}
               margin="normal"
