@@ -15,9 +15,27 @@ bayesian_ridge_model = joblib.load('E:/Term project/models/bayesian_ridge_model.
 linear_regression_model = joblib.load('E:/Term project/models/linear_regression_model.joblib')
 orthogonal_matching_pursuit_model = joblib.load('E:/Term project/models/orthogonal_matching_pursuit_model.joblib')
 
+# Convert sale_date to datetime and extract relevant features
+data['sale_date'] = pd.to_datetime(data['sale_date'])
+data['year'] = data['sale_date'].dt.year
+data['month'] = data['sale_date'].dt.month
+data['day'] = data['sale_date'].dt.day
+data['day_of_year'] = data['sale_date'].dt.dayofyear
 
 # เลือกคอลัมน์ที่ต้องการเพื่อสร้าง latest_data
-latest_data = data.iloc[-1][['profit_amount', 'event', 'day_of_week', 'festival', 'weather', 'is_weekend']].values.reshape(1, -1)
+latest_data = data.iloc[-1][[
+    'year', 
+    'month', 
+    'day', 
+    'day_of_year',
+    'profit_amount', 
+    'event', 
+    'day_of_week', 
+    'festival', 
+    'weather', 
+    'Back_to_School_Period',
+    'Seasonal'
+    ]].values.reshape(1, -1)
 
 # ทำนายยอดขายวันถัดไป
 predicted_sales = orthogonal_matching_pursuit_model.predict(latest_data)

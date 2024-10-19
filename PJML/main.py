@@ -30,15 +30,26 @@ def main():
         print(f"Error loading or processing data: {e}")
         return
     
+    # แปลง sale_date ให้เป็นค่าที่เหมาะสมสำหรับโมเดล
+    df['sale_date'] = pd.to_datetime(df['sale_date'])  # แปลงให้เป็น datetime ก่อน
+    df['year'] = df['sale_date'].dt.year
+    df['month'] = df['sale_date'].dt.month
+    df['day'] = df['sale_date'].dt.day
+
     # ฟีเจอร์ที่ใช้ในการฝึกโมเดล
     features = [
-        'profit_amount', 
-        'event', 
-        'day_of_week', 
-        'festival', 
-        'weather', 
-        'is_weekend'
+    'year', 
+    'month', 
+    'day', 
+    'day_of_year',  
+    'event', 
+    'day_of_week', 
+    'festival', 
+    'weather',
+    'Back_to_School_Period',
+    'Seasonal'
     ]
+
     target = 'sales_amount'
 
     # ตรวจสอบฟีเจอร์ที่ขาดหายไป
