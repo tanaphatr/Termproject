@@ -91,9 +91,9 @@ def main():
         print(f"MAPE (Mean Absolute Percentage Error): {mape:.4f} - แสดงถึงความผิดพลาดเฉลี่ยในรูปแบบเปอร์เซ็นต์\n")
 
         # บันทึกโมเดลที่ฝึกเสร็จแล้วในโฟลเดอร์ที่แยกต่างหาก
-        model_filename = os.path.join(model_dir, f"{model_name.replace(' ', '_').lower()}_model.joblib")
-        joblib.dump(model, model_filename)
-        print(f"Saved {model_name} model to {model_filename}")
+        # model_filename = os.path.join(model_dir, f"{model_name.replace(' ', '_').lower()}_model.joblib")
+        # joblib.dump(model, model_filename)
+        # print(f"Saved {model_name} model to {model_filename}")
 
 if __name__ == "__main__":
     main()
