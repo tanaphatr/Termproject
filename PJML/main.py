@@ -6,6 +6,7 @@ from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import BayesianRidge, LinearRegression, OrthogonalMatchingPursuit
+from sklearn.ensemble import AdaBoostRegressor  # นำเข้า AdaBoostRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 def evaluate_model(model, X_test, y_test):
@@ -38,16 +39,16 @@ def main():
 
     # ฟีเจอร์ที่ใช้ในการฝึกโมเดล
     features = [
-    'year', 
-    'month', 
-    'day', 
-    'day_of_year',  
-    'event', 
-    'day_of_week', 
-    'festival', 
-    'weather',
-    'Back_to_School_Period',
-    'Seasonal'
+        'year', 
+        'month', 
+        'day', 
+        'day_of_year',  
+        'event', 
+        'day_of_week', 
+        'festival', 
+        'weather',
+        'Back_to_School_Period',
+        'Seasonal'
     ]
 
     target = 'sales_amount'
@@ -70,6 +71,7 @@ def main():
         'Bayesian Ridge': BayesianRidge(),
         'Linear Regression': LinearRegression(),
         'Orthogonal Matching Pursuit': OrthogonalMatchingPursuit(),
+        'AdaBoost Regressor': AdaBoostRegressor()  # เพิ่ม AdaBoost Regressor
     }
 
     # สร้างโฟลเดอร์สำหรับเก็บโมเดล

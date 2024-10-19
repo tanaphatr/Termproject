@@ -14,7 +14,7 @@ print(processed_data)
 bayesian_ridge_model = joblib.load('E:/Term project/models/bayesian_ridge_model.joblib')
 linear_regression_model = joblib.load('E:/Term project/models/linear_regression_model.joblib')
 orthogonal_matching_pursuit_model = joblib.load('E:/Term project/models/orthogonal_matching_pursuit_model.joblib')
-
+adaboost_regressor_model = joblib.load('E:/Term project/models/adaboost_regressor_model.joblib')
 # Convert sale_date to datetime and extract relevant features
 data['sale_date'] = pd.to_datetime(data['sale_date'])
 data['year'] = data['sale_date'].dt.year
@@ -28,7 +28,6 @@ latest_data = data.iloc[-1][[
     'month', 
     'day', 
     'day_of_year',
-    'profit_amount', 
     'event', 
     'day_of_week', 
     'festival', 
@@ -38,7 +37,7 @@ latest_data = data.iloc[-1][[
     ]].values.reshape(1, -1)
 
 # ทำนายยอดขายวันถัดไป
-predicted_sales = orthogonal_matching_pursuit_model.predict(latest_data)
+predicted_sales = linear_regression_model.predict(latest_data)
 
 # ดึงวันที่จากข้อมูล
 predicted_date = data.iloc[-1]['sale_date'] + pd.DateOffset(days=1)
