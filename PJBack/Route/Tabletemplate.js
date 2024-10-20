@@ -1,5 +1,5 @@
 function generateHtmlPage(title, fields, rows) {
-    return `
+  return `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -34,24 +34,48 @@ function generateHtmlPage(title, fields, rows) {
                 <button onclick="navigateTo('/Salesdata/html')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Sales Data</button>
             </div>
 
-            <div class="w-full max-w-6xl px-4 overflow-x-auto">
+            <div class="w-[100%] px-4 overflow-x-auto">
                 <table class="w-full bg-white shadow-md rounded-lg overflow-hidden border-collapse">
                     <thead class="bg-gray-200">
                         <tr>
-                            ${fields.map(field => `<th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">${field.name}</th>`).join('')}
+                            ${fields
+                              .map(
+                                (field) => `
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">${field.name}</th>
+                            `
+                              )
+                              .join("")}
                             <th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${rows.map((row, index) => `
-                            <tr class="${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
-                                ${fields.map(field => `<td class="py-3 px-4 border border-gray-300 table-cell">${row[field.name] !== undefined ? row[field.name] : ''}</td>`).join('')}
-                                <td class="py-3 px-4 border border-gray-300">
-                                    <button onclick="editRow(${index})" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                        ${rows
+                          .map(
+                            (row, index) => `
+                            <tr class="${
+                              index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                            }">
+                                ${fields
+                                  .map(
+                                    (field) => `
+                                    <td class="py-3 px-4 border border-gray-300 table-cell">${
+                                      row[field.name] !== undefined
+                                        ? row[field.name]
+                                        : ""
+                                    }</td>
+                                `
+                                  )
+                                  .join("")}
+                                <td class="py-3 px-4 border flex flex-col space-y-2" style="height: 50%;">
+                                    <button onclick="editRow(${index})" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded">Edit</button>   
+                                </td>
+                                <td class="py-3 px-4 border flex flex-col space-y-2" style="height: 50%;">
                                     <button onclick="deleteRow(${index})" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Delete</button>
                                 </td>
                             </tr>
-                        `).join('')}
+                        `
+                          )
+                          .join("")}
                     </tbody>
                 </table>
             </div>
