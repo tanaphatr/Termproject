@@ -10,17 +10,20 @@ function Sidebar() {
     const location = useLocation();
     const [selectedItem, setSelectedItem] = useState('/dashboard');
     const [isLoggedIn, setIsLoggedIn] = useState(false); // สถานะการเข้าสู่ระบบ
+    const [userRole, setUserRole] = useState(''); // สถานะ role ของผู้ใช้
 
     useEffect(() => {
         setSelectedItem(location.pathname);
     }, [location]);
 
     useEffect(() => {
-        // ตรวจสอบสถานะการเข้าสู่ระบบ (ปรับตามที่คุณมีในแอปของคุณ)
+        // ตรวจสอบสถานะการเข้าสู่ระบบจาก localStorage
         const checkLoginStatus = () => {
-            // แทนที่ด้วยการตรวจสอบการเข้าสู่ระบบที่แท้จริง
-            const loggedIn = true; // เปลี่ยนให้เป็นการตรวจสอบที่แท้จริง
-            setIsLoggedIn(loggedIn);
+            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+            setIsLoggedIn(!!loggedInUser); // เปลี่ยนสถานะการเข้าสู่ระบบตามที่ได้จาก localStorage
+            if (loggedInUser) {
+                setUserRole(loggedInUser.role); // ดึง role ของผู้ใช้จากข้อมูลใน localStorage
+            }
         };
 
         checkLoginStatus();
@@ -45,23 +48,23 @@ function Sidebar() {
     };
 
     const handleLogout = () => {
-        // ที่นี่คุณอาจจะต้องทำการล้างข้อมูลผู้ใช้ (เช่น token) ก่อนนำทาง
-        navigate('/login'); // นำทางไปยัง /login
+        // ลบข้อมูลผู้ใช้จาก localStorage และนำทางไปยังหน้าล็อกอิน
+        localStorage.removeItem("loggedInUser");
+        navigate('/login');
     };
 
     return (
         <DrawerStyled variant="permanent">
             <DrawerPaper>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 3 }}>
-                    <Typography variant="h6">Name</Typography>
+                    <Typography variant="h6">{isLoggedIn ? userRole : 'Guest'}</Typography> {/* แสดง role หรือ Guest หากยังไม่เข้าสู่ระบบ */}
                 </Box>
                 <Box sx={{ flexGrow: 1, marginTop: 1 }}>
-                    {isLoggedIn && ( // แสดงเมนูเฉพาะเมื่อเข้าสู่ระบบ
+                    {isLoggedIn ? ( // แสดงเมนูเฉพาะเมื่อเข้าสู่ระบบ
                         <List>
-                            {[
+                            {[ 
                                 { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
                                 { text: 'Products', icon: <ShoppingCart />, path: '/products' },
-                                { text: 'Employees', icon: <People />, path: '/employees' },
                                 { text: 'Reports', icon: <Assessment />, path: '/reports' },
                             ].map(({ text, icon, path }) => (
                                 <ListItem
@@ -81,12 +84,40 @@ function Sidebar() {
                                     <ListItemText primary={text} />
                                 </ListItem>
                             ))}
+                            {/* แสดงเมนู Employees เฉพาะเมื่อ role ไม่ใช่ employee */}
+                            {userRole !== 'employee' && (
+                                <ListItem
+                                    button
+                                    onClick={() => handleNavigation('/employees')}
+                                    sx={{
+                                        color: selectedItem === '/employees' ? 'blue' : 'inherit',
+                                        '& .MuiListItemIcon-root': {
+                                            color: selectedItem === '/employees' ? 'blue' : 'inherit',
+                                        },
+                                        borderLeft: selectedItem === '/employees' ? '4px solid blue' : 'none',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <ListItemIcon><People /></ListItemIcon>
+                                    <ListItemText primary="Employees" />
+                                </ListItem>
+                            )}
+                        </List>
+                    ) : (null)}
+                </Box>
+                <Box sx={{ marginBottom: 5 }}>
+                    {!isLoggedIn && ( // แสดงปุ่ม Login หากยังไม่เข้าสู่ระบบ
+                        <List>
+                            <ListItem button key="Login" sx={{ cursor: 'pointer' }} onClick={() => navigate('/login')}>
+                                <ListItemIcon><ExitToApp /></ListItemIcon>
+                                <ListItemText primary="Login" />
+                            </ListItem>
                         </List>
                     )}
                 </Box>
                 {isLoggedIn && ( // แสดงปุ่ม Logout เฉพาะเมื่อเข้าสู่ระบบ
                     <List>
-                        <ListItem button key="Logout" sx={{ marginBottom: 5 , cursor: 'pointer', }} onClick={handleLogout}>
+                        <ListItem button key="Logout" sx={{ marginBottom: 5, cursor: 'pointer' }} onClick={handleLogout}>
                             <ListItemIcon><ExitToApp /></ListItemIcon>
                             <ListItemText primary="Logout" />
                         </ListItem>
