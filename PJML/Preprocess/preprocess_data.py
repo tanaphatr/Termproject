@@ -1,21 +1,26 @@
-# Preprocess/preprocess_data.py
 import pandas as pd
 
 def preprocess_data(df):
-    # Convert sale_date to datetime, coerce errors
-    df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')
+    # แปลงปีพุทธศักราชเป็นปีคริสต์ศักราช
+    df['sale_date'] = pd.to_datetime(df['sale_date'].astype(str).str.replace(r'(\d{4})', lambda x: str(int(x.group(0)) - 543), regex=True), errors='coerce')
 
-    # Create day_of_week feature
-    df['day_of_week'] = df['sale_date'].dt.dayofweek
+    # Log จำนวนวันที่ขาดหาย
+    print(f"Missing sale_date entries: {df['sale_date'].isnull().sum()}")
 
-    # Create is_weekend feature
-    df['is_weekend'] = df['day_of_week'].apply(lambda x: 1 if x >= 5 else 0)
+    # แทนที่ค่าที่ขาดหายใน sales_amount และ profit_amount ด้วยค่าเฉลี่ย
+    df['sales_amount'].fillna(df['sales_amount'].mean(), inplace=True)
+    df['profit_amount'].fillna(df['profit_amount'].mean(), inplace=True)
 
-    # Create dummy variables for event, festival, and weather
-    df = pd.get_dummies(df, columns=['event', 'festival', 'weather'], drop_first=True)
+    # แปลง event, festival, weather, Temperature, Back_to_School_Period, Seasonal เป็นรหัสตัวเลข
+    df['event'], _ = pd.factorize(df['event'])
+    df['day_of_week'], _ = pd.factorize(df['day_of_week'])
+    df['festival'], _ = pd.factorize(df['festival'])
+    df['weather'], _ = pd.factorize(df['weather'])
+    df['Back_to_School_Period'], _ = pd.factorize(df['Back_to_School_Period'])
+    df['Seasonal'], _ = pd.factorize(df['Seasonal'])
 
-    # Fill missing values with 0 only for numeric columns
-    numeric_columns = df.select_dtypes(include='number').columns
-    df[numeric_columns] = df[numeric_columns].fillna(0)
+    # เพิ่มคอลัมน์ day_of_year
+    df['day_of_year'] = df['sale_date'].dt.dayofyear
 
+    df.to_csv('cleaned_data.csv', index=False, encoding='utf-8-sig')
     return df
