@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 const cors = require('cors');
 
@@ -37,6 +38,3 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     console.log(`Server is running on \x1b[31m${hostname}:${port}\x1b[0m`);
 });
-
-// Main Server
-app.use('/', mainRoutes);
