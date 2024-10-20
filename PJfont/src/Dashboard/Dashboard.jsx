@@ -49,7 +49,9 @@ const dashboard = () => {
                     <SalesCard  title="Yesterday sales" amount="15,000 Bath" 
                                 prediction="14,000 Bath" subtitle="Today's Prediction" 
                                 Yessubtitle="Yesterday's Prediction" Yesprediction="15,000 Bath"/>
-                    <PredictionCard title="Prediction for tomorrow" amount={`${!isNaN(Number(Predictive.predicted_sales)) ? Number(Predictive.predicted_sales).toFixed(2) : '0.00'} Bath`} accuracy={`${(100 - Predictive.percentage_error).toFixed(2)}%`}  />
+                    <PredictionCard title="Prediction for tomorrow" 
+                                    amount={`${!isNaN(Number(Predictive.predicted_sales)) ? Number(Predictive.predicted_sales).toFixed(2) : '0.00'} Bath`} 
+                                    accuracy={`${(100 - Predictive.percentage_error).toFixed(2)}%`}  />
                     <WeatherCard title="Weather tomorrow" temperature="50" />
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>

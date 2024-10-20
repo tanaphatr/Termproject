@@ -15,16 +15,11 @@ const Login = () => {
     <div>
       <Link to="/" style={{ display: "flex", alignItems: "center", margin: "1rem" }}>
         <ArrowBack /> {/* ไอคอนลูกศร */}
-        <Typography style={{ marginLeft: "0.5rem" , fontWeight: 'bold'}}>Back</Typography>
+        <Typography style={{ marginLeft: "0.5rem", fontWeight: 'bold' }}>Back</Typography>
       </Link>
       <Container
         maxWidth="lg"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100%",
-        }}
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100%", }}
       >
         <div style={{ flex: 1, padding: "2rem" }}>
           <ImageSection />

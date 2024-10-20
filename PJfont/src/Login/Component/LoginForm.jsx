@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  TextField,
-  Button,
-  Paper,
-  Typography,
-  CircularProgress,
-  Box,
+  TextField, Button, Paper, Typography, CircularProgress, Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -57,48 +52,21 @@ const LoginForm = ({ onLogin }) => {
     >
       <br />
       <br />
-      <Typography
-        variant="h5"
-        component="h2"
-        gutterBottom
-        align="center"
-        sx={{ fontWeight: "bold" }} // ใช้ sx เพื่อทำให้ตัวหนา
-      >
+      <Typography variant="h5" component="h2" gutterBottomalign="center" sx={{ fontWeight: "bold" }}>
         Login into your account
       </Typography>
-
       <br />
       <br />
       <form onSubmit={handleLogin}>
         <Box display="flex" flexDirection="column">
           {" "}
-          <TextField
-            fullWidth
-            label="Username"
-            variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <TextField fullWidthlabel="Username" variant="outlined" value={username} onChange={(e) => setUsername(e.target.value)} />
           <br />
-          <TextField
-            fullWidth
-            label="Password"
-            type="password"
-            variant="outlined"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <TextField fullWidthlabel="Password" type="password" variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
           <br />
           {error && <Typography color="error">{error}</Typography>}
           <br />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="large"
-            disabled={loading}
-          >
+          <Button type="submit" fullWidthvariant="contained" color="primary" size="large" disabled={loading}>
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
