@@ -12,7 +12,7 @@ print(processed_data)
 
 # โหลดโมเดลที่ถูกบันทึกไว้
 # bayesian_ridge_model = joblib.load('E:/Term project/PJ/PJML/models/bayesian_ridge_model.joblib')
-linear_regression_model = joblib.load('E:/Term project/PJ/PJML/models/linear_regression_model.joblib')
+linear_regression_model = joblib.load('E:/Term project/models/linear_regression_model.joblib')
 # orthogonal_matching_pursuit_model = joblib.load('E:/Term project/PJ/PJML/models/orthogonal_matching_pursuit_model.joblib')
 # adaboost_regressor_model = joblib.load('E:/Term project/PJ/PJML/models/adaboost_regressor_model.joblib')
 

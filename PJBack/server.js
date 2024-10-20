@@ -10,6 +10,7 @@ const Product_sales = require('./Route/Table/Product_sales')
 const Product_stock_history = require('./Route/Table/Product_stock_history')
 const Sales_prediction = require('./Route/Table/Sales_prediction')
 const Salesdata = require('./Route/Table/Salesdata')
+const Predictive = require('./Route/Table/ML/Predictive')
 
 const app = express();
 const hostname = 'http://localhost';
@@ -30,6 +31,7 @@ app.use('/Product_sales', Product_sales);
 app.use('/Product_stock_history', Product_stock_history);
 app.use('/Sales_prediction', Sales_prediction);
 app.use('/Salesdata', Salesdata);
+app.use('/Predictive', Predictive);
 
 
 // Start the server

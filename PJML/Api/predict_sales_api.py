@@ -13,9 +13,10 @@ from Preprocess.preprocess_data import preprocess_data
 app = Flask(__name__)
 
 # โหลดโมเดลที่ถูกบันทึกไว้
-linear_regression_model = joblib.load('E:/Term project/PJ/PJML/models/linear_regression_model.joblib')
+linear_regression_model = joblib.load('E:/Term project/models/linear_regression_model.joblib')
+# linear_regression_model = joblib.load('E:/Term project/PJ/PJML/models/linear_regression_model.joblib')
 
-@app.route('/predict', methods=['GET'])
+@app.route('/', methods=['GET'])
 def predict_sales():
     # โหลดและประมวลผลข้อมูล
     data = load_data()
@@ -64,4 +65,4 @@ def predict_sales():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='localhost', port=8887 , debug=True)
