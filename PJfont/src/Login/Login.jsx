@@ -13,7 +13,7 @@ const Login = () => {
 
   return (
     <div>
-      <Link to="/home" style={{ display: "flex", alignItems: "center", margin: "1rem" }}>
+      <Link to="/" style={{ display: "flex", alignItems: "center", margin: "1rem" }}>
         <ArrowBack /> {/* ไอคอนลูกศร */}
         <Typography style={{ marginLeft: "0.5rem" , fontWeight: 'bold'}}>Back</Typography>
       </Link>

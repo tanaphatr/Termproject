@@ -25,4 +25,15 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.post('/', async (req, res) => {
+    try {
+        const [rows, fields] = await db.query('SELECT * FROM Users');
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching Users:', err);
+        res.status(500).json({ error: 'Error fetching Users' });
+    }
+});
+
+
 module.exports = router;
