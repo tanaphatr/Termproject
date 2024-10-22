@@ -29,6 +29,11 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const { sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal } = req.body;
 
+    // Validation
+    if (!sale_date || !sales_amount || !profit_amount) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
     try {
         const result = await db.query(
             'INSERT INTO Salesdata (sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
@@ -42,33 +47,27 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Route to update a Salesdata record (PUT)
-router.put('/:id', async (req, res) => {
-    const { id } = req.params;
-    const { sales_data_id,sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal } = req.body;
-
-    try {
-        await db.query(
-            'UPDATE Salesdata SET sales_data_id = ?, sale_date = ?, sales_amount = ?, profit_amount = ?, event = ?, day_of_week = ?, festival = ?, weather = ?, Temperature = ?, Back_to_School_Period = ?, Seasonal = ? WHERE sales_data_id = ?', 
-            [sales_data_id,sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal, sales_data_id]
-        );
-        res.status(200).json({ message: 'Record updated successfully' });
-    } catch (err) {
-        console.error('Error updating record:', err);
-        res.status(500).json({ error: 'Error updating record' });
-    }
-});
-
-// Route to delete a Salesdata record (DELETE)
 router.delete('/:sales_data_id', async (req, res) => {
-    const { sales_data_id } = req.params;
     try {
-        await db.query('DELETE FROM Salesdata WHERE sales_data_id = ?', [sales_data_id]);
-        res.status(200).json({ message: 'Record deleted successfully' });
+        const { sales_data_id } = req.params;
+        if (!sales_data_id) {
+            return res.status(400).json({ error: "Sales data ID is required" });
+        }
+
+        console.log("Deleting Salesdata ID:", sales_data_id);
+
+        const [result] = await db.query('DELETE FROM Salesdata WHERE sales_data_id = ?', [sales_data_id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Salesdata record not found" });
+        }
+
+        res.status(200).json({ message: "Salesdata record deleted successfully" });
     } catch (err) {
-        console.error('Error deleting record:', err);
-        res.status(500).json({ error: 'Error deleting record' });
+        console.error(err);
+        res.status(500).json({ error: err.message || "Internal server error" });
     }
 });
 
 module.exports = router;
+
