@@ -83,9 +83,11 @@ function generateHtmlPage(title, fields, rows) {
 
             <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+                <input type="hidden" id="edit_sale_date" name="sale_date">
                     <h2 class="text-2xl font-semibold text-center mb-4">Edit Data</h2>
                     <form id="editForm" class="flex flex-wrap">
                         ${fields
+                            .filter(field => field.name !== 'sale_date')
                             .map(
                                 (field) => `
                                 <div class="mb-4 w-1/2 pr-2">
@@ -148,6 +150,7 @@ function generateHtmlPage(title, fields, rows) {
         event.preventDefault();
         
         const data = {};
+                        // รวมฟิลด์ที่ไม่ใช่ sales_date เท่านั้น
                     ${fields.map(field => `
                         data['${field.name}'] = document.getElementById('edit_${field.name}').value;`
                     ).join('\n')}
