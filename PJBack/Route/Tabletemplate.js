@@ -35,6 +35,7 @@ function generateHtmlPage(title, fields, rows) {
                 <button onclick="navigateTo('/Sales_prediction/html')" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Sales Prediction</button>
                 <button onclick="navigateTo('/Salesdata/html')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Sales Data</button>
             </div>
+            <button onclick="openAddModal()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md mb-4">Add New Record</button>
 
             <!-- ส่วนของตาราง -->
             <div class="class="w-[100%] px-4 overflow-x-auto">
@@ -68,7 +69,9 @@ function generateHtmlPage(title, fields, rows) {
                                   )
                                   .join("")}
                                 <td class="py-3 px-4 border border-gray-300">
-                                    <button onclick="editRow(${row.sales_data_id})" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                                    <button onclick="editRow(${
+                                      row.sales_data_id
+                                    })" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
                                     <button onclick="deleteRow(${
                                       row.sales_data_id
                                     })" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Delete</button>
@@ -87,16 +90,16 @@ function generateHtmlPage(title, fields, rows) {
                     <h2 class="text-2xl font-semibold text-center mb-4">Edit Data</h2>
                     <form id="editForm" class="flex flex-wrap">
                         ${fields
-                            .filter(field => field.name !== 'sale_date')
-                            .map(
-                                (field) => `
+                          .filter((field) => field.name !== "sale_date")
+                          .map(
+                            (field) => `
                                 <div class="mb-4 w-1/2 pr-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">${field.name}:</label>
                                     <input type="text" name="${field.name}" id="edit_${field.name}" class="border border-gray-300 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required />
                                 </div>
                             `
-                            )
-                            .join("")}
+                          )
+                          .join("")}
                         <div class="flex justify-between w-full mt-4">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">Save Changes</button>
                             <button type="button" onclick="closeModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow">Cancel</button>
@@ -105,6 +108,28 @@ function generateHtmlPage(title, fields, rows) {
                 </div>
             </div>
 
+            <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+                    <h2 class="text-2xl font-semibold text-center mb-4">Add New Data</h2>
+                    <form id="addForm" class="flex flex-wrap">
+                        ${fields
+                          .filter(field => field.name !== 'sales_data_id')  // sales_data_id ไม่ต้องการให้แก้ไข  
+                          .map(
+                            (field) => `
+                                <div class="mb-4 w-1/2 pr-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">${field.name}:</label>
+                                    <input type="text" name="${field.name}" id="add_${field.name}" class="border border-gray-300 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                                </div>
+                            `
+                          )
+                          .join("")}
+                        <div class="flex justify-between w-full mt-4">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow">Add Record</button>
+                            <button type="button" onclick="closeAddModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
 
             <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -127,9 +152,12 @@ function generateHtmlPage(title, fields, rows) {
                     
                     if (rowToEdit) {
                         // ใส่ข้อมูลลงในฟอร์ม
-                        ${fields.map(field => `
+                        ${fields
+                          .map(
+                            (field) => `
                             document.getElementById('edit_${field.name}').value = rowToEdit['${field.name}'] || '';`
-                        ).join('\n')}
+                          )
+                          .join("\n")}
                         
                         // เปิด Modal
                         openModal();
@@ -138,35 +166,71 @@ function generateHtmlPage(title, fields, rows) {
                     }
                 }
 
-    function openModal() {
-        document.getElementById('editModal').classList.remove('hidden');
-    }
+                function openModal() {
+                    document.getElementById('editModal').classList.remove('hidden');
+                }
 
-    function closeModal() {
-        document.getElementById('editModal').classList.add('hidden');
-    }
+                function closeModal() {
+                    document.getElementById('editModal').classList.add('hidden');
+                }
 
-    document.getElementById('editForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+                document.getElementById('editForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
         
-        const data = {};
-                        // รวมฟิลด์ที่ไม่ใช่ sales_date เท่านั้น
-                    ${fields.map(field => `
-                        data['${field.name}'] = document.getElementById('edit_${field.name}').value;`
-                    ).join('\n')}
+                    const data = {};
+                                ${fields
+                                  .map(
+                                    (field) => `
+                                    data['${field.name}'] = document.getElementById('edit_${field.name}').value;`
+                                  )
+                                  .join("\n")}
 
-        axios.put(\`/Salesdata/\${currentSalesDataId}\`, data)
-            .then(response => {
-                alert('Record updated successfully');
-                closeModal(); // Close the modal
-                window.location.reload(); // Reload the page to reflect changes
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to update the record');
-            });
-    });
+                    axios.put(\`/Salesdata/\${currentSalesDataId}\`, data)
+                        .then(response => {
+                            alert('Record updated successfully');
+                            closeModal(); // Close the modal
+                            window.location.reload(); // Reload the page to reflect changes
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to update the record');
+                        });
+                });
                 
+                //Modal Add ข้อมูล
+                function openAddModal() {
+                    document.getElementById('addModal').classList.remove('hidden');
+                }
+
+                function closeAddModal() {
+                    document.getElementById('addModal').classList.add('hidden');
+                }
+
+            document.getElementById('addForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const data = {};
+                ${fields
+                  .filter((field) => field.name !== "sales_data_id")
+                  .map(
+                    (field) => `
+                    data['${field.name}'] = document.getElementById('add_${field.name}').value;`
+                  )
+                  .join("\n")}
+                
+                axios.post('/Salesdata', data)
+                    .then(response => {
+                        alert('Record added successfully');
+                        closeAddModal();  // ปิดโมดัล
+                        window.location.reload();  // โหลดหน้าใหม่เพื่อแสดงข้อมูลใหม่
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to add the record');
+                    });
+            });
+
+
                 //ฟังก์ชันDELETEที่ใช้งานผ่าน Route Salesdata.js
                 function deleteRow(sales_data_id) {
                     console.log('Delete row ID:', sales_data_id);
