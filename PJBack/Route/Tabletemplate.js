@@ -36,6 +36,7 @@ function generateHtmlPage(title, fields, rows) {
                 <button onclick="navigateTo('/Salesdata/html')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Sales Data</button>
             </div>
 
+            <!-- ส่วนของตาราง -->
             <div class="class="w-[100%] px-4 overflow-x-auto">
                 <table class="w-full bg-white shadow-md rounded-lg overflow-hidden border-collapse">
                     <thead class="bg-gray-200">
@@ -67,7 +68,7 @@ function generateHtmlPage(title, fields, rows) {
                                   )
                                   .join("")}
                                 <td class="py-3 px-4 border border-gray-300">
-                                    <button onclick="editRow(${index})" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                                    <button onclick="editRow(${row.sales_data_id})" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
                                     <button onclick="deleteRow(${
                                       row.sales_data_id
                                     })" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Delete</button>
@@ -89,7 +90,7 @@ function generateHtmlPage(title, fields, rows) {
                                 (field) => `
                                 <div class="mb-4 w-1/2 pr-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">${field.name}:</label>
-                                    <input type="text" name="${field.name}" id="${field.name}" class="border border-gray-300 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                                    <input type="text" name="${field.name}" id="edit_${field.name}" class="border border-gray-300 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required />
                                 </div>
                             `
                             )
@@ -107,6 +108,8 @@ function generateHtmlPage(title, fields, rows) {
             <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
             <script>
+                 // เก็บข้อมูล rows ไว้ใน global variable
+                const rowsData = ${JSON.stringify(rows)};
                 let currentSalesDataId;
 
                 function navigateTo(url) {
@@ -115,15 +118,23 @@ function generateHtmlPage(title, fields, rows) {
 
                 function editRow(sales_data_id) {
                     console.log('Edit row ID:', sales_data_id);
-                    currentSalesDataId = sales_data_id; // Save the current ID to use in the form submission
-                    openModal();
+                    currentSalesDataId = sales_data_id;
 
-                    // Populate form fields with current data
-                    const row = rows.find(row => row.sales_data_id === sales_data_id);
-                    fields.forEach(field => {
-                        document.getElementById(field.name).value = row[field.name] || '';
-                    });
-    }
+                    // ค้นหาข้อมูลแถวที่ต้องการจาก rowsData
+                    const rowToEdit = rowsData.find(row => row.sales_data_id === sales_data_id);
+                    
+                    if (rowToEdit) {
+                        // ใส่ข้อมูลลงในฟอร์ม
+                        ${fields.map(field => `
+                            document.getElementById('edit_${field.name}').value = rowToEdit['${field.name}'] || '';`
+                        ).join('\n')}
+                        
+                        // เปิด Modal
+                        openModal();
+                    } else {
+                        console.error('Row not found');
+                    }
+                }
 
     function openModal() {
         document.getElementById('editModal').classList.remove('hidden');
@@ -137,9 +148,9 @@ function generateHtmlPage(title, fields, rows) {
         event.preventDefault();
         
         const data = {};
-        fields.forEach(field => {
-            data[field.name] = document.getElementById(field.name).value;
-        });
+                    ${fields.map(field => `
+                        data['${field.name}'] = document.getElementById('edit_${field.name}').value;`
+                    ).join('\n')}
 
         axios.put(\`/Salesdata/\${currentSalesDataId}\`, data)
             .then(response => {
