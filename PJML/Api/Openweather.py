@@ -32,7 +32,7 @@ def get_forecast(lat, lon, api_key):
 # กำหนดพิกัด latitude, longitude และ API key ของคุณ
 latitude = 13.7563  # ละติจูดของกรุงเทพฯ
 longitude = 100.5018  # ลองจิจูดของกรุงเทพฯ
-api_key = 'e08e202ea27c61d6ccb5f6610f7be4cb'  # แทนที่ด้วย API key ของคุณ
+api_key = '3dfccd2d631993bade660c38a1776d62'  # แทนที่ด้วย API key ของคุณ
 
 # เรียกข้อมูลสภาพอากาศปัจจุบัน
 current_weather = get_weather(latitude, longitude, api_key)

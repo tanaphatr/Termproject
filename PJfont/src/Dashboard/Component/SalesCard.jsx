@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 
-const SalesCard = ({ title, amount, Yessubtitle, Yesprediction, prediction, subtitle }) => {
+const SalesCard = ({ title, amount, Yessubtitle, Yesprediction}) => {
     return (
         <Card style={{ flex: '1 1 calc(40% - 16px)' }}>
             <CardContent>
@@ -9,7 +9,6 @@ const SalesCard = ({ title, amount, Yessubtitle, Yesprediction, prediction, subt
                 <Typography variant="h4">{amount}</Typography>
                 <br />
                 <Typography variant="body2" color="textSecondary">{Yessubtitle}: {Yesprediction}</Typography>
-                <Typography variant="body2" color="textSecondary">{subtitle}: {prediction}</Typography>
             </CardContent>
         </Card>
     );

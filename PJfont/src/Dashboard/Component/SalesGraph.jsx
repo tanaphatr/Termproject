@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, Typography } from '@mui/material';
 
 const SalesGraph = ({ data }) => {
@@ -8,15 +8,18 @@ const SalesGraph = ({ data }) => {
             <CardContent>
                 <Typography variant="h6">Sales Graph</Typography>
                 <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={data}>
+                    <LineChart data={data}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
-                        <YAxis />
+                        <YAxis 
+                            ticks={[5000, 10000, 15000, 20000]} // กำหนดค่าที่จะแสดงในแกน Y
+                            domain={[0, 20000]} // กำหนดช่วงของแกน Y
+                        />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="actual" fill="#8884d8" />
-                        <Bar dataKey="prediction" fill="#82ca9d" />
-                    </BarChart>
+                        <Line type="monotone" dataKey="actual" stroke="#8884d8" />
+                        <Line type="monotone" dataKey="profit" stroke="#82ca9d" />
+                    </LineChart>
                 </ResponsiveContainer>
             </CardContent>
         </Card>
