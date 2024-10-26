@@ -31,7 +31,7 @@ const ProductFormAlert = ({ open, handleClose }) => {
   const handleSubmit = async (data) => {
     try {
       await axios.post('http://localhost:8888/Products', data);
-      alert("Product added successfully!");
+      // alert("Product added successfully!");
       window.location.reload(); // รีเฟรชหน้าเว็บ
     } catch (error) {
       console.error("Error adding product:", error);

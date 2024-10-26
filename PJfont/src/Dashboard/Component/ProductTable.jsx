@@ -1,34 +1,75 @@
-import React from 'react';
-import { Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Button,
+  Box,
+} from '@mui/material';
 
 const ProductTable = ({ products }) => {
-    return (
-        <Card style={{ flex: '1 1 calc(20% - 16px)' }}>
-            <CardContent>
-                <Typography variant="h6">Product List</Typography>
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Product</TableCell>
-                                <TableCell>Price</TableCell>
-                                <TableCell>Stock</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {products.map((product, index) => (
-                                <TableRow key={index}>
-                                    <TableCell align="center">{product.name}</TableCell>
-                                    <TableCell align="center">{product.unit_price}</TableCell>
-                                    <TableCell align="center">{product.stock_quantity}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </CardContent>
-        </Card>
-    );
+  const itemsPerPage = 6; // จำนวนสินค้าที่แสดงต่อหน้า
+  const [currentPage, setCurrentPage] = useState(0); // สถานะของหน้าปัจจุบัน
+
+  const totalPages = Math.ceil(products.length / itemsPerPage); // คำนวณจำนวนหน้า
+
+  const displayedProducts = products.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  ); // สินค้าที่จะแสดงตามหน้าปัจจุบัน
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  return (
+    <Card style={{ flex: '1 1 calc(20% - 16px)' }}>
+      <CardContent>
+        <Typography variant="h6">Product List</Typography>
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Product</TableCell>
+                <TableCell align="center">Stock</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {displayedProducts.map((product, index) => (
+                <TableRow key={index}>
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell align="center">{product.stock_quantity}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+          <Button onClick={handlePrevPage} disabled={currentPage === 0}>
+            Previous
+          </Button>
+          <Button onClick={handleNextPage} disabled={currentPage >= totalPages - 1}>
+            Next
+          </Button>
+        </Box>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default ProductTable;

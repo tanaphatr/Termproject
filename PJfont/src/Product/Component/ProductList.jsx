@@ -15,6 +15,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Pagination,
 } from "@mui/material";
 
 const ProductList = () => {
@@ -24,6 +25,9 @@ const ProductList = () => {
   const [editedName, setEditedName] = useState("");
   const [editedPrice, setEditedPrice] = useState("");
   const [editedQuantity, setEditedQuantity] = useState(0);
+  
+  const [page, setPage] = useState(1); // หน้าเริ่มต้น
+  const itemsPerPage = 5; // จำนวนสินค้าที่จะแสดงต่อหน้า
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -106,7 +110,10 @@ const ProductList = () => {
     }
   };
 
-
+  // คำนวณข้อมูลที่จะแสดงในแต่ละหน้า
+  const startIndex = (page - 1) * itemsPerPage;
+  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -142,7 +149,7 @@ const ProductList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
+            {currentProducts.map((product) => (
               <TableRow key={product.product_id}>
                 <TableCell align="center">{product.product_code}</TableCell>
                 <TableCell align="center">{product.name}</TableCell>
@@ -169,6 +176,14 @@ const ProductList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        count={totalPages}
+        page={page}
+        onChange={(event, value) => setPage(value)}
+        variant="outlined"
+        color="primary"
+        sx={{ alignSelf: "center", mb: 2 }}
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
