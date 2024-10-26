@@ -17,8 +17,6 @@ const Dashboard = () => {
     const [products, setProducts] = useState([]);
     const [Salesdata, setSalesdata] = useState([]);
     const [data, setData] = useState([]);
-    const [temperature, setTemperature] = useState(null); // State สำหรับอุณหภูมิ
-    const [weather, setWeather] = useState(null); // State สำหรับสภาพอากาศ
     const [tomorrowWeather, setTomorrowWeather] = useState({ temperature: null, condition: null }); // State สำหรับสภาพอากาศวันพรุ่งนี้
     const apiKey = '9f04441fb1254c3a8bf212302242009'; // แทนที่ YOUR_API_KEY ด้วย API Key ของคุณ
     const location = 'Bangkok'; // ตั้งค่าตำแหน่งที่ต้องการ
@@ -85,12 +83,8 @@ const Dashboard = () => {
                     throw new Error("Network response was not ok");
                 }
                 const weatherData = await response.json();
-                const currentTemperature = weatherData.current.temp_c; // อุณหภูมิใน °C
-                const weatherCondition = weatherData.current.condition.text; // สภาพอากาศ
                 const tomorrowTemperature = weatherData.forecast.forecastday[1].day.avgtemp_c; // อุณหภูมิของวันพรุ่งนี้
                 const tomorrowCondition = weatherData.forecast.forecastday[1].day.condition.text; // สภาพอากาศของวันพรุ่งนี้
-                setTemperature(currentTemperature);
-                setWeather(weatherCondition);
                 setTomorrowWeather({ temperature: tomorrowTemperature, condition: tomorrowCondition });
                 console.log("Fetched Weather:", currentTemperature, weatherCondition, tomorrowTemperature, tomorrowCondition);
             } catch (error) {
@@ -110,10 +104,12 @@ const Dashboard = () => {
             <div style={{ padding: '1px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <Typography variant="h4" gutterBottom sx={{ textAlign: 'left', color: 'darkblue', fontWeight: 'bold' }}>Dashboard</Typography>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-                    <SalesCard title="Yesterday sales" amount="15,000 Bath"
-                        prediction="14,000 Bath" subtitle="Today's Prediction"
-                        Yessubtitle="Yesterday's Prediction" Yesprediction="15,000 Bath" />
-                    <PredictionCard title="Prediction for tomorrow"
+                    <SalesCard
+                        title="Yesterday sales"
+                        amount={`${Salesdata.length > 0 ? Salesdata[Salesdata.length - 1].sales_amount : 0} Bath`} // แสดงยอดขายล่าสุด
+                        Yessubtitle="Yesterday's Prediction"
+                        Yesprediction="15,000 Bath"/>
+                    <PredictionCard title="Prediction for Today"
                         amount={`${!isNaN(Number(Predictive.predicted_sales)) ? Number(Predictive.predicted_sales).toFixed(2) : '0.00'} Bath`}
                         accuracy={`${(100 - Predictive.percentage_error).toFixed(2)}%`} />
                     <WeatherCard title="Weather for Tomorrow"
