@@ -117,13 +117,6 @@ const ProductList = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <Typography
-        variant="h4"
-        gutterBottom
-        sx={{ textAlign: "left", color: "darkblue", fontWeight: "bold" }}
-      >
-        Product
-      </Typography>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography variant="h6">Product List</Typography>
       </Box>
