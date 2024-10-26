@@ -26,13 +26,27 @@ router.get('/html', async (req, res) => {
 });
 
 // Route to fetch all daily sales data
-router.get('/', async (req, res) => {
+router.get('/:daily_sale_id?', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM daily_sales');
-        res.json(rows);
+        const { daily_sale_id } = req.params; // ดึง user_id จาก URL
+
+        if (daily_sale_id) {
+            // ถ้ามี user_id ให้ดึงข้อมูลเฉพาะ ID นั้น
+            const [rows] = await db.query('SELECT * FROM daily_sales WHERE daily_sale_id = ?', [daily_sale_id]);
+            
+            if (rows.length === 0) {
+                return res.status(404).json({ error: "User not found" }); // ถ้าไม่พบผู้ใช้
+            }
+
+            return res.json(rows[0]); // ส่งข้อมูลเฉพาะ user
+        } else {
+            // ถ้าไม่มี user_id ให้ดึงข้อมูลทั้งหมด
+            const [rows] = await db.query('SELECT * FROM daily_sales');
+            return res.json(rows); // ส่งข้อมูลทั้งหมด
+        }
     } catch (err) {
-        console.error('Error fetching daily sales:', err);
-        res.status(500).json({ error: 'Error fetching daily sales' });
+        console.error('Error fetching DailySales:', err);
+        res.status(500).json({ error: 'Error fetching DailySales' });
     }
 });
 
@@ -56,7 +70,7 @@ router.post('/', async (req, res) => {
             [sale_date, total_sales, employee_id]
         );
 
-        res.status(201).json({ daily_sale_id: result.insertId, sale_date, total_sales, employee_id });
+        res.status(201).json({ message: "dailySales record post successfully", daily_sale_id: result.insertId, sale_date, total_sales, employee_id });
     } catch (err) {
         console.error('Error adding daily sales record:', err);
         res.status(500).json({ error: 'Error adding daily sales record' });
