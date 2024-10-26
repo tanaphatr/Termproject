@@ -8,7 +8,9 @@ const generateHtmlPage = require('../Tabletemplate.js');
 router.get('/html', async (req, res) => {
     try {
         const [rows, fields] = await db.query('SELECT * FROM Users');
-        res.send(generateHtmlPage('Data of Pro', fields, rows));
+       //res.send(generateHtmlPage('Data of Pro', fields, rows,res));
+      // res.render('pages/Usersform',{title:'Data of Pro', fields: fields,rows: rows,res:res, table_name:"Users"});
+       res.render('pages/Crudform',{title:'User Data', fields: fields,rows: rows,res:res, table_name:"Users",primary_key: "user_id"});
     } catch (err) {
         console.error('Error fetching Users:', err);
         res.status(500).json({ error: 'Error fetching Users' });

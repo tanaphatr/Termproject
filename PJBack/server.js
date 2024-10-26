@@ -14,9 +14,12 @@ const Salesdata = require('./Route/Table/Salesdata')
 const Predictive = require('./Route/Table/ML/Predictive')
 
 const app = express();
+const path = require('path') // เรียกใช้งาน path module
 const hostname = 'http://localhost';
 const port = 8888;
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
 app.use(cors()); // Enable CORS for all requests

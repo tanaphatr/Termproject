@@ -3,25 +3,25 @@ const mysql = require("mysql2");
 
 //Use for login Mysql 
 
-const config = {
-    user: 'Admin',
-    password: 'CE498termprojectsql',
-    host: 'localhost',
-    database: 'termproject',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-};
-
 // const config = {
-//     user: 'root',
-//     password: '',
+//     user: 'Admin',
+//     password: 'CE498termprojectsql',
 //     host: 'localhost',
 //     database: 'termproject',
 //     waitForConnections: true,
 //     connectionLimit: 10,
 //     queueLimit: 0
-// }
+// };
+
+const config = {
+    user: 'root',
+    password: '',
+    host: 'localhost',
+    database: 'termproject',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+}
 
 //Connect
 const pool = mysql.createPool(config);

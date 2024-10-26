@@ -45,7 +45,7 @@ function generateHtmlPage(title, fields, rows) {
                             ${fields
                               .map(
                                 (field) =>
-                                  `<th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">${field.name}</th>`
+                                  `<th class="py-3 px-4 border border-gray-300 table-cell">${field.name}</th>`
                               )
                               .join("")}
                             <th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">Actions</th>

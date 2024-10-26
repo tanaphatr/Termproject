@@ -8,7 +8,7 @@ const generateHtmlPage = require('../Tabletemplate.js');
 router.get('/html', async (req, res) => {
     try {
         const [rows, fields] = await db.query('SELECT * FROM product_sales');
-        res.send(generateHtmlPage('Data of Pro', fields, rows));
+        res.render('pages/Crudform',{title:'Product Data', fields: fields,rows: rows,res:res, table_name:"Product_sales",primary_key: "product_sale_id"});
     } catch (err) {
         console.error('Error fetching product_sales:', err);
         res.status(500).json({ error: 'Error fetching product_sales' });
