@@ -11,14 +11,16 @@ const ProductTable = ({ products }) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Product</TableCell>
-                                <TableCell align="right">Price</TableCell>
+                                <TableCell>Price</TableCell>
+                                <TableCell>Stock</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {products.map((product, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell align="right">{product.price}</TableCell>
+                                    <TableCell align="center">{product.name}</TableCell>
+                                    <TableCell align="center">{product.unit_price}</TableCell>
+                                    <TableCell align="center">{product.stock_quantity}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
