@@ -30,7 +30,7 @@ app.use('/', mainRoutes);
 app.use('/Users', UsersRoutes);
 app.use('/Products', ProductsRoutes);
 app.use('/Employees', EmployeesRoutes);
-app.use('/Daily_salesRoutes', Daily_salesRoutes);
+app.use('/Daily_sales', Daily_salesRoutes);
 app.use('/Product_sales', Product_sales);
 app.use('/Product_stock_history', Product_stock_history);
 app.use('/Sales_prediction', Sales_prediction);

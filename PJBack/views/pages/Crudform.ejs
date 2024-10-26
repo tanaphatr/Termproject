@@ -93,7 +93,7 @@
     <button onclick="navigateTo('/Users/html')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Users</button>
     <button onclick="navigateTo('/Products/html')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Products</button>
     <button onclick="navigateTo('/Employees/html')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Employees</button>
-    <button onclick="navigateTo('/Daily_salesRoutes/html')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Daily
+    <button onclick="navigateTo('/Daily_sales/html')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Daily
       Sales</button>
     <button onclick="navigateTo('/Product_sales/html')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Product
       Sales</button>
@@ -207,7 +207,7 @@
 
     document.getElementById('addForm').addEventListener('submit', function(event) {
       event.preventDefault();
-
+      console.log('Table name:', '<%=table_name%>');
       const data = {};
        <% fields.filter((field) => field.name !== "data_id").map((field) => { %>data['<%=field.name%>'] = document.getElementById('add_<%=field.name%>').value;
        <% }).join("\n");%>
