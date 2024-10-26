@@ -8,22 +8,37 @@ import {
   Button,
   Grid,
 } from '@mui/material';
+import axios from 'axios';
 
-const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
+const ProductFormAlert = ({ open, handleClose }) => {
   const [formData, setFormData] = useState({
-    date: '',
+    product_code: '',
     name: '',
-    price: '',
-    quantity: ''
+    category: '',
+    stock_quantity: '',
+    unit_price: '',
+    min_stock_level: ''
   });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
+
+  const handleSubmit = async (data) => {
+    try {
+      await axios.post('http://localhost:8888/Products', data);
+      // alert("Product added successfully!");
+      window.location.reload(); // รีเฟรชหน้าเว็บ
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert("Failed to add product. Please try again.");
+    }
+  };
+
 
   const onSubmit = () => {
     handleSubmit(formData);
@@ -38,14 +53,10 @@ const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Date"
-              name="date"
-              type="date"
-              value={formData.date}
+              label="Product Code"
+              name="product_code"
+              value={formData.product_code}
               onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
               margin="normal"
             />
           </Grid>
@@ -59,13 +70,12 @@ const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
               margin="normal"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Price"
-              name="price"
-              type="number" // รับเฉพาะตัวเลข
-              value={formData.price}
+              label="Category"
+              name="category"
+              value={formData.category}
               onChange={handleChange}
               margin="normal"
             />
@@ -73,10 +83,32 @@ const ProductFormAlert = ({ open, handleClose, handleSubmit }) => {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Quantity"
-              name="quantity"
-              type="number" // รับเฉพาะตัวเลข
-              value={formData.quantity}
+              label="Stock Quantity"
+              name="stock_quantity"
+              type="number"
+              value={formData.stock_quantity}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Unit Price"
+              name="unit_price"
+              type="number"
+              value={formData.unit_price}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Minimum Stock Level"
+              name="min_stock_level"
+              type="number"
+              value={formData.min_stock_level}
               onChange={handleChange}
               margin="normal"
             />

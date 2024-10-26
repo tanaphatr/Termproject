@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,59 +15,108 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Pagination,
 } from "@mui/material";
 
 const ProductList = () => {
-  const [products, setProducts] = useState([
-    { id: 1, name: "สินค้า01", price: "-", quantity: 0, date: "2024-10-10" },
-    { id: 2, name: "สินค้า02", price: "-", quantity: 0, date: "2024-10-11" },
-    { id: 3, name: "สินค้า03", price: "-", quantity: 0, date: "2024-10-12" },
-    { id: 4, name: "สินค้า04", price: "-", quantity: 0, date: "2024-10-13" },
-    { id: 5, name: "สินค้า05", price: "-", quantity: 0, date: "2024-10-14" },
-    { id: 6, name: "สินค้า06", price: "-", quantity: 0, date: "2024-10-15" },
-  ]);
+  const [products, setProducts] = useState([]); // เก็บข้อมูลจาก API
   const [open, setOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editedPrice, setEditedPrice] = useState("");
   const [editedQuantity, setEditedQuantity] = useState(0);
-  const [editedDate, setEditedDate] = useState(""); // สถานะใหม่สำหรับวันที่
+  
+  const [page, setPage] = useState(1); // หน้าเริ่มต้น
+  const itemsPerPage = 5; // จำนวนสินค้าที่จะแสดงต่อหน้า
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8888/Products");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setProducts(data); // ตั้งค่าข้อมูลที่ดึงมาจาก API
+        console.log("Fetched Products:", data);
+      } catch (error) {
+        console.error("Error fetching Products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const handleEdit = (id) => {
-    const product = products.find((product) => product.id === id);
+    const product = products.find((product) => product.product_id === id);
     setCurrentProduct(product);
     setEditedName(product.name);
-    setEditedPrice(product.price);
-    setEditedQuantity(product.quantity);
-    setEditedDate(product.date); // โหลดวันที่ลงในฟิลด์แก้ไข
+    setEditedPrice(product.unit_price);
+    setEditedQuantity(product.stock_quantity);
     setOpen(true);
   };
 
-  const handleDelete = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8888/products/${id}`, { // ตรวจสอบว่าเส้นทางถูกต้อง
+        method: 'DELETE',
+      });
+      // ลบผลิตภัณฑ์ออกจาก state
+      setProducts(products.filter((product) => product.product_id !== id));
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
-  const handleSave = () => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === currentProduct.id
-          ? { ...product, name: editedName, price: editedPrice, quantity: editedQuantity, date: editedDate }
-          : product
-      )
-    );
-    setOpen(false);
-    setCurrentProduct(null);
-    setEditedName("");
-    setEditedPrice("");
-    setEditedQuantity(0);
-    setEditedDate("");
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:8888/products/${currentProduct.product_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_code: currentProduct.product_code, // รหัสผลิตภัณฑ์ที่ไม่เปลี่ยนแปลง
+          name: editedName, // ชื่อผลิตภัณฑ์ที่แก้ไข
+          stock_quantity: editedQuantity, // จำนวนที่เก็บ
+          unit_price: editedPrice, // ราคาต่อหน่วย
+          category: currentProduct.category, // ค่าประเภทที่ไม่เปลี่ยนแปลง
+          min_stock_level: currentProduct.min_stock_level, // ค่าระดับสต็อกขั้นต่ำที่ไม่เปลี่ยนแปลง
+        }),
+      });
+
+      // อัปเดต state ของ products ในกรณีที่การอัปเดตสำเร็จ
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.product_id === currentProduct.product_id
+            ? {
+              ...product,
+              name: editedName,
+              unit_price: editedPrice,
+              stock_quantity: editedQuantity,
+              // ค่าอื่น ๆ ยังคงเป็นค่าเดิม
+            }
+            : product
+        )
+      );
+
+      // ปิด dialog และรีเซ็ตค่าต่าง ๆ
+      setOpen(false);
+      setCurrentProduct(null);
+      setEditedName("");
+      setEditedPrice("");
+      setEditedQuantity(0);
+    } catch (error) {
+      console.error("Error saving product:", error);
+    }
   };
+
+  // คำนวณข้อมูลที่จะแสดงในแต่ละหน้า
+  const startIndex = (page - 1) * itemsPerPage;
+  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <Typography variant="h4" gutterBottom sx={{ textAlign: "left", color: "darkblue", fontWeight: "bold" }}>
-        Product
-      </Typography>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography variant="h6">Product List</Typography>
       </Box>
@@ -75,25 +124,43 @@ const ProductList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Product</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Price</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Quantity</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Date</TableCell> {/* คอลัมน์ Date ใหม่ */}
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Actions</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Product Code
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Name
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Unit Price
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Stock Quantity
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
+            {currentProducts.map((product) => (
+              <TableRow key={product.product_id}>
+                <TableCell align="center">{product.product_code}</TableCell>
                 <TableCell align="center">{product.name}</TableCell>
-                <TableCell align="center">{product.price}</TableCell>
-                <TableCell align="center">{product.quantity}</TableCell>
-                <TableCell align="center">{product.date}</TableCell> {/* แสดงวันที่ */}
+                <TableCell align="center">{product.unit_price}</TableCell>
+                <TableCell align="center">{product.stock_quantity}</TableCell>
                 <TableCell align="center">
-                  <Button variant="outlined" sx={{ mr: 1 }} onClick={() => handleEdit(product.id)}>
+                  <Button
+                    variant="outlined"
+                    sx={{ mr: 1 }}
+                    onClick={() => handleEdit(product.product_id)}
+                  >
                     EDIT
                   </Button>
-                  <Button variant="contained" color="error" onClick={() => handleDelete(product.id)}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleDelete(product.product_id)}
+                  >
                     DELETE
                   </Button>
                 </TableCell>
@@ -102,6 +169,14 @@ const ProductList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        count={totalPages}
+        page={page}
+        onChange={(event, value) => setPage(value)}
+        variant="outlined"
+        color="primary"
+        sx={{ alignSelf: "center", mb: 2 }}
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
@@ -117,35 +192,21 @@ const ProductList = () => {
           />
           <TextField
             margin="dense"
-            label="Price"
+            label="Unit Price"
             type="number"
             fullWidth
             variant="outlined"
             value={editedPrice}
             onChange={(e) => setEditedPrice(e.target.value)}
-            inputProps={{ min: 0, pattern: "[0-9]*", inputMode: "numeric" }}
           />
           <TextField
             margin="dense"
-            label="Quantity"
+            label="Stock Quantity"
             type="number"
             fullWidth
             variant="outlined"
             value={editedQuantity}
             onChange={(e) => setEditedQuantity(Number(e.target.value))}
-            inputProps={{ min: 0 }}
-          />
-          <TextField
-            margin="dense"
-            label="Date"
-            type="date" // ฟิลด์วันที่
-            fullWidth
-            variant="outlined"
-            value={editedDate}
-            onChange={(e) => setEditedDate(e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-            }}
           />
         </DialogContent>
         <DialogActions>
