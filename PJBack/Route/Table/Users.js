@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../connect.js');
 const generateHtmlPage = require('../Tabletemplate.js');
+const bcrypt = require('bcrypt');
 
 // Route to fetch Users
 router.get('/html', async (req, res) => {
@@ -43,54 +44,57 @@ router.get('/:user_id?', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const { username, password_hash, role } = req.body;
+    const { username, password_hash, role } = req.body; // ใช้ password_hash ในการรับค่า
 
     // Validation
-    if (!username || !password_hash || !role) {  // ตรวจสอบว่ามีการส่งค่าครบถ้วนหรือไม่
+    if (!username || !password_hash || !role) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
+        // แฮชรหัสผ่านก่อนบันทึก
+        const hashedPassword = await bcrypt.hash(password_hash, 10); // 10 คือจำนวนรอบของ salt
         const result = await db.query(
             'INSERT INTO Users (username, password_hash, role) VALUES (?, ?, ?)', 
-            [username, password_hash, role]
+            [username, hashedPassword, role]
         );
         
-        res.status(201).json({ user_id: result.insertId, username, password_hash, role });
+        res.status(201).json({ user_id: result.insertId, username, role });
     } catch (err) {
         console.error('Error adding record:', err);
         res.status(500).json({ error: 'Error adding record' });
     }
 });
 
-
-// PUT: อัปเดตข้อมูล Users โดยอ้างอิงจาก user_id
+// ในการอัปเดต
 router.put('/:user_id', async (req, res) => {
     const { user_id } = req.params;
-    const { username, password_hash, role } = req.body;
+    const { username, password_hash, role } = req.body; // ใช้ password_hash ในการรับค่า
 
-    // Validation ตรวจสอบว่า field จำเป็นมีข้อมูลครบหรือไม่
+    // Validation
     if (!username || !password_hash || !role) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
-        // อัปเดตข้อมูลในฐานข้อมูลโดยใช้ user_id ที่ดึงมา
+        // แฮชรหัสผ่านใหม่ก่อนการอัปเดต
+        const hashedPassword = await bcrypt.hash(password_hash, 10); // 10 คือจำนวนรอบของ salt
         const result = await db.query(
             'UPDATE Users SET username = ?, password_hash = ?, role = ? WHERE user_id = ?',
-            [username, password_hash, role, user_id] // ใส่ user_id ตรงนี้
+            [username, hashedPassword, role, user_id]
         );
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: "Record not found" });
         }
 
-        res.status(200).json({ message: "Record updated successfully", user_id, username, password_hash, role });
+        res.status(200).json({ message: "Record updated successfully", user_id, username, role });
     } catch (err) {
         console.error('Error updating record:', err);
         res.status(500).json({ error: 'Error updating record' });
     }
 });
+
 
 // DELETE: ลบข้อมูล Users โดยอ้างอิงจาก user_id
 router.delete('/:user_id', async (req, res) => {
