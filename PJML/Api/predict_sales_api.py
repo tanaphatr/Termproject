@@ -5,19 +5,18 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
 
 from flask import Flask, jsonify, request
-import joblib
 import pandas as pd
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
+from Trainmodel.main import train_model  # นำเข้า train_model จาก main.py
 
 app = Flask(__name__)
 
-# โหลดโมเดลที่ถูกบันทึกไว้
-linear_regression_model = joblib.load('E:/Term project/models/linear_regression_model.joblib')
-# linear_regression_model = joblib.load('E:/Term project/PJ/PJML/models/linear_regression_model.joblib')
-
 @app.route('/', methods=['GET'])
 def predict_sales():
+    # ฝึกโมเดลทุกครั้งที่เรียกใช้ API
+    linear_regression_model = train_model()
+    
     # โหลดและประมวลผลข้อมูล
     data = load_data()
     processed_data = preprocess_data(data)

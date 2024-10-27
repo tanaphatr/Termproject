@@ -3,6 +3,7 @@ import {
   TextField, Button, Paper, Typography, CircularProgress, Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs";
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState("");
@@ -34,11 +35,15 @@ const LoginForm = ({ onLogin }) => {
     setLoading(true);
 
     const user = Users.find((user) => user.username === username);
-    if (user && user.password_hash === password) {
-      setError("");
-      // เก็บข้อมูลผู้ใช้ใน local storage
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      navigate("/");
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+      if (isPasswordValid) {
+        setError("");
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+        navigate("/");
+      } else {
+        setError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+      }
     } else {
       setError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
     }
