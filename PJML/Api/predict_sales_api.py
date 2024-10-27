@@ -31,15 +31,12 @@ def predict_sales():
     # สร้าง latest_data
     latest_data = data.iloc[-1][[
         'year', 
-        'month', 
         'day', 
-        'day_of_year',
         'event', 
-        'day_of_week', 
-        'festival', 
-        'weather', 
+        'festival',
+        'weather',  
+        'Temperature',
         'Back_to_School_Period',
-        'Seasonal'
     ]].values.reshape(1, -1)
 
     # ทำนายยอดขายวันถัดไป
