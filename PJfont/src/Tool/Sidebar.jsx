@@ -88,18 +88,18 @@ function Sidebar() {
                             {userRole !== 'employee' && (
                                 <ListItem
                                     button
-                                    onClick={() => handleNavigation('/employees')}
+                                    onClick={() => handleNavigation('/employee')}
                                     sx={{
-                                        color: selectedItem === '/employees' ? 'blue' : 'inherit',
+                                        color: selectedItem === '/employee' ? 'blue' : 'inherit',
                                         '& .MuiListItemIcon-root': {
-                                            color: selectedItem === '/employees' ? 'blue' : 'inherit',
+                                            color: selectedItem === '/employee' ? 'blue' : 'inherit',
                                         },
-                                        borderLeft: selectedItem === '/employees' ? '4px solid blue' : 'none',
+                                        borderLeft: selectedItem === '/employee' ? '4px solid blue' : 'none',
                                         cursor: 'pointer',
                                     }}
                                 >
                                     <ListItemIcon><People /></ListItemIcon>
-                                    <ListItemText primary="Employees" />
+                                    <ListItemText primary="Employee" />
                                 </ListItem>
                             )}
                         </List>

@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import Home from "./App";
 import Login from "./Login/Login";
 import Products from "./Product/Products";
+import Employee from "./Employee/Employee";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Products" element={<Products />} />
+        <Route path="/Employee" element={<Employee />} />
       </Routes>
     </Router>
   </React.StrictMode>
