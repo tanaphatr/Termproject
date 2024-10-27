@@ -65,7 +65,7 @@ function Sidebar() {
                             {[ 
                                 { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
                                 { text: 'Products', icon: <ShoppingCart />, path: '/products' },
-                                { text: 'Reports', icon: <Assessment />, path: '/reports' },
+                                { text: 'Reports', icon: <Assessment />, path: '/report' },
                             ].map(({ text, icon, path }) => (
                                 <ListItem
                                     button

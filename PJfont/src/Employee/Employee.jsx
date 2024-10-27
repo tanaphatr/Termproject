@@ -8,9 +8,9 @@ import BTAddMore from "./Component/BTAddMore"; // ปรับใช้ตาม
 
 const Employees = () => {
   return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
+    <div style={{ display: 'flex' }}>
       <Sidebar />
-      <Box sx={{ flexGrow: 1, p: 3, display: "flex", flexDirection: "column", overflow: "auto" }}>
+      <div style={{ padding: '1px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <Typography
           variant="h4"
           gutterBottom
@@ -23,8 +23,8 @@ const Employees = () => {
           <BTAddMore /> {/* อาจจะต้องเปลี่ยนชื่อให้เข้ากับบริบทของพนักงาน */}
           <EmployeeFormAlert /> {/* เปลี่ยนจาก ProductFormAlert เป็น EmployeeFormAlert */}
         </Box>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

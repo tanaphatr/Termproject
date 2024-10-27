@@ -178,7 +178,7 @@ const ProductList = () => {
         sx={{ alignSelf: "center", mb: 2 }}
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Edit Product</DialogTitle>
+        <DialogTitle variant="h5" gutterBottom sx={{ textAlign: "left", color: "darkblue", fontWeight: "bold" }}>Edit Product</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

@@ -49,10 +49,10 @@ const EmployeeFormAlert = ({ open, handleClose }) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Add New Employee</DialogTitle>
+    <Dialog open={open}onClose={handleClose} maxWidth="lg"fullWidth PaperProps={{style: {width: '90%',maxWidth: '1200px',},}}>
+      <DialogTitle variant="h5" gutterBottom sx={{ textAlign: "left", color: "darkblue", fontWeight: "bold" }}>Add New Employee</DialogTitle>
       <DialogContent>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           <Grid item xs={6}>
             <TextField
               fullWidth
@@ -148,7 +148,7 @@ const EmployeeFormAlert = ({ open, handleClose }) => {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Position"
+              label="Jobposition"
               name="position"
               value={formData.position}
               onChange={handleChange}

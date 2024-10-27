@@ -47,7 +47,7 @@ const ProductFormAlert = ({ open, handleClose }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Add New Product</DialogTitle>
+      <DialogTitle variant="h5" gutterBottom sx={{ textAlign: "left", color: "darkblue", fontWeight: "bold" }}>Add New Product</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={6}>
@@ -60,7 +60,7 @@ const ProductFormAlert = ({ open, handleClose }) => {
               margin="normal"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Product Name"
@@ -70,7 +70,7 @@ const ProductFormAlert = ({ open, handleClose }) => {
               margin="normal"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Category"

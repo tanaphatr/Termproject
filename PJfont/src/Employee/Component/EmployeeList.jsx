@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogTitle,
   Pagination,
+  Grid,
 } from "@mui/material";
 
 const EmployeeList = () => {
@@ -151,16 +152,13 @@ const EmployeeList = () => {
           <TableHead>
             <TableRow>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Employee ID
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 First Name
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 Last Name
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Position
+                Jobposition
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 Phone
@@ -182,7 +180,6 @@ const EmployeeList = () => {
           <TableBody>
             {currentEmployees.map((employee) => (
               <TableRow key={employee.employee_id}>
-                <TableCell align="center">{employee.employee_id}</TableCell>
                 <TableCell align="center">{employee.first_name}</TableCell>
                 <TableCell align="center">{employee.last_name}</TableCell>
                 <TableCell align="center">{employee.position}</TableCell>
@@ -219,104 +216,129 @@ const EmployeeList = () => {
         shape="rounded"
         sx={{ alignSelf: "center", mb: 2 }}
       />
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Edit Employee</DialogTitle>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg" fullWidth PaperProps={{ style: { width: '90%', maxWidth: '1200px', } }}>
+        <DialogTitle variant="h5" gutterBottom sx={{ textAlign: "left", color: "darkblue", fontWeight: "bold" }}>Edit Employee</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="First Name"
-            fullWidth
-            variant="outlined"
-            value={editedFirstName}
-            onChange={(e) => setEditedFirstName(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Last Name"
-            fullWidth
-            variant="outlined"
-            value={editedLastName}
-            onChange={(e) => setEditedLastName(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Position"
-            fullWidth
-            variant="outlined"
-            value={editedPosition}
-            onChange={(e) => setEditedPosition(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Email"
-            fullWidth
-            variant="outlined"
-            value={editedEmail}
-            onChange={(e) => setEditedEmail(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Phone"
-            fullWidth
-            variant="outlined"
-            value={editedPhone}
-            onChange={(e) => setEditedPhone(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Salary"
-            fullWidth
-            variant="outlined"
-            value={editedSalary}
-            onChange={(e) => setEditedSalary(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Nickname" // ฟิลด์ใหม่
-            fullWidth
-            variant="outlined"
-            value={editedNickname}
-            onChange={(e) => setEditedNickname(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Age" // ฟิลด์ใหม่
-            fullWidth
-            variant="outlined"
-            value={editedAge}
-            onChange={(e) => setEditedAge(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Address" // ฟิลด์ใหม่
-            fullWidth
-            variant="outlined"
-            value={editedAddress}
-            onChange={(e) => setEditedAddress(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="District" // ฟิลด์ใหม่
-            fullWidth
-            variant="outlined"
-            value={editedDistrict}
-            onChange={(e) => setEditedDistrict(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Province" // ฟิลด์ใหม่
-            fullWidth
-            variant="outlined"
-            value={editedProvince}
-            onChange={(e) => setEditedProvince(e.target.value)}
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="First Name"
+                fullWidth
+                variant="outlined"
+                value={editedFirstName}
+                onChange={(e) => setEditedFirstName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Last Name"
+                fullWidth
+                variant="outlined"
+                value={editedLastName}
+                onChange={(e) => setEditedLastName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Jobposition"
+                fullWidth
+                variant="outlined"
+                value={editedPosition}
+                onChange={(e) => setEditedPosition(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Email"
+                fullWidth
+                variant="outlined"
+                value={editedEmail}
+                onChange={(e) => setEditedEmail(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Phone"
+                fullWidth
+                variant="outlined"
+                value={editedPhone}
+                onChange={(e) => setEditedPhone(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Salary"
+                fullWidth
+                variant="outlined"
+                value={editedSalary}
+                onChange={(e) => setEditedSalary(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Nickname" // ฟิลด์ใหม่
+                fullWidth
+                variant="outlined"
+                value={editedNickname}
+                onChange={(e) => setEditedNickname(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Age" // ฟิลด์ใหม่
+                fullWidth
+                variant="outlined"
+                value={editedAge}
+                onChange={(e) => setEditedAge(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Address" // ฟิลด์ใหม่
+                fullWidth
+                variant="outlined"
+                value={editedAddress}
+                onChange={(e) => setEditedAddress(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="District" // ฟิลด์ใหม่
+                fullWidth
+                variant="outlined"
+                value={editedDistrict}
+                onChange={(e) => setEditedDistrict(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                margin="dense"
+                label="Province" // ฟิลด์ใหม่
+                fullWidth
+                variant="outlined"
+                value={editedProvince}
+                onChange={(e) => setEditedProvince(e.target.value)}
+              />
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 };
