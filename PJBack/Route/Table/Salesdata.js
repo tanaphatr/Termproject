@@ -27,20 +27,20 @@ router.get('/', async (req, res) => {
 
 // Route to add a new Salesdata record (POST)
 router.post('/', async (req, res) => {
-    const { sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal } = req.body;
+    const { sale_date, sales_amount, profit_amount, event, festival, weather, Temperature, Back_to_School_Period } = req.body;
 
     // Validation
-    if (!sale_date || !sales_amount || !profit_amount) {
+    if (!sale_date) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
         const result = await db.query(
-            'INSERT INTO Salesdata (sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-            [sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal]
+            'INSERT INTO Salesdata (sale_date, sales_amount, profit_amount, event, festival, weather, Temperature, Back_to_School_Period) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+            [sale_date, sales_amount, profit_amount, event, festival, weather, Temperature, Back_to_School_Period]
         );
         
-        res.status(201).json({ id: result.insertId, sale_date, sales_amount, profit_amount, event, day_of_week, festival, weather, Temperature, Back_to_School_Period, Seasonal });
+        res.status(201).json({ id: result.insertId, sale_date, sales_amount, profit_amount, event, festival, weather, Temperature, Back_to_School_Period});
     } catch (err) {
         console.error('Error adding record:', err);
         res.status(500).json({ error: 'Error adding record' });

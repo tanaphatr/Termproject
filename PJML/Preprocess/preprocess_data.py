@@ -13,11 +13,9 @@ def preprocess_data(df):
 
     # แปลง event, festival, weather, Temperature, Back_to_School_Period, Seasonal เป็นรหัสตัวเลข
     df['event'], _ = pd.factorize(df['event'])
-    df['day_of_week'], _ = pd.factorize(df['day_of_week'])
     df['festival'], _ = pd.factorize(df['festival'])
     df['weather'], _ = pd.factorize(df['weather'])
     df['Back_to_School_Period'], _ = pd.factorize(df['Back_to_School_Period'])
-    df['Seasonal'], _ = pd.factorize(df['Seasonal'])
 
     # เพิ่มคอลัมน์ day_of_year
     df['day_of_year'] = df['sale_date'].dt.dayofyear

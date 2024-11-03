@@ -29,7 +29,7 @@ def predict_sales():
     data['day_of_year'] = data['sale_date'].dt.dayofyear
 
     # สร้าง latest_data
-    latest_data = data.iloc[-1][[
+    latest_data = processed_data.iloc[-1][[
         'year', 
         'day', 
         'event', 
