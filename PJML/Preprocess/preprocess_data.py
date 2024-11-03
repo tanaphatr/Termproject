@@ -22,5 +22,4 @@ def preprocess_data(df):
     # เพิ่มคอลัมน์ day_of_year
     df['day_of_year'] = df['sale_date'].dt.dayofyear
 
-    df.to_csv('cleaned_data.csv', index=False, encoding='utf-8-sig')
     return df
