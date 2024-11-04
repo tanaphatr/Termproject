@@ -17,7 +17,7 @@ const config = {
     user: 'root',
     password: '',
     host: 'localhost',
-    database: 'termproject2',
+    database: 'termproject',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

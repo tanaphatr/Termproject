@@ -49,10 +49,10 @@ router.get('/:id', async (req, res) => {
 // POST - Create new product sale
 router.post('/', async (req, res) => {
     try {
-        const { daily_sale_id, product_id, quantity_sold, sale_amount } = req.body;
+        const {product_id, date, quantity_sold, sale_amount } = req.body;
         const [result] = await db.query(
-            'INSERT INTO product_sales (daily_sale_id, product_id, quantity_sold, sale_amount) VALUES (?, ?, ?, ?)',
-            [daily_sale_id, product_id, quantity_sold, sale_amount]
+            'INSERT INTO product_sales (product_id, date, quantity_sold, sale_amount) VALUES (?, ?, ?, ?)',
+            [product_id, date, quantity_sold, sale_amount]
         );
         
         res.status(201).json({
@@ -68,10 +68,10 @@ router.post('/', async (req, res) => {
 // PUT - Update product sale
 router.put('/:id', async (req, res) => {
     try {
-        const { daily_sale_id, product_id, quantity_sold, sale_amount } = req.body;
+        const {product_id, date, quantity_sold, sale_amount } = req.body;
         const [result] = await db.query(
-            'UPDATE product_sales SET daily_sale_id = ?, product_id = ?, quantity_sold = ?, sale_amount = ? WHERE product_sale_id = ?',
-            [daily_sale_id, product_id, quantity_sold, sale_amount, req.params.id]
+            'UPDATE product_sales SET product_id = ?, date= ?, quantity_sold = ?, sale_amount = ? WHERE product_sale_id = ?',
+            [product_id, date, quantity_sold, sale_amount, req.params.id]
         );
         
         if (result.affectedRows === 0) {
