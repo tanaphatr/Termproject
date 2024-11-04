@@ -29,17 +29,14 @@ def predict_sales():
     data['day_of_year'] = data['sale_date'].dt.dayofyear
 
     # สร้าง latest_data
-    latest_data = data.iloc[-1][[
+    latest_data = processed_data.iloc[-1][[
         'year', 
-        'month', 
         'day', 
-        'day_of_year',
         'event', 
-        'day_of_week', 
-        'festival', 
-        'weather', 
+        'festival',
+        'weather',  
+        'Temperature',
         'Back_to_School_Period',
-        'Seasonal'
     ]].values.reshape(1, -1)
 
     # ทำนายยอดขายวันถัดไป
@@ -48,19 +45,10 @@ def predict_sales():
     # ดึงวันที่จากข้อมูล
     predicted_date = data.iloc[-1]['sale_date'] + pd.DateOffset(days=1)
 
-    # คุณสามารถส่งยอดขายจริงจาก request หรือค่าตัวอย่างก็ได้
-    actual_sales = request.args.get('actual_sales', type=float, default=9379)
-
-    # คำนวณค่าผิดพลาดและเปอร์เซ็นต์ความผิดพลาด
-    error = predicted_sales[0] - actual_sales
-    percentage_error = (error / actual_sales) * 100
-
     # ส่งผลลัพธ์กลับในรูปแบบ JSON
     return jsonify({
         'predicted_sales': predicted_sales[0],
         'predicted_date': predicted_date.strftime("%Y-%m-%d"),
-        'error': error,
-        'percentage_error': percentage_error
     })
 
 if __name__ == '__main__':

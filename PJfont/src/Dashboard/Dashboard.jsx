@@ -8,14 +8,11 @@ import SalesGraph from './Component/SalesGraph';
 import ProductTable from './Component/ProductTable';
 import HistoryTable from './Component/HistoryTable';
 
-const historyData = [
-    { prediction: 18000, sale: 17000, difference: -1000, percentageOfError: '5%' },
-];
-
 const Dashboard = () => {
     const [Predictive, setPredictive] = useState({});
     const [products, setProducts] = useState([]);
     const [Salesdata, setSalesdata] = useState([]);
+    const [Salesprediction, setSalesprediction] = useState([]);
     const [data, setData] = useState([]);
     const [tomorrowWeather, setTomorrowWeather] = useState({ temperature: null, condition: null }); // State สำหรับสภาพอากาศวันพรุ่งนี้
     const apiKey = '9f04441fb1254c3a8bf212302242009'; // แทนที่ YOUR_API_KEY ด้วย API Key ของคุณ
@@ -33,6 +30,20 @@ const Dashboard = () => {
                 console.log("Fetched Predictive:", data);
             } catch (error) {
                 console.error("Error fetching Predictive:", error);
+            }
+        };
+
+        const fetchSalesprediction = async () => {
+            try {
+                const response = await fetch("http://localhost:8888/Sales_prediction");
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const data = await response.json();
+                setSalesprediction(data);
+                console.log("Fetched Salesprediction:", data);
+            } catch (error) {
+                console.error("Error fetching Salesprediction:", error);
             }
         };
 
@@ -83,16 +94,17 @@ const Dashboard = () => {
                     throw new Error("Network response was not ok");
                 }
                 const weatherData = await response.json();
-                const tomorrowTemperature = weatherData.forecast.forecastday[1].day.avgtemp_c; // อุณหภูมิของวันพรุ่งนี้
+                const tomorrowTemperature = weatherData.forecast.forecastday[1].day.maxtemp_c; // อุณหภูมิของวันพรุ่งนี้
                 const tomorrowCondition = weatherData.forecast.forecastday[1].day.condition.text; // สภาพอากาศของวันพรุ่งนี้
                 setTomorrowWeather({ temperature: tomorrowTemperature, condition: tomorrowCondition });
-                console.log("Fetched Weather:", currentTemperature, weatherCondition, tomorrowTemperature, tomorrowCondition);
+                console.log("Fetched Weather:", tomorrowTemperature, tomorrowCondition);
             } catch (error) {
                 console.error("Error fetching Weather:", error);
             }
         };
 
         fetchWeather();
+        fetchSalesprediction();
         fetchProducts();
         fetchPredictives();
         fetchSalesdata();
@@ -108,7 +120,7 @@ const Dashboard = () => {
                         title="Yesterday sales"
                         amount={`${Salesdata.length > 0 ? Salesdata[Salesdata.length - 1].sales_amount : 0} Bath`} // แสดงยอดขายล่าสุด
                         Yessubtitle="Yesterday's Prediction"
-                        Yesprediction="15,000 Bath"/>
+                        Yesprediction={`${Salesprediction.length > 0 ? Salesprediction[Salesprediction.length - 1].predicted_sales : "-"} Bath`}/>
                     <PredictionCard title="Prediction for Today"
                         amount={`${!isNaN(Number(Predictive.predicted_sales)) ? Number(Predictive.predicted_sales).toFixed(2) : '0.00'} Bath`}
                         accuracy={`${(100 - Predictive.percentage_error).toFixed(2)}%`} />
@@ -122,7 +134,7 @@ const Dashboard = () => {
                     <ProductTable products={products} />
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-                    <HistoryTable historyData={historyData} />
+                    <HistoryTable historyData={Salesprediction} />
                 </div>
             </div>
         </div>

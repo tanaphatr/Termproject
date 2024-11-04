@@ -18,15 +18,12 @@ def train_model():
 
     features = [
         'year', 
-        'month', 
         'day', 
-        'day_of_year',  
         'event', 
-        'day_of_week', 
-        'festival', 
-        'weather',
+        'festival',
+        'weather',  
+        'Temperature',
         'Back_to_School_Period',
-        'Seasonal'
     ]
     target = 'sales_amount'
 

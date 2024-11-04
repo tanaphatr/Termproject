@@ -57,7 +57,7 @@ function Sidebar() {
         <DrawerStyled variant="permanent">
             <DrawerPaper>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 3 }}>
-                    <Typography variant="h6">{isLoggedIn ? userRole : 'Guest'}</Typography> {/* แสดง role หรือ Guest หากยังไม่เข้าสู่ระบบ */}
+                    <Typography variant="h5" gutterBottom sx={{ textAlign: 'left', color: 'darkblue', fontWeight: 'bold' }}>{isLoggedIn ? userRole : 'Guest'}</Typography> {/* แสดง role หรือ Guest หากยังไม่เข้าสู่ระบบ */}
                 </Box>
                 <Box sx={{ flexGrow: 1, marginTop: 1 }}>
                     {isLoggedIn ? ( // แสดงเมนูเฉพาะเมื่อเข้าสู่ระบบ

@@ -155,9 +155,9 @@ const EmployeeFormAlert = ({ open, handleClose }) => {
               margin="normal"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
-              fullWidth
+              fullWidth 
               label="Salary"
               name="salary"
               type="number"
