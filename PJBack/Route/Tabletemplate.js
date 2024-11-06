@@ -82,21 +82,21 @@ function generateHtmlPage(title, fields, rows) {
                   </table>
               </div>
             <!-- Add Modal -->
-            <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
-                    <h2 class="text-2xl font-semibold text-center mb-4">Add New Data</h2>
-                    <form id="addForm" class="flex flex-wrap">
-                    ${fields
-                        .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal'].includes(field.name))
+              <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                  <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+                      <h2 class="text-2xl font-semibold text-center mb-4">Add New Data</h2>
+                      <form id="addForm" class="flex flex-wrap">
+                      ${fields
+                        .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                         .map(
                         (field) => `
                             <div class="mb-4 w-1/2 pr-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">${field.name}:</label>
-                                <input type="${field.name === 'sale_date' ? 'text' : field.name.toLowerCase().includes('date') ? 'date' : 'text'}" 
+                                <input type="${field.name.toLowerCase().includes('date') ? 'text' : 'text'}" 
                                         name="${field.name}" 
                                         id="add_${field.name}" 
                                         class="border border-gray-300 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                        ${!['sales_amount', 'profit_amount'].includes(field.name) ? 'required' : ''} />
+                                        ${!['sales_amount', 'profit_amount', 'sale_date'].includes(field.name) ? 'required' : ''} />
                             </div>
                         `
                         )
@@ -105,26 +105,26 @@ function generateHtmlPage(title, fields, rows) {
                             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow">Add Record</button>
                             <button type="button" onclick="closeAddModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow">Cancel</button>
                         </div>
-                    </form>
-                </div>
-            </div>
+                      </form>
+                  </div>
+              </div>
 
-            <!-- Edit Modal -->
-            <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
-                    <h2 class="text-2xl font-semibold text-center mb-4">Edit Data</h2>
-                    <form id="editForm" class="flex flex-wrap">
-                    ${fields
-                        .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal'].includes(field.name))
+              <!-- Edit Modal -->
+              <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                  <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+                      <h2 class="text-2xl font-semibold text-center mb-4">Edit Data</h2>
+                      <form id="editForm" class="flex flex-wrap">
+                      ${fields
+                        .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                         .map(
                         (field) => `
                             <div class="mb-4 w-1/2 pr-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">${field.name}:</label>
-                                <input type="${field.name === 'sale_date' ? 'text' : field.name.toLowerCase().includes('date') ? 'date' : 'text'}" 
+                                <input type="${field.name.toLowerCase().includes('date') ? 'text' : 'text'}" 
                                         name="${field.name}" 
                                         id="edit_${field.name}" 
                                         class="border border-gray-300 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                        ${!['sales_amount', 'profit_amount'].includes(field.name) ? 'required' : ''} />
+                                        ${!['sales_amount', 'profit_amount', 'sale_date'].includes(field.name) ? 'required' : ''} />
                             </div>
                         `
                         )
@@ -133,9 +133,9 @@ function generateHtmlPage(title, fields, rows) {
                             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">Update Record</button>
                             <button type="button" onclick="closeEditModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow">Cancel</button>
                         </div>
-                    </form>
-                </div>
-            </div>
+                      </form>
+                  </div>
+              </div>
   
               <script>
                   const rowsData = ${JSON.stringify(rows)};
@@ -158,7 +158,7 @@ function generateHtmlPage(title, fields, rows) {
                       const row = rowsData.find(r => r.sales_data_id === sales_data_id);
                       if (row) {
                           ${fields
-                              .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal'].includes(field.name))
+                              .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                               .map(field => `
                                   const ${field.name}Input = document.getElementById('edit_${field.name}');
                                   if (${field.name}Input) {
@@ -178,7 +178,7 @@ function generateHtmlPage(title, fields, rows) {
                       
                       const data = {};
                       ${fields
-                        .filter((field) => !['sales_data_id', 'day_of_week', 'Seasonal'].includes(field.name))
+                        .filter((field) => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                         .map(
                           (field) => `
                           const ${field.name}Value = document.getElementById('add_${field.name}').value;
@@ -205,7 +205,7 @@ function generateHtmlPage(title, fields, rows) {
                       
                       const data = {};
                       ${fields
-                        .filter((field) => !['sales_data_id', 'day_of_week', 'Seasonal'].includes(field.name))
+                        .filter((field) => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                         .map(
                           (field) => `
                           const ${field.name}Value = document.getElementById('edit_${field.name}').value;
