@@ -161,17 +161,18 @@
     </div>
   </div>
 
-  <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+  <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50"> 
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
       <h2 class="text-2xl font-semibold text-center mb-4">Add New Data</h2>
       <form id="addForm" class="flex flex-wrap">
         <% fields.map((field) => { 
-          // ตรวจสอบว่าเป็นหน้า Daily_sales หรือไม่ และเป็นฟิลด์ที่ต้องการซ่อนหรือไม่
-          const shouldHideField = table_name === 'Daily_sales' && 
-                                ['first_name', 'last_name'].includes(field.name);
+          // ตรวจสอบว่าเป็นหน้า Sales_prediction หรือ Daily_sales และฟิลด์ที่ต้องการซ่อนหรือไม่
+          const shouldHideField = (table_name === 'Daily_sales' && 
+                                  ['first_name', 'last_name'].includes(field.name)) ||
+                                  (table_name === 'Sales_prediction' && 
+                                  ['actual_sales', 'error_value'].includes(field.name));
           
           if(field.name !== primary_key) { 
-            // ถ้าไม่ใช่ฟิลด์ที่ต้องการซ่อน จึงแสดง input
             if (!shouldHideField) { %>
               <div class="mb-4 w-1/2 pr-2">
                 <label class="block text-sm font-medium text-gray-700 mb-1"><%=field.name%>:</label>
@@ -182,7 +183,7 @@
                        required />
               </div>    
             <% } else { %>
-              <!-- ซ่อน input สำหรับ first_name และ last_name ในหน้า Daily_sales -->
+              <!-- ซ่อน input สำหรับฟิลด์ที่ไม่ต้องการให้แสดงในหน้า Sales_prediction และ Daily_sales -->
               <input type="hidden" 
                      name="<%=field.name%>" 
                      id="add_<%=field.name%>" 
@@ -210,6 +211,7 @@
       </form>
     </div>
   </div>
+
   <script>
     //Modal Add ข้อมูล
     function openAddModal() {
