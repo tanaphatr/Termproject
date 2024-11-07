@@ -68,10 +68,10 @@ router.post('/', async (req, res) => {
 // PUT - Update prediction
 router.put('/:id', async (req, res) => {
     try {
-        const { product_id, prediction_date, predicted_sales, actual_sales, confidence } = req.body;
+        const { prediction_date, predicted_sales, actual_sales, error_value } = req.body;
         const [result] = await db.query(
-            'UPDATE sales_prediction SET product_id = ?, prediction_date = ?, predicted_sales = ?, actual_sales = ?, confidence = ? WHERE prediction_id = ?',
-            [product_id, prediction_date, predicted_sales, actual_sales, confidence, req.params.id]
+            'UPDATE sales_prediction SET prediction_date = ?, predicted_sales = ?, actual_sales = ?, error_value = ? WHERE prediction_id = ?',
+            [prediction_date, predicted_sales, actual_sales, error_value, req.params.id]
         );
         
         if (result.affectedRows === 0) {
