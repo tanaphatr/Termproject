@@ -20,4 +20,6 @@ def preprocess_data(df):
     # เพิ่มคอลัมน์ day_of_year
     df['day_of_year'] = df['sale_date'].dt.dayofyear
 
+    # # สร้างไฟล์ CSV
+    # df.to_csv("processed_data.csv", index=False)
     return df
