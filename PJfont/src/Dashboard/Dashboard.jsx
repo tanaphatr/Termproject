@@ -120,10 +120,10 @@ const Dashboard = () => {
                         title="Yesterday sales"
                         amount={`${Salesdata.length > 0 ? Salesdata[Salesdata.length - 1].sales_amount : 0} Bath`} // แสดงยอดขายล่าสุด
                         Yessubtitle="Yesterday's Prediction"
-                        Yesprediction={`${Salesprediction.length > 0 ? Salesprediction[Salesprediction.length - 1].predicted_sales : "-"} Bath`}/>
+                        Yesprediction={`${Salesprediction.length > 0 ? Salesprediction[0].predicted_sales : 0} Bath`} />
                     <PredictionCard title="Prediction for Today"
                         amount={`${!isNaN(Number(Predictive.predicted_sales)) ? Number(Predictive.predicted_sales).toFixed(2) : '0.00'} Bath`}
-                        accuracy={`${(100 - Predictive.percentage_error).toFixed(2)}%`} />
+                        accuracy={`${Salesprediction.length > 0 ? Salesprediction[0].error_value : 0} %`} />
                     <WeatherCard title="Weather for Tomorrow"
                         temperature={tomorrowWeather.temperature ? `${tomorrowWeather.temperature} °C` : 'Loading...'}
                         weather={tomorrowWeather.condition ? tomorrowWeather.condition : 'Loading...'}

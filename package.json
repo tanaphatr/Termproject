@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix PJBack\" \"npm run dev --prefix PJfont\"",
+    "dev": "concurrently \"npm run dev --prefix PJBack\" \"npm run dev --prefix PJfont\" \"npm run python-api\"",
+  "python-api": "python \"E:/Term project/PJ/PJML/Api/predict_sales_api.py\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

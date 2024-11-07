@@ -49,10 +49,10 @@ router.get('/:id', async (req, res) => {
 // POST - Create new prediction
 router.post('/', async (req, res) => {
     try {
-        const { product_id, prediction_date, predicted_sales, actual_sales, confidence } = req.body;
+        const { prediction_date, predicted_sales} = req.body;
         const [result] = await db.query(
-            'INSERT INTO sales_prediction (product_id, prediction_date, predicted_sales, actual_sales, confidence) VALUES (?, ?, ?, ?, ?)',
-            [product_id, prediction_date, predicted_sales, actual_sales, confidence]
+            'INSERT INTO sales_prediction (prediction_date, predicted_sales) VALUES (?, ?)',
+            [prediction_date, predicted_sales]
         );
         
         res.status(201).json({

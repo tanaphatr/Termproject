@@ -19,10 +19,10 @@ const HistoryTable = ({ historyData }) => {
                         <TableBody>
                             {historyData.map((row, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{Salesprediction.predicted_sales}</TableCell>
-                                    <TableCell>{Salesprediction.actual_sales}</TableCell>
-                                    <TableCell>{Salesprediction.predicted_sales-Salesprediction.actual_sales}</TableCell>
-                                    <TableCell>{Salesprediction.confidence}</TableCell>
+                                    <TableCell>{row.predicted_sales}</TableCell>
+                                    <TableCell>{row.actual_sales}</TableCell>
+                                    <TableCell>{row.predicted_sales - row.actual_sales}</TableCell>
+                                    <TableCell>{row.error_value}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
