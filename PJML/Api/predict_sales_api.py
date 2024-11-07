@@ -44,6 +44,7 @@ def predict_sales():
 
     # ดึงวันที่จากข้อมูล
     predicted_date = data.iloc[-1]['sale_date'] + pd.DateOffset(days=1)
+    
 
     # ส่งผลลัพธ์กลับในรูปแบบ JSON
     return jsonify({
