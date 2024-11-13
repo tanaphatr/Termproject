@@ -29,15 +29,10 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const { sale_date, sales_amount, profit_amount, weather, Temperature } = req.body;
 
-    // Validation
-    if (!sales_amount) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
-
     try {
         const result = await db.query(
             'INSERT INTO Salesdata (sale_date, sales_amount, profit_amount, weather, Temperature) VALUES (?, ?, ?, ?, ?)', 
-            [sale_date, sales_amount, profit_amount, weather, Temperature]
+            [sale_date, sales_amount || null, profit_amount || null, weather, Temperature]
         );
         
         res.status(201).json({ id: result.insertId, sale_date, sales_amount, profit_amount, weather, Temperature });
@@ -50,27 +45,22 @@ router.post('/', async (req, res) => {
 // Route to update a Salesdata record (PUT)
 router.put('/:sales_data_id', async (req, res) => {
     const { sales_data_id } = req.params;
-    const { sales_amount, profit_amount, day_of_week, weather, Temperature, Seasonal } = req.body;
-
-    // Validation
-    if (!sales_data_id || !sales_amount || !profit_amount) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
+    const { sales_amount, profit_amount,  weather, Temperature } = req.body;
 
     try {
         const result = await db.query(
-            'UPDATE Salesdata SET sales_amount = ?, profit_amount = ?, day_of_week = ?, weather = ?, Temperature = ?, Seasonal = ? WHERE sales_data_id = ?',
-            [sales_amount, profit_amount, day_of_week, weather, Temperature, Seasonal, sales_data_id]
+            'UPDATE Salesdata SET sales_amount = ?, profit_amount = ?,  weather = ?, Temperature = ? WHERE sales_data_id = ?',
+            [sales_amount || null, profit_amount || null, weather, Temperature,  sales_data_id]
         );
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: "Record not found" });
         }
 
-        res.status(200).json({ message: "Record updated successfully", sales_data_id, sales_amount, profit_amount, day_of_week, weather, Temperature, Seasonal });
+        res.status(200).json({ message: "Record updated successfully", sales_data_id, sales_amount, profit_amount, weather, Temperature });
     } catch (err) {
         console.error('Error updating record:', err);
-        res.status(500).json({ error: 'Error updating record' });
+        res.status(500).json({ error: err.message });
     }
 });
 

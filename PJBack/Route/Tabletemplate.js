@@ -87,7 +87,7 @@ function generateHtmlPage(title, fields, rows) {
                       <h2 class="text-2xl font-semibold text-center mb-4">Add New Data</h2>
                       <form id="addForm" class="flex flex-wrap">
                       ${fields
-                        .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
+                        .filter(field => !['sales_data_id',  'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                         .map(
                         (field) => `
                             <div class="mb-4 w-1/2 pr-2">
@@ -115,7 +115,7 @@ function generateHtmlPage(title, fields, rows) {
                       <h2 class="text-2xl font-semibold text-center mb-4">Edit Data</h2>
                       <form id="editForm" class="flex flex-wrap">
                       ${fields
-                        .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
+                        .filter(field => !['sales_data_id', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                         .map(
                         (field) => `
                             <div class="mb-4 w-1/2 pr-2">
@@ -158,7 +158,7 @@ function generateHtmlPage(title, fields, rows) {
                       const row = rowsData.find(r => r.sales_data_id === sales_data_id);
                       if (row) {
                           ${fields
-                              .filter(field => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
+                              .filter(field => !['sales_data_id', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
                               .map(field => `
                                   const ${field.name}Input = document.getElementById('edit_${field.name}');
                                   if (${field.name}Input) {
@@ -173,59 +173,59 @@ function generateHtmlPage(title, fields, rows) {
                       document.getElementById('editModal').classList.add('hidden');
                   }
   
-                  document.getElementById('addForm').addEventListener('submit', function(event) {
-                      event.preventDefault();
-                      
-                      const data = {};
-                      ${fields
-                        .filter((field) => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
-                        .map(
-                          (field) => `
-                          const ${field.name}Value = document.getElementById('add_${field.name}').value;
-                          data['${field.name}'] = ${['sales_amount', 'profit_amount'].includes(field.name) ? 
-                            `${field.name}Value === '' ? null : ${field.name}Value` : 
-                            `${field.name}Value`};`
-                        )
-                        .join("\n")}
-                      
-                      axios.post('/Salesdata', data)
-                          .then(response => {
-                              alert('Record added successfully');
-                              closeAddModal();
-                              window.location.reload();
-                          })
-                          .catch(error => {
-                              console.error('Error:', error);
-                              alert('Failed to add the record');
-                          });
-                  });
+                    document.getElementById('addForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const data = {};
+                    ${fields
+                    .filter((field) => !['sales_data_id', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
+                    .map(
+                        (field) => `
+                        const ${field.name}Value = document.getElementById('add_${field.name}').value;
+                        data['${field.name}'] = ${['sales_amount', 'profit_amount'].includes(field.name) ? 
+                        `${field.name}Value === '' ? null : ${field.name}Value` : 
+                        `${field.name}Value`};`
+                    )
+                    .join("\n")}
+                    
+                    axios.post('/Salesdata', data)
+                        .then(response => {
+                            alert('Record added successfully');
+                            closeAddModal();
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to add the record');
+                        });
+                    });
 
-                  document.getElementById('editForm').addEventListener('submit', function(event) {
-                      event.preventDefault();
-                      
-                      const data = {};
-                      ${fields
-                        .filter((field) => !['sales_data_id', 'day_of_week', 'Seasonal', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
-                        .map(
-                          (field) => `
-                          const ${field.name}Value = document.getElementById('edit_${field.name}').value;
-                          data['${field.name}'] = ${['sales_amount', 'profit_amount'].includes(field.name) ? 
-                            `${field.name}Value === '' ? null : ${field.name}Value` : 
-                            `${field.name}Value`};`
-                        )
-                        .join("\n")}
-                      
-                      axios.put(\`/Salesdata/\${currentSalesDataId}\`, data)
-                          .then(response => {
-                              alert('Record updated successfully');
-                              closeEditModal();
-                              window.location.reload();
-                          })
-                          .catch(error => {
-                              console.error('Error:', error);
-                              alert('Failed to update the record');
-                          });
-                  });
+                   document.getElementById('editForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const data = {};
+                    ${fields
+                    .filter((field) => !['sales_data_id', 'event', 'festival', 'Back_to_School_Period'].includes(field.name))
+                    .map(
+                        (field) => `
+                        const ${field.name}Value = document.getElementById('edit_${field.name}').value;
+                        data['${field.name}'] = ${['sales_amount', 'profit_amount'].includes(field.name) ? 
+                        `${field.name}Value === '' ? null : ${field.name}Value` : 
+                        `${field.name}Value`};`
+                    )
+                    .join("\n")}
+                    
+                    axios.put(\`/Salesdata/\${currentSalesDataId}\`, data)
+                        .then(response => {
+                            alert('Record updated successfully');
+                            closeEditModal();
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to update the record');
+                        });
+                    });
   
                   function deleteRow(sales_data_id) {
                       if (confirm('Are you sure you want to delete this record?')) {
@@ -238,8 +238,8 @@ function generateHtmlPage(title, fields, rows) {
                                   console.error('Error:', error);
                                   alert('Failed to delete the record');
                               });
-                      }
-                  }
+                        }
+                    }
               </script>
           </body>
           </html>
