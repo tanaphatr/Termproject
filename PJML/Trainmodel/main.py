@@ -1,37 +1,33 @@
-# main.py ใน Trainmodel
-import pandas as pd  # เพิ่มการนำเข้า pandas
-from sklearn.linear_model import LinearRegression
+import pandas as pd
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
+from pycaret.regression import setup, compare_models, finalize_model, pull
 
 def train_model():
-    # โหลดข้อมูลและประมวลผลข้อมูลเหมือนใน main function
+    # โหลดข้อมูลและประมวลผลข้อมูล
     df = load_data()
     df = preprocess_data(df)
     
-    # แปลง sale_date ให้เป็น datetime และฟีเจอร์ที่ต้องการ
-    df['sale_date'] = pd.to_datetime(df['sale_date'])
-    df['year'] = df['sale_date'].dt.year
-    df['month'] = df['sale_date'].dt.month
-    df['day'] = df['sale_date'].dt.day
-    df['day_of_year'] = df['sale_date'].dt.dayofyear
-
-    features = [
-        'year', 
-        'day', 
-        'event', 
-        'festival',
-        'weather',  
-        'Temperature',
-        'Back_to_School_Period',
-    ]
+    # เลือกฟีเจอร์ที่ต้องการใช้
     target = 'sales_amount'
 
-    X = df[features]
-    y = df[target]
-
-    # ฝึกโมเดล Linear Regression
-    model = LinearRegression()
-    model.fit(X, y)
+    # ลบ sale_date ออกจากข้อมูล (ไม่จำเป็นต้องใส่ใน ignore_features ถ้าลบไปแล้ว)
+    df = df.drop(columns=['sale_date'])
     
-    return model
+    # ตั้งค่าการเตรียมข้อมูลใน PyCaret
+    setup(data=df, target=target, session_id=123, feature_selection=True)
+    
+    # เปรียบเทียบโมเดลต่างๆ ที่ PyCaret แนะนำ
+    best_model = compare_models()
+
+    # ฝึกและเลือกโมเดลที่ดีที่สุด
+    final_model = finalize_model(best_model)
+    
+    # ดึงผลลัพธ์ metrics ที่เกี่ยวข้อง
+    model_metrics = pull()  # ดึงข้อมูลผลลัพธ์จาก evaluate_model
+    
+    # เก็บชื่อของโมเดลที่เลือก
+    model_name = best_model.__class__.__name__
+    
+    # คืนค่าของโมเดลที่ฝึกเสร็จแล้ว
+    return final_model,model_metrics,model_name
