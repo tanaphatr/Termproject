@@ -15,7 +15,7 @@ def train_model():
     df = df.drop(columns=['sale_date'])
     
     # ตั้งค่าการเตรียมข้อมูลใน PyCaret
-    setup(data=df, target=target, session_id=123, feature_selection=True)
+    setup(data=df, target=target, session_id=123, feature_selection=True, train_size=0.8)
     
     # เปรียบเทียบโมเดลต่างๆ ที่ PyCaret แนะนำ
     best_model = compare_models()
