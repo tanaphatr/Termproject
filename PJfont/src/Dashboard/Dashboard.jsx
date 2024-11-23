@@ -70,7 +70,7 @@ const Dashboard = () => {
                 const data = await response.json();
                 setSalesdata(data);
         
-                const latestData = data.slice(-180);
+                const latestData = data.slice(-360);
                 console.log("Fetched Salesdata:", latestData);
         
                 // สร้างข้อมูลสำหรับกราฟ

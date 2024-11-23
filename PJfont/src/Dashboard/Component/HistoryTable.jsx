@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Button } from '@mui/material';
-import moment from 'moment';
 
 const HistoryTable = ({ historyData }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -44,10 +43,10 @@ const HistoryTable = ({ historyData }) => {
                         <TableBody>
                             {displayedData.map((row, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{moment(row.prediction_date).format('DD MMM YYYY')}</TableCell>
+                                    <TableCell>{new Date(row.prediction_date).toLocaleDateString('en-GB').replace(/\//g, '-')}</TableCell>
                                     <TableCell>{row.predicted_sales}</TableCell>
                                     <TableCell>{row.actual_sales}</TableCell>
-                                    <TableCell>{row.predicted_sales - row.actual_sales}</TableCell>
+                                    <TableCell>{(row.predicted_sales - row.actual_sales).toFixed(2)}</TableCell>
                                     <TableCell>{row.error_value}</TableCell>
                                 </TableRow>
                             ))}
