@@ -1,9 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Button, Card, CardContent, TextField, Typography, MenuItem, Select, InputLabel, FormControl, Dialog, DialogActions, DialogContent, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
+    Button,
+    Card,
+    CardContent,
+    TextField,
+    Typography,
+    MenuItem,
+    Select,
+    InputLabel,
+    FormControl,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
 } from '@mui/material';
 
-const SalesForm = () => {
+const SalesForm = (props) => {
     const [products, setProducts] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState('');
@@ -27,6 +46,13 @@ const SalesForm = () => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        // คำนวณยอดรวมเมื่อ addedProducts เปลี่ยนแปลง
+        const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
+        // ส่งยอดขายรวมไปที่ Report
+        props.onTotalSaleChange(totalSale);
+    }, [addedProducts, props]); // ติดตามการเปลี่ยนแปลงของ addedProducts
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -40,15 +66,17 @@ const SalesForm = () => {
     const handleAddProduct = () => {
         const product = products.find(prod => prod.name === selectedProduct);
         const qty = parseInt(quantity);
-        if (product && qty > 0) {
+
+        if (product && qty > 0) {  // Validate quantity
             const newProduct = {
-                product_id: product.product_id,
+                product_id: product.product_id, // Using product_id consistently
                 name: product.name,
                 quantity: qty,
                 unit_price: product.unit_price,
                 total: product.unit_price * qty,
             };
-            setAddedProducts([...addedProducts, newProduct]); // อัปเดต Context
+            console.log("Adding product:", newProduct); // Log the product being added
+            setAddedProducts(prevProducts => [...prevProducts, newProduct]);
             handleClose();
         } else {
             alert("Please select a product and enter a valid quantity.");
@@ -58,11 +86,6 @@ const SalesForm = () => {
     const handleRemoveProduct = (product_id) => {
         console.log("Removing product with id:", product_id); // Log the product ID being removed
         setAddedProducts(prevProducts => prevProducts.filter(prod => prod.product_id !== product_id));
-    };
-
-    const handleSave = () => {
-        console.log("Saving products:", addedProducts);
-        // Add your code to save the data here
     };
 
     const handleReset = () => {
@@ -113,10 +136,7 @@ const SalesForm = () => {
                     </Button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <Button variant="outlined" onClick={handleSave} color="success">
-                        Save
-                    </Button>
-                    <Button variant="outlined" onClick={handleReset} color="error" style={{ marginLeft: '10px' }}>
+                    <Button variant="outlined" onClick={handleReset} color="error">
                         Reset
                     </Button>
                 </div>
@@ -131,10 +151,21 @@ const SalesForm = () => {
                             labelId="product-select-label"
                             value={selectedProduct}
                             onChange={(e) => setSelectedProduct(e.target.value)}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 200, // สามารถปรับขนาดความสูงได้ตามต้องการ
+                                        width: 300, // ปรับขนาดให้เต็มความกว้างของ Select
+                                    },
+                                },
+                            }}
                         >
                             {products.map((product) => (
                                 <MenuItem key={product.product_id} value={product.name}>
-                                    {product.name}
+                                    <div>
+                                        <Typography variant="body2">{product.name}</Typography>
+                                        <Typography variant="body2" color="textSecondary">{`Price: ${product.unit_price} THB`}</Typography>
+                                    </div>
                                 </MenuItem>
                             ))}
                         </Select>
