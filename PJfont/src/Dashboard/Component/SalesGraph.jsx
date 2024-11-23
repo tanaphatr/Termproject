@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import { Card, CardContent, Typography } from '@mui/material';
 
 const SalesGraph = ({ data }) => {
@@ -17,8 +17,12 @@ const SalesGraph = ({ data }) => {
                         />
                         <Tooltip />
                         <Legend />
-                        <Line type="monotone" dataKey="actual" stroke="#8884d8" />
-                        <Line type="monotone" dataKey="profit" stroke="#82ca9d" />
+                        <Line type="monotone" dataKey="actual" stroke="#8884d8">
+                            <LabelList dataKey="actual" position="right" />
+                        </Line>
+                        <Line type="monotone" dataKey="profit" stroke="#82ca9d">
+                            <LabelList dataKey="profit" position="right" />
+                        </Line>
                     </LineChart>
                 </ResponsiveContainer>
             </CardContent>

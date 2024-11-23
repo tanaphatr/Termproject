@@ -1,25 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Button,
-    Card,
-    CardContent,
-    TextField,
-    Typography,
-    MenuItem,
-    Select,
-    InputLabel,
-    FormControl,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
+    Button, Card, CardContent, TextField, Typography, MenuItem, Select, InputLabel, FormControl, Dialog, DialogActions, DialogContent, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
 } from '@mui/material';
 
 const SalesForm = () => {
@@ -59,17 +40,15 @@ const SalesForm = () => {
     const handleAddProduct = () => {
         const product = products.find(prod => prod.name === selectedProduct);
         const qty = parseInt(quantity);
-        
-        if (product && qty > 0) {  // Validate quantity
+        if (product && qty > 0) {
             const newProduct = {
-                product_id: product.product_id, // Using product_id consistently
+                product_id: product.product_id,
                 name: product.name,
                 quantity: qty,
                 unit_price: product.unit_price,
                 total: product.unit_price * qty,
             };
-            console.log("Adding product:", newProduct); // Log the product being added
-            setAddedProducts(prevProducts => [...prevProducts, newProduct]);
+            setAddedProducts([...addedProducts, newProduct]); // อัปเดต Context
             handleClose();
         } else {
             alert("Please select a product and enter a valid quantity.");
