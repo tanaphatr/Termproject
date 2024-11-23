@@ -68,24 +68,36 @@ const Dashboard = () => {
                     throw new Error("Network response was not ok");
                 }
                 const data = await response.json();
-
-                // กรองข้อมูลให้เหลือ 60 ค่าสุดท้าย
-                const latestData = data.slice(-60);
-                setSalesdata(latestData);
+                setSalesdata(data);
+        
+                const latestData = data.slice(-180);
                 console.log("Fetched Salesdata:", latestData);
-
+        
                 // สร้างข้อมูลสำหรับกราฟ
                 const graphData = latestData.map(item => ({
-                    name: new Date(item.sale_date).toLocaleString('default', { month: 'short', day: 'numeric' }),
-                    actual: item.sales_amount,
-                    profit: item.profit_amount // ใช้ profit_amount จาก Salesdata
+                    name: new Date(item.sale_date).toLocaleString('default', { month: 'short', year: 'numeric' }), // แยกปีและเดือน
+                    actual: isNaN(Number(item.sales_amount)) ? 0 : Number(item.sales_amount),  // แปลง sales_amount เป็นตัวเลข ถ้าไม่ใช่จะใช้ค่า 0
+                    profit: isNaN(Number(item.profit_amount)) ? 0 : Number(item.profit_amount)   // แปลง profit_amount เป็นตัวเลข ถ้าไม่ใช่จะใช้ค่า 0
                 }));
-
-                setData(graphData); // ตั้งค่า data สำหรับกราฟ
+        
+                // รวมยอดขายและกำไรตามเดือน
+                const monthlyData = graphData.reduce((acc, item) => {
+                    if (!acc[item.name]) {
+                        acc[item.name] = { name: item.name, actual: 0, profit: 0 };
+                    }
+                    acc[item.name].actual += item.actual;  // รวมยอดขาย
+                    acc[item.name].profit += item.profit;  // รวมกำไร
+                    return acc;
+                }, {});
+        
+                // แปลงผลลัพธ์ให้เป็นอาร์เรย์
+                const finalGraphData = Object.values(monthlyData);
+        
+                setData(finalGraphData); // ตั้งค่า data สำหรับกราฟ
             } catch (error) {
                 console.error("Error fetching Salesdata:", error);
             }
-        };
+        };        
 
         const fetchWeather = async () => {
             try {

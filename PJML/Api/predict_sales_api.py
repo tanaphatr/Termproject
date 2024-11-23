@@ -51,4 +51,4 @@ def predict_sales():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=8886, debug=True)
+    app.run(host='localhost', port=8887, debug=True)
