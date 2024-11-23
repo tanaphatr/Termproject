@@ -44,7 +44,18 @@ def load_trained_model():
     # โหลด metrics ที่บันทึกไว้
     model_metrics = pd.read_csv(model_metrics_path)
     
-    return model, model_metrics
+    # พาธของไฟล์ชื่อโมเดลที่บันทึกไว้
+    model_name_path = 'E:/Term project/PJ/PJML/Model/model_name.csv'
+    
+    # โหลดชื่อโมเดลที่บันทึกไว้
+    model_name_df = pd.read_csv(model_name_path)
+    
+    # ดึงชื่อโมเดลจาก DataFrame
+    model_name = model_name_df.iloc[0]['model_name']  # สมมติว่า 'model_name' เป็นชื่อคอลัมน์ในไฟล์ CSV
+
+    return model, model_metrics, model_name
+
+
 
 app = Flask(__name__)
 
@@ -54,7 +65,7 @@ def predict_sales():
     if should_train_new_model():
         model, model_metrics, model_name = train_model()  # ฝึกโมเดลใหม่
     else:
-        model, model_metrics = load_trained_model()  # โหลดโมเดลที่ฝึกเสร็จแล้ว
+        model, model_metrics, model_name = load_trained_model()  # โหลดโมเดลที่ฝึกเสร็จแล้ว
 
     # โหลดและประมวลผลข้อมูล
     data = load_data()

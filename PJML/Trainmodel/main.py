@@ -35,6 +35,13 @@ def train_model():
     model_path = 'E:/Term project/PJ/PJML/Model/model.pkl'
     joblib.dump(final_model, model_path)
     
+    # แปลงชื่อโมเดลเป็น DataFrame หรือ Series
+    model_name_df = pd.DataFrame([model_name], columns=['model_name'])
+
+    # บันทึก DataFrame ลงในไฟล์ CSV
+    model_name_path = 'E:/Term project/PJ/PJML/Model/model_name.csv'
+    model_name_df.to_csv(model_name_path, index=False)
+
     # บันทึก metrics ลงใน CSV
     model_metrics_path = 'E:/Term project/PJ/PJML/Model/model_metrics.csv'
     model_metrics.to_csv(model_metrics_path, index=False)
