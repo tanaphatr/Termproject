@@ -30,7 +30,7 @@ def train_arima_model():
     sales_data = df['sales_amount']
 
     # สร้างโมเดล ARIMA (พารามิเตอร์ p, d, q ที่เลือกมาจากการทดสอบหรือการวิจัย)
-    model = ARIMA(sales_data, order=(5, 1, 0))  # p=5, d=1, q=0 (คุณสามารถปรับได้)
+    model = ARIMA(sales_data, order=(10, 1, 0))  # p=5, d=1, q=0 (คุณสามารถปรับได้)
     model_fit = model.fit()
 
     # ทำนายยอดขายในอนาคต 1 วัน (จากวันที่ล่าสุดในข้อมูล)
@@ -43,23 +43,21 @@ def train_arima_model():
 
     mae = mean_absolute_error(y_true, y_pred)  # MAE
     mape = mean_absolute_percentage_error(y_true, y_pred)  # MAPE
-    r2 = r2_score(y_true, y_pred)  # R²
 
     # เพิ่มวัน +1
     latest_date = df.index.max()
     latest_date_plus_one = latest_date + pd.Timedelta(days=1)
 
-    return forecast, mae, mape, r2, latest_date_plus_one
+    return forecast, mae, mape, latest_date_plus_one
 
 # Route สำหรับการทำนายยอดขาย
 @app.route('/', methods=['GET'])
 def predict_sales():
-    forecast, mae, mape, r2, latest_date_plus_one = train_arima_model()
+    forecast, mae, mape, latest_date_plus_one = train_arima_model()
     return jsonify({
         'forecast': forecast.tolist(),  # ส่งผลการทำนายเป็น JSON
         'mae': mae,  # ส่ง MAE
         'mape': mape,  # ส่ง MAPE
-        'r2': r2,  # ส่ง R²
         'latest_date': latest_date_plus_one.strftime('%Y-%m-%d')  # ส่งวันที่ล่าสุดที่เพิ่มวันแล้ว
     })
 

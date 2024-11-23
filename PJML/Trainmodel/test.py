@@ -38,7 +38,7 @@ def train_modeltest():
         session_id=123,
         categorical_features=categorical,
         feature_selection=True,
-        train_size=0.8
+        train_size=0.8,
     )
 
     # เปรียบเทียบโมเดลต่างๆ
@@ -111,4 +111,4 @@ def predict_sales():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=8887, debug=True)
+    app.run(host='localhost', port=8885, debug=True)
