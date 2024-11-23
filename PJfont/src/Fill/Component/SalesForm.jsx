@@ -96,16 +96,19 @@ const SalesForm = (props) => {
 
     const handleSave = async () => {
         // ดึง employee_id จาก localStorage
-        const employeeId = localStorage.getItem('user_id');
-
+        const employee = JSON.parse(localStorage.getItem("loggedInUser"));
+        const employeeId = employee.user_id;
+        console.log(employeeId)
         if (!employeeId) {
             alert("Employee ID not found in localStorage.");
             return;
         }
 
+        const today = new Date().toISOString();
+        console.log(today)
         // คำนวณยอดขายรวม
         const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
-
+        console.log(totalSale)
         // ส่งข้อมูลยอดขายรายวัน
         try {
             const dailySaleResponse = await fetch("http://localhost:8888/Daily_sales", {
@@ -114,7 +117,7 @@ const SalesForm = (props) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    sale_date: new Date().toISOString(), // หรือใช้วันที่ที่คุณต้องการ
+                    sale_date: today, // หรือใช้วันที่ที่คุณต้องการ
                     total_sales: totalSale,
                     employee_id: employeeId, // ส่ง employee_id ที่ดึงมาจาก localStorage
                 }),
@@ -136,7 +139,7 @@ const SalesForm = (props) => {
                     },
                     body: JSON.stringify({
                         product_id: product.product_id,
-                        date: new Date().toISOString(),
+                        date: today,
                         quantity_sold: product.quantity,
                         sale_amount: product.total,
                     }),
@@ -168,25 +171,25 @@ const SalesForm = (props) => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Nameproduct</TableCell>
-                                <TableCell>Quantity</TableCell>
-                                <TableCell>Unitprice</TableCell>
-                                <TableCell>Total</TableCell>
-                                <TableCell>Action</TableCell>
+                                <TableCell align="center">Nameproduct</TableCell>
+                                <TableCell align="center">Quantity</TableCell>
+                                <TableCell align="center">Unitprice</TableCell>
+                                <TableCell align="center">Total</TableCell>
+                                <TableCell align="center">Action</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {addedProducts.map((product) => (
                                 <TableRow key={product.product_id}>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell>{product.quantity}</TableCell>
-                                    <TableCell>{product.unit_price}</TableCell>
-                                    <TableCell>{product.total}</TableCell>
-                                    <TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.name}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.quantity}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.unit_price}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.total}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>
                                         <Button
                                             variant="outlined"
                                             color="error"
-                                            onClick={() => handleRemoveProduct(product.product_id)} // Send the product_id to remove
+                                            onClick={() => handleRemoveProduct(product.product_id)} // ส่ง product_id เพื่อลบ
                                         >
                                             Delete
                                         </Button>
@@ -211,7 +214,7 @@ const SalesForm = (props) => {
                 </div>
             </CardContent>
 
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth={true}>
                 <DialogTitle>Add Product</DialogTitle>
                 <DialogContent>
                     <FormControl fullWidth margin="normal">
