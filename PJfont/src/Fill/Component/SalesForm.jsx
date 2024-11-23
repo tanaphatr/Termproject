@@ -94,6 +94,72 @@ const SalesForm = (props) => {
         setQuantity(''); // Reset quantity
     };
 
+    const handleSave = async () => {
+        // ดึง employee_id จาก localStorage
+        const employeeId = localStorage.getItem('user_id');
+
+        if (!employeeId) {
+            alert("Employee ID not found in localStorage.");
+            return;
+        }
+
+        // คำนวณยอดขายรวม
+        const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
+
+        // ส่งข้อมูลยอดขายรายวัน
+        try {
+            const dailySaleResponse = await fetch("http://localhost:8888/Daily_sales", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sale_date: new Date().toISOString(), // หรือใช้วันที่ที่คุณต้องการ
+                    total_sales: totalSale,
+                    employee_id: employeeId, // ส่ง employee_id ที่ดึงมาจาก localStorage
+                }),
+            });
+
+            if (!dailySaleResponse.ok) {
+                throw new Error("Failed to save daily sales.");
+            }
+
+            const dailySaleData = await dailySaleResponse.json();
+            console.log("Daily Sales saved:", dailySaleData);
+
+            // ส่งข้อมูลยอดขายของแต่ละผลิตภัณฑ์
+            for (const product of addedProducts) {
+                const productSaleResponse = await fetch("http://localhost:8888/Product_sales", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        product_id: product.product_id,
+                        date: new Date().toISOString(),
+                        quantity_sold: product.quantity,
+                        sale_amount: product.total,
+                    }),
+                });
+
+                if (!productSaleResponse.ok) {
+                    throw new Error(`Failed to save product sale for ${product.name}.`);
+                }
+
+                const productSaleData = await productSaleResponse.json();
+                console.log("Product Sale saved:", productSaleData);
+            }
+
+            alert("Sales data saved successfully!");
+
+            // รีเซ็ตข้อมูลหลังจากการบันทึก
+            setAddedProducts([]);
+        } catch (error) {
+            console.error("Error saving sales data:", error);
+            alert("There was an error saving the sales data.");
+        }
+    };
+
     return (
         <Card style={{ padding: '20px' }}>
             <CardContent>
@@ -130,14 +196,17 @@ const SalesForm = (props) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', gap: '10px' }}>
                     <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                         Add Product
                     </Button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <Button variant="outlined" onClick={handleReset} color="error">
                         Reset
+                    </Button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <Button variant="outlined" color="success" onClick={handleSave}>
+                        Save
                     </Button>
                 </div>
             </CardContent>
@@ -169,6 +238,7 @@ const SalesForm = (props) => {
                                 </MenuItem>
                             ))}
                         </Select>
+
                     </FormControl>
                     <TextField
                         label="Quantity"

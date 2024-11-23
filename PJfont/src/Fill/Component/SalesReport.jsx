@@ -11,7 +11,7 @@ const SalesReport = ({ totalSales }) => {
                         Total Sales Today
                     </Typography>
                     <Typography variant="h6" color="text.secondary">
-                        ฿{totalSales.toFixed(2)}  {/* แสดงยอดขาย */}
+                        ฿{totalSales.toFixed(2)}
                     </Typography>
                 </Box>
             </CardContent>
