@@ -1,7 +1,9 @@
+import joblib
 import pandas as pd
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
 from pycaret.regression import setup, compare_models, finalize_model, pull
+from datetime import datetime
 
 def train_model():
     # โหลดข้อมูลและประมวลผลข้อมูล
@@ -29,5 +31,18 @@ def train_model():
     # เก็บชื่อของโมเดลที่เลือก
     model_name = best_model.__class__.__name__
     
+    # บันทึกโมเดลลงในไฟล์
+    model_path = 'E:/Term project/PJ/PJML/Model/model.pkl'
+    joblib.dump(final_model, model_path)
+    
+    # บันทึก metrics ลงใน CSV
+    model_metrics_path = 'E:/Term project/PJ/PJML/Model/model_metrics.csv'
+    model_metrics.to_csv(model_metrics_path, index=False)
+    
+    # บันทึกเวลาในการฝึกโมเดล
+    model_time_path = 'E:/Term project/PJ/PJML/Model/model_train_time.txt'
+    with open(model_time_path, 'w') as f:
+        f.write(str(datetime.now()))
+    
     # คืนค่าของโมเดลที่ฝึกเสร็จแล้ว
-    return final_model,model_metrics,model_name
+    return final_model, model_metrics, model_name
