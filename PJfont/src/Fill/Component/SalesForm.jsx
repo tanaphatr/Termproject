@@ -22,7 +22,7 @@ import {
     Paper,
 } from '@mui/material';
 
-const SalesForm = () => {
+const SalesForm = (props) => {
     const [products, setProducts] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState('');
@@ -46,6 +46,13 @@ const SalesForm = () => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        // คำนวณยอดรวมเมื่อ addedProducts เปลี่ยนแปลง
+        const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
+        // ส่งยอดขายรวมไปที่ Report
+        props.onTotalSaleChange(totalSale);
+    }, [addedProducts, props]); // ติดตามการเปลี่ยนแปลงของ addedProducts
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -59,7 +66,7 @@ const SalesForm = () => {
     const handleAddProduct = () => {
         const product = products.find(prod => prod.name === selectedProduct);
         const qty = parseInt(quantity);
-        
+
         if (product && qty > 0) {  // Validate quantity
             const newProduct = {
                 product_id: product.product_id, // Using product_id consistently
@@ -81,15 +88,79 @@ const SalesForm = () => {
         setAddedProducts(prevProducts => prevProducts.filter(prod => prod.product_id !== product_id));
     };
 
-    const handleSave = () => {
-        console.log("Saving products:", addedProducts);
-        // Add your code to save the data here
-    };
-
     const handleReset = () => {
         setAddedProducts([]); // Clear added products
         setSelectedProduct(''); // Reset selected product
         setQuantity(''); // Reset quantity
+    };
+
+    const handleSave = async () => {
+        // ดึง employee_id จาก localStorage
+        const employee = JSON.parse(localStorage.getItem("loggedInUser"));
+        const employeeId = employee.user_id;
+        console.log(employeeId)
+        if (!employeeId) {
+            alert("Employee ID not found in localStorage.");
+            return;
+        }
+
+        const today = new Date().toISOString();
+        console.log(today)
+        // คำนวณยอดขายรวม
+        const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
+        console.log(totalSale)
+        // ส่งข้อมูลยอดขายรายวัน
+        try {
+            const dailySaleResponse = await fetch("http://localhost:8888/Daily_sales", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sale_date: today, // หรือใช้วันที่ที่คุณต้องการ
+                    total_sales: totalSale,
+                    employee_id: employeeId, // ส่ง employee_id ที่ดึงมาจาก localStorage
+                }),
+            });
+
+            if (!dailySaleResponse.ok) {
+                throw new Error("Failed to save daily sales.");
+            }
+
+            const dailySaleData = await dailySaleResponse.json();
+            console.log("Daily Sales saved:", dailySaleData);
+
+            // ส่งข้อมูลยอดขายของแต่ละผลิตภัณฑ์
+            for (const product of addedProducts) {
+                const productSaleResponse = await fetch("http://localhost:8888/Product_sales", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        product_id: product.product_id,
+                        date: today,
+                        quantity_sold: product.quantity,
+                        sale_amount: product.total,
+                    }),
+                });
+
+                if (!productSaleResponse.ok) {
+                    throw new Error(`Failed to save product sale for ${product.name}.`);
+                }
+
+                const productSaleData = await productSaleResponse.json();
+                console.log("Product Sale saved:", productSaleData);
+            }
+
+            alert("Sales data saved successfully!");
+
+            // รีเซ็ตข้อมูลหลังจากการบันทึก
+            setAddedProducts([]);
+        } catch (error) {
+            console.error("Error saving sales data:", error);
+            alert("There was an error saving the sales data.");
+        }
     };
 
     return (
@@ -100,25 +171,25 @@ const SalesForm = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Nameproduct</TableCell>
-                                <TableCell>Quantity</TableCell>
-                                <TableCell>Unitprice</TableCell>
-                                <TableCell>Total</TableCell>
-                                <TableCell>Action</TableCell>
+                                <TableCell align="center">Nameproduct</TableCell>
+                                <TableCell align="center">Quantity</TableCell>
+                                <TableCell align="center">Unitprice</TableCell>
+                                <TableCell align="center">Total</TableCell>
+                                <TableCell align="center">Action</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {addedProducts.map((product) => (
                                 <TableRow key={product.product_id}>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell>{product.quantity}</TableCell>
-                                    <TableCell>{product.unit_price}</TableCell>
-                                    <TableCell>{product.total}</TableCell>
-                                    <TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.name}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.quantity}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.unit_price}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.total}</TableCell>
+                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>
                                         <Button
                                             variant="outlined"
                                             color="error"
-                                            onClick={() => handleRemoveProduct(product.product_id)} // Send the product_id to remove
+                                            onClick={() => handleRemoveProduct(product.product_id)} // ส่ง product_id เพื่อลบ
                                         >
                                             Delete
                                         </Button>
@@ -128,22 +199,22 @@ const SalesForm = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', gap: '10px' }}>
                     <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                         Add Product
                     </Button>
+                    <Button variant="outlined" onClick={handleReset} color="error">
+                        Reset
+                    </Button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <Button variant="outlined" onClick={handleSave} color="success">
+                    <Button variant="outlined" color="success" onClick={handleSave}>
                         Save
-                    </Button>
-                    <Button variant="outlined" onClick={handleReset} color="error" style={{ marginLeft: '10px' }}>
-                        Reset
                     </Button>
                 </div>
             </CardContent>
 
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth={true}>
                 <DialogTitle>Add Product</DialogTitle>
                 <DialogContent>
                     <FormControl fullWidth margin="normal">
@@ -152,13 +223,25 @@ const SalesForm = () => {
                             labelId="product-select-label"
                             value={selectedProduct}
                             onChange={(e) => setSelectedProduct(e.target.value)}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 200, // สามารถปรับขนาดความสูงได้ตามต้องการ
+                                        width: 300, // ปรับขนาดให้เต็มความกว้างของ Select
+                                    },
+                                },
+                            }}
                         >
                             {products.map((product) => (
                                 <MenuItem key={product.product_id} value={product.name}>
-                                    {product.name}
+                                    <div>
+                                        <Typography variant="body2">{product.name}</Typography>
+                                        <Typography variant="body2" color="textSecondary">{`Price: ${product.unit_price} THB`}</Typography>
+                                    </div>
                                 </MenuItem>
                             ))}
                         </Select>
+
                     </FormControl>
                     <TextField
                         label="Quantity"

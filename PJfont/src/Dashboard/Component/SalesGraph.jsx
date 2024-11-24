@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import { Card, CardContent, Typography } from '@mui/material';
 
 const SalesGraph = ({ data }) => {
@@ -12,13 +12,17 @@ const SalesGraph = ({ data }) => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis 
-                            ticks={[5000, 10000, 15000, 20000]} // กำหนดค่าที่จะแสดงในแกน Y
-                            domain={[0, 20000]} // กำหนดช่วงของแกน Y
+                            ticks={[0, 150000, 300000, 450000, 600000]} // กำหนดค่าที่จะแสดงในแกน Y
+                            domain={[0, 600000]} // กำหนดช่วงของแกน Y
                         />
                         <Tooltip />
                         <Legend />
-                        <Line type="monotone" dataKey="actual" stroke="#8884d8" />
-                        <Line type="monotone" dataKey="profit" stroke="#82ca9d" />
+                        <Line type="monotone" dataKey="actual" stroke="#8884d8">
+                            <LabelList dataKey="actual" position="right" />
+                        </Line>
+                        <Line type="monotone" dataKey="profit" stroke="#82ca9d">
+                            <LabelList dataKey="profit" position="right" />
+                        </Line>
                     </LineChart>
                 </ResponsiveContainer>
             </CardContent>
