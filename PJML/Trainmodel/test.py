@@ -1,6 +1,6 @@
 import pandas as pd
 from Datafile.load_data import load_data
-from pycaret.regression import setup, compare_models, finalize_model, pull
+from pycaret.regression import setup, compare_models, finalize_model, pull # type: ignore
 
 def train_modeltest():
     # โหลดข้อมูล

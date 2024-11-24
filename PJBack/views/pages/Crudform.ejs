@@ -111,27 +111,32 @@
     <table class="w-full bg-white shadow-md rounded-lg overflow-hidden border-collapse">
       <thead class="bg-gray-200">
         <tr>
-          <% fields.map((field)=> {%><th class="py-3 px-4 border border-gray-300 table-cell"><%=field.name%></th>
-          <% }).join(""); %>
-          <th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">Actions
-          </th>
+          <% fields.map((field) => {
+            // ตรวจสอบว่าอยู่ในหน้า Daily_sales และเป็น first_name หรือ last_name หรือไม่
+            if (!(table_name === 'Daily_sales' && (field.name === 'first_name' || field.name === 'last_name'))) { %>
+              <th class="py-3 px-4 border border-gray-300 table-cell"><%=field.name%></th>
+          <% }
+          }).join(""); %>
+          <th class="py-3 px-4 text-left font-semibold text-gray-700 border border-gray-300">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% rows.map((row, index)=> {%>
-        <tr class="<%- index % 2===0 ? "bg-gray-50" : "bg-white"%>">
-          <% fields.map((field)=>{ %><td class="py-3 px-4 border border-gray-300 table-cell">
-            <%- row[field.name] !==undefined? row[field.name]: "" %>
-          </td>
-          <% }).join(""); %>
+        <% rows.map((row, index) => { %>
+        <tr class="<%- index % 2 === 0 ? 'bg-gray-50' : 'bg-white' %>">
+          <% fields.map((field) => {
+            // ตรวจสอบว่าอยู่ในหน้า Daily_sales และเป็น first_name หรือ last_name หรือไม่
+            if (!(table_name === 'Daily_sales' && (field.name === 'first_name' || field.name === 'last_name'))) { %>
+              <td class="py-3 px-4 border border-gray-300 table-cell">
+                <%- row[field.name] !== undefined ? row[field.name] : "" %>
+              </td>
+          <% }
+          }).join(""); %>
           <td class="py-3 px-4 border border-gray-300">
-            <button onclick="editRow(<%= row[primary_key] %>)" class="bg-blue-500
-                                        hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
-            <button onclick="deleteRow(<%= row[primary_key] %>)" class="bg-red-500
-                                        hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Delete</button>
+            <button onclick="editRow(<%= row[primary_key] %>)" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+            <button onclick="deleteRow(<%= row[primary_key] %>)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Delete</button>
           </td>
         </tr>
-        <% }).join("");%>
+        <% }).join(""); %>
       </tbody>
     </table>
   </div>
