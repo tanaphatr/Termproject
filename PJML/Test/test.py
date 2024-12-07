@@ -31,7 +31,8 @@ def train_modeltest():
         df[column] = df[column].str.replace(' ', '_', regex=True)
 
     categorical = ['event', 'festival', 'weather', 'Back_to_School_Period']
-    # ตั้งค่าการเตรียมข้อมูลใน PyCaret
+    # # ตั้งค่าการเตรียมข้อมูลใน PyCaret
+
     setup(
         data=df,
         target='sales_amount',
