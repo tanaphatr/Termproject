@@ -9,10 +9,10 @@ router.get('/html', async (req, res) => {
         const [rows, fields] = await db.query('SELECT * FROM product_sales');
         res.render('pages/Crudform', {
             title: 'Product Data',
-            fields: fields,
+            fields: fields, 
             rows: rows,
             res: res,
-            table_name: "Product_sales",
+            table_name: "product_sales",
             primary_key: "product_sale_id"
         });
     } catch (err) {
@@ -49,10 +49,10 @@ router.get('/:id', async (req, res) => {
 // POST - Create new product sale
 router.post('/', async (req, res) => {
     try {
-        const {product_id, date, quantity_sold, sale_amount } = req.body;
+        const {Product_code, Date, Quantity, Total_Sale} = req.body;
         const [result] = await db.query(
-            'INSERT INTO product_sales (product_id, date, quantity_sold, sale_amount) VALUES (?, ?, ?, ?)',
-            [product_id, date, quantity_sold, sale_amount]
+            'INSERT INTO product_sales (Product_code, Date, Quantity, Total_Sale) VALUES (?, ?, ?, ?)',
+            [Product_code, Date, Quantity, Total_Sale]
         );
         
         res.status(201).json({
@@ -68,10 +68,10 @@ router.post('/', async (req, res) => {
 // PUT - Update product sale
 router.put('/:id', async (req, res) => {
     try {
-        const {product_id, date, quantity_sold, sale_amount } = req.body;
+        const {product_code, Date, Quantity, Total_Sale} = req.body;
         const [result] = await db.query(
-            'UPDATE product_sales SET product_id = ?, date= ?, quantity_sold = ?, sale_amount = ? WHERE product_sale_id = ?',
-            [product_id, date, quantity_sold, sale_amount, req.params.id]
+            'UPDATE product_sales SET product_code = ?, Date = ?, Quantity = ?, Total_Sale = ? WHERE product_sale_id = ?',
+            [product_code, Date, Quantity, Total_Sale, req.params.id]
         );
         
         if (result.affectedRows === 0) {
