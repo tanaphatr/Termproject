@@ -10,6 +10,7 @@ from flask import Flask, jsonify
 from tensorflow.keras.models import Sequential  # type: ignore
 from tensorflow.keras.layers import LSTM, Dense  # type: ignore
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
@@ -18,8 +19,13 @@ from Datafile.load_data import load_dataps
 from Preprocess.preprocess_data import preprocess_dataps
 from Datafile.load_data import load_data
 
-model_path1 = r'E:\Term project\PJ\PJML\LSTM\ModelLstm\lstm_model1.pkl'
-model_path2 = r'E:\Term project\PJ\PJML\LSTM\ModelLstm\lstm_model2.pkl'
+# prepare_data ทำความสะอาดข้อมูล, เติมค่าขาดหาย, แปลงวันที่, และสเกลข้อมูลสำหรับการฝึกโมเดล
+# train_lstm_model1 เทรนโมเดล LSTM สำหรับการทำนายยอดขาย
+# predict_next_sales ทำนายยอดขายในวันถัดไปโดยใช้โมเดล LSTM
+# create_dataset สร้างชุดข้อมูลสำหรับฝึกโมเดล โดยการแยกข้อมูลเป็นลำดับเวลา
+# train_lstm_model2 เทรนโมเดล LSTM สำหรับการทำนายปริมาณสินค้าตามลำดับเวลา
+# predict_next_month ทำนายยอดขายสำหรับเดือนถัดไปโดยใช้โมเดล LSTM
+# predict_sales API endpoint สำหรับทำนายยอดขายจากข้อมูลที่มี โดยใช้ LSTM
 #===============================================เตรียมข้อมูล=========================================
 def prepare_data(df):
     # เติมค่าขาดหายไปในคอลัมน์เป้าหมาย
@@ -51,6 +57,7 @@ def prepare_data(df):
     return np.array(X), np.array(y), scaler, df
 #===============================================Dalisale=========================================
 def train_lstm_model1(X, y):
+    model_path1 = r'E:\Term project\PJ\PJML\LSTM\ModelLstm\lstm_model1.pkl'
     # ตรวจสอบว่าไฟล์โมเดลมีอยู่หรือไม่
     if os.path.exists(model_path1):
         # ถ้ามีไฟล์โมเดลให้โหลดไฟล์ที่มีอยู่
@@ -104,6 +111,7 @@ def create_dataset(data, time_step=30):
 
 #===============================================Stock=========================================
 def train_lstm_model2(X_train, y_train, input_shape=None):
+    model_path2 = r'E:\Term project\PJ\PJML\LSTM\ModelLstm\lstm_model2.pkl'
      # ตรวจสอบว่าไฟล์โมเดลมีอยู่หรือไม่
     if os.path.exists(model_path2):
         # ถ้ามีไฟล์โมเดลให้โหลดไฟล์ที่มีอยู่
@@ -164,7 +172,7 @@ def predict_sales():
     X = X.reshape(X.shape[0], X.shape[1], 1)
 
     # แบ่งข้อมูลเป็น training และ testing set (80/20)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False)
 
     # ฝึกโมเดล
     model = train_lstm_model1(X_train, y_train)
@@ -172,6 +180,9 @@ def predict_sales():
     # ทำนายยอดขายในวันถัดไปโดยใช้ข้อมูล testing
     predicted_sales = model.predict(X_test)
     predicted_sales = scaler.inverse_transform(predicted_sales)
+
+    # คำนวณ mse สำหรับ Testing Data
+    mse = mean_squared_error(y_test, predicted_sales)
 
     # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()
@@ -219,15 +230,17 @@ def predict_sales():
 
     # รวมข้อมูลเพื่อส่งกลับ
     response_data = {
-    'predicted_sales': float(predicted_sales[-1][0]),
-    'predicted_date': str(df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)),
-    'model_name': "LSTM",
-    'predictions': [
-        {"Next_Year": next_year, "Next_Month": next_month}
-    ] + [
-        {"Product_code": prediction["Product_code"], "Prediction": prediction["Prediction"]}
-        for prediction in predictions
-    ]
+        'predicted_sales': float(predicted_sales[-1][0]),
+        'predicted_date': str(df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)),
+        'model_name': "LSTM",
+        'mse': mse,
+        'predictions': [
+            {"Next_Year": next_year, "Next_Month": next_month}
+        ] + [
+            {"Product_code": prediction["Product_code"], "Prediction": round(prediction["Prediction"], 0)}
+            for prediction in predictions
+            if prediction["Prediction"] != 0.0 and prediction["Product_code"] != ""
+        ]
     }
 
     return jsonify(response_data)

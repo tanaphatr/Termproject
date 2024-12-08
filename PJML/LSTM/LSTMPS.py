@@ -4,8 +4,8 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import LSTM, Dense
+from keras.models import Sequential # type: ignore
+from keras.layers import LSTM, Dense # type: ignore
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
