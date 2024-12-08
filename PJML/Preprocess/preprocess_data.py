@@ -33,21 +33,11 @@ def preprocess_dataps(dfps):
     dfps['Year'] = dfps['Date'].str[:4]  # ใช้ 4 หลักแรกของ 'Date' เพื่อดึงปี
     dfps['Month'] = dfps['Date'].str[5:7]  # ใช้หลักที่ 5 ถึง 7 เพื่อดึงเดือน
 
-    # 3. คำนวณยอดขายรวมต่อเดือนตาม Product_code
-    monthly_total_sales = dfps.groupby(['Year', 'Month', 'Product_code'])['Total_Sale'].sum().reset_index()
-    monthly_total_sales.rename(columns={'Total_Sale': 'Monthly_Total_Sales'}, inplace=True)
-
-    # 4. คำนวณปริมาณการขายเฉลี่ยต่อวันตาม Product_code
-    daily_avg_quantity = dfps.groupby(['Date', 'Product_code'])['Quantity'].mean().reset_index()
-    daily_avg_quantity.rename(columns={'Quantity': 'Daily_Avg_Quantity'}, inplace=True)
-
-    # 5. คำนวณยอดสินค้ารวมต่อเดือนตาม Product_code
+    # 3. คำนวณยอดสินค้ารวมต่อเดือนตาม Product_code
     monthly_total_quantity = dfps.groupby(['Year', 'Month', 'Product_code'])['Quantity'].sum().reset_index()
     monthly_total_quantity.rename(columns={'Quantity': 'Monthly_Total_Quantity'}, inplace=True)
 
-    # 6. รวมข้อมูลทั้งหมดกลับไปที่ DataFrame
-    dfps = dfps.merge(monthly_total_sales, on=['Year', 'Month', 'Product_code'], how='left')
-    dfps = dfps.merge(daily_avg_quantity, on=['Date', 'Product_code'], how='left')
+    # 4. รวมข้อมูลทั้งหมดกลับไปที่ DataFrame
     dfps = dfps.merge(monthly_total_quantity, on=['Year', 'Month', 'Product_code'], how='left')
 
     return dfps

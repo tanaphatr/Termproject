@@ -64,9 +64,10 @@ def predict_next_sales(model, X, scaler, df):
     predicted_date = df['sale_date'].iloc[-1] + pd.DateOffset(days=1)
     return predicted_sales, predicted_date
 
+#===============================================API=========================================
 # Flask App
 app = Flask(__name__)
-#===============================================API=========================================
+
 @app.route('/', methods=['GET'])
 def predict_sales():
     # โหลดข้อมูล
