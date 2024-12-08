@@ -13,3 +13,14 @@ def load_data():
     # Read data from database
     df = pd.read_sql(query, engine)
     return df
+
+def load_dataps():
+    # Create SQLAlchemy engine
+    engine = create_engine(DATABASE_CONFIG)
+
+    # SQL query to load data
+    query = "SELECT * FROM product_sales"
+    
+    # Read data from database
+    dfps = pd.read_sql(query, engine)
+    return dfps

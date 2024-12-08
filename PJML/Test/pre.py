@@ -1,29 +1,11 @@
+import sys
+import os
+
+# เพิ่ม path ของโปรเจค
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
+
 import pandas as pd
-
-def preprocess_data(df):
-    # แปลงปีพุทธศักราชเป็นปีคริสต์ศักราช
-    df['sale_date'] = pd.to_datetime(df['sale_date'].astype(str).str.replace(r'(\d{4})', lambda x: str(int(x.group(0)) - 543), regex=True), errors='coerce')
-
-    # Log จำนวนวันที่ขาดหาย
-    print(f"Missing sale_date entries: {df['sale_date'].isnull().sum()}")
-
-    # แทนที่ค่าที่ขาดหายใน sales_amount และ profit_amount ด้วยค่าเฉลี่ย
-    df['sales_amount'].fillna(df['sales_amount'].mean(), inplace=True)
-    df['profit_amount'].fillna(df['profit_amount'].mean(), inplace=True)
-
-    # แปลงข้อมูลหมวดหมู่เป็น One-Hot Encoding
-    categorical_features = ['event', 'festival', 'weather', 'Back_to_School_Period']
-    df = pd.get_dummies(df, columns=categorical_features, drop_first=True)
-
-    # เพิ่มคอลัมน์ day_of_year
-    df['day_of_year'] = df['sale_date'].dt.dayofyear
-
-    # เปลี่ยนชื่อคอลัมน์ที่มีช่องว่างเป็นชื่อที่ใช้ _ แทนช่องว่าง
-    df.columns = df.columns.str.replace(' ', '_')
-
-    # สร้างไฟล์ CSV หลังจากประมวลผลข้อมูล
-    df.to_csv("processed_data.csv", index=False)
-    return df
+from Datafile.load_data import load_data, load_dataps
 
 def preprocess_dataps(dfps):
     # 1. แปลงคอลัมน์ 'Date' ให้เป็น string (ถ้าคอลัมน์ 'Date' เป็น datetime)
@@ -51,3 +33,27 @@ def preprocess_dataps(dfps):
     dfps = dfps.merge(monthly_total_quantity, on=['Year', 'Month', 'Product_code'], how='left')
 
     return dfps
+
+# Main Function
+if __name__ == "__main__":
+    try:
+        # โหลดข้อมูลจากฐานข้อมูล salesdata
+        df_raw = load_data()
+        print("โหลดข้อมูล salesdata สำเร็จ")
+
+        # โหลดข้อมูลจากฐานข้อมูล product_sales
+        dfps_raw = load_dataps()
+        print("โหลดข้อมูล product_sales สำเร็จ")
+
+        # เรียกใช้ฟังก์ชัน preprocess
+        dfps_processed = preprocess_dataps(dfps_raw)
+        print("ประมวลผลข้อมูลสำเร็จ")
+
+        # บันทึกข้อมูลเป็นไฟล์ CSV
+        output_path = os.path.join(os.path.dirname(__file__), 'preproduct_sales.csv')
+        dfps_processed.to_csv(output_path, index=False, encoding='utf-8-sig')
+        print(f"บันทึกข้อมูลที่แปลงแล้วลงไฟล์: {output_path}")
+
+    except Exception as e:
+        print(f"เกิดข้อผิดพลาด: {e}")
+        sys.exit(1)
