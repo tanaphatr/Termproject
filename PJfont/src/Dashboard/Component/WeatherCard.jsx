@@ -9,7 +9,7 @@ const WeatherCard = ({ title, temperature ,weather ,date}) => {
                 <br />
                 <Typography variant="h4">{temperature}</Typography>
                 <Typography variant="h7">{weather}</Typography>
-                <Typography variant="h6">{date}</Typography>
+                {/* <Typography variant="h6">{date}</Typography> */}
             </CardContent>
         </Card>
     );

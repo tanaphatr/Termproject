@@ -8,7 +8,7 @@ const PredictionCard = ({ title, amount, accuracy }) => {
                 <Typography variant="h6">{title}</Typography>
                 <Typography variant="h4">{amount}</Typography>
                 <br />
-                <Typography variant="body2" color="textSecondary">Accuracy: {accuracy}</Typography>
+                <Typography variant="body2" color="textSecondary">Date: {accuracy}</Typography>
             </CardContent>
         </Card>
     );

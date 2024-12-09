@@ -250,4 +250,4 @@ def predict_sales():
     return jsonify(response_data)
     
 if __name__ == '__main__':
-    app.run(host='localhost', port=8885, debug=True)
+    app.run(host='localhost', port=8887, debug=True)

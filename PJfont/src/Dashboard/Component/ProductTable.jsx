@@ -14,7 +14,7 @@ import {
   Box,
 } from '@mui/material';
 
-const ProductTable = ({ products }) => {
+const ProductTable = ({ products,mount}) => {
   const itemsPerPage = 6; // จำนวนสินค้าที่แสดงต่อหน้า
   const [currentPage, setCurrentPage] = useState(0); // สถานะของหน้าปัจจุบัน
 
@@ -36,24 +36,24 @@ const ProductTable = ({ products }) => {
       setCurrentPage(currentPage - 1);
     }
   };
-
+  
   return (
     <Card style={{ flex: '1 1 calc(20% - 16px)' }}>
       <CardContent>
-        <Typography variant="h6">Product List</Typography>
+        <Typography variant="h6">Prediction Sales(30Day)</Typography>
         <TableContainer component={Paper}>
           <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Product</TableCell>
-                <TableCell align="center">Stock</TableCell>
+                <TableCell align="center">Sales</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {displayedProducts.map((product, index) => (
                 <TableRow key={index}>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell align="center">{product.stock_quantity}</TableCell>
+                  <TableCell>{product.Product_code}</TableCell>
+                  <TableCell align="center">{product.Prediction}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

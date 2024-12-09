@@ -121,7 +121,11 @@ const Dashboard = () => {
         fetchPredictives();
         fetchSalesdata();
     }, []);
-
+    console.log(Predictive.predictions);
+    const filteredProducts = Predictive.predictions
+    ? Predictive.predictions.filter((item) => item.Product_code && item.Prediction)
+    : []; // ถ้า Predictive.predictions เป็น undefined ให้ใช้อาเรย์ว่าง
+      
     return (
         <div style={{ display: 'flex' }}>
             <Sidebar />
@@ -135,7 +139,7 @@ const Dashboard = () => {
                         Yesprediction={`${Salesprediction.length > 0 ? Salesprediction[0].predicted_sales : 0} Bath`} />
                     <PredictionCard title="Prediction for Today"
                         amount={`${!isNaN(Number(Predictive.predicted_sales)) ? Number(Predictive.predicted_sales).toFixed(2) : '0.00'} Bath`}
-                        accuracy={`${Salesprediction.length > 0 ? Salesprediction[0].error_value : 0} %`} />
+                        accuracy={Predictive.predicted_date} />
                     <WeatherCard title="Weather for Tomorrow"
                         temperature={tomorrowWeather.temperature ? `${tomorrowWeather.temperature} °C` : 'Loading...'}
                         weather={tomorrowWeather.condition ? tomorrowWeather.condition : 'Loading...'}
@@ -143,11 +147,11 @@ const Dashboard = () => {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
                     <SalesGraph data={data} />
-                    <ProductTable products={products} />
+                    <ProductTable products={filteredProducts} mount={Predictive.predictions}/>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                {/* <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
                     <HistoryTable historyData={Salesprediction} />
-                </div>
+                </div> */}
             </div>
         </div>
     );
