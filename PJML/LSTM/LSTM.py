@@ -7,12 +7,13 @@ from sklearn.preprocessing import MinMaxScaler
 from flask import Flask, jsonify
 from tensorflow.keras.models import Sequential  # type: ignore
 from tensorflow.keras.layers import LSTM, Dense  # type: ignore
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
 
 from Datafile.load_data import load_data
+
 #===============================================เตรียมข้อมูล=========================================
 def prepare_data(df):
     # เติมค่าขาดหายไปในคอลัมน์เป้าหมาย
@@ -32,7 +33,7 @@ def prepare_data(df):
     df['sales_amount_scaled'] = scaler.fit_transform(df[['sales_amount']])
 
     # เตรียมข้อมูลสำหรับ LSTM
-    sequence_length = 10  # จำนวนวันใน sequence
+    sequence_length = 5  # จำนวนวันใน sequence
     X, y = [], []
     for i in range(sequence_length, len(df)):
         X.append(df['sales_amount_scaled'].iloc[i-sequence_length:i].values)
@@ -42,17 +43,19 @@ def prepare_data(df):
     df[['sale_date']].to_csv('sale_dates.csv', index=False)
 
     return np.array(X), np.array(y), scaler, df
+
 #===============================================เทรน=========================================
 def train_lstm_model(X, y):
     # สร้างโมเดล LSTM
     model = Sequential([
-        LSTM(50, return_sequences=True, input_shape=(X.shape[1], 1)),
-        LSTM(50),
+        LSTM(100, return_sequences=True, input_shape=(X.shape[1], 1)),
+        LSTM(100),
         Dense(1)
     ])
     model.compile(optimizer='adam', loss='mse')
     model.fit(X, y, epochs=20, batch_size=32, verbose=1)
     return model
+
 #===============================================ทำนาย=========================================
 def predict_next_sales(model, X, scaler, df):
     # ใช้ข้อมูลล่าสุดในการทำนาย
@@ -79,23 +82,28 @@ def predict_sales():
     # ปรับรูปร่างข้อมูลให้เหมาะสมกับ LSTM
     X = X.reshape(X.shape[0], X.shape[1], 1)
 
-    # แบ่งข้อมูลเป็น training และ testing set (80/20)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    # ฝึกโมเดลโดยใช้ข้อมูลทั้งหมด
+    model = train_lstm_model(X, y)
 
-    # ฝึกโมเดล
-    model = train_lstm_model(X_train, y_train)
+    # ใช้ข้อมูลล่าสุดในการทำนาย
+    predicted_sales, predicted_date = predict_next_sales(model, X, scaler, df_prepared)
 
-    # ทำนายยอดขายในวันถัดไปโดยใช้ข้อมูล testing
-    predicted_sales = model.predict(X_test)
-    predicted_sales = scaler.inverse_transform(predicted_sales)
+    # ทำนายทั้งหมดเพื่อคำนวณค่าผลลัพธ์
+    predicted_sales_all = model.predict(X)
+    predicted_sales_all = scaler.inverse_transform(predicted_sales_all)
 
-    # แปลงค่า y_test กลับจากการสเกลเป็นยอดขายจริง
-    y_test_actual = scaler.inverse_transform(y_test.reshape(-1, 1))
+    # คำนวณ mse, mae, mape
+    mse = mean_squared_error(y, predicted_sales_all)
+    mae = mean_absolute_error(y, predicted_sales_all)
+    mape = mean_absolute_percentage_error(y, predicted_sales_all)
+
+    # แปลงค่า y กลับจากการสเกลเป็นยอดขายจริง
+    y_actual = scaler.inverse_transform(y.reshape(-1, 1))
 
     # สร้างกราฟเปรียบเทียบผลลัพธ์
     plt.figure(figsize=(10, 6))
-    plt.plot(df_prepared['sale_date'].iloc[-len(y_test):], y_test_actual, label="Actual Sales", color='blue')
-    plt.plot(df_prepared['sale_date'].iloc[-len(y_test):], predicted_sales, label="Predicted Sales", color='red')
+    plt.plot(df_prepared['sale_date'].iloc[-len(y):], y_actual, label="Actual Sales", color='blue')
+    plt.plot(df_prepared['sale_date'].iloc[-len(y):], predicted_sales_all, label="Predicted Sales", color='red')
     plt.xlabel('Date')
     plt.ylabel('Sales Amount')
     plt.title('Actual vs Predicted Sales')
@@ -105,9 +113,12 @@ def predict_sales():
     plt.show()
 
     return jsonify({
-        'predicted_sales': float(predicted_sales[-1][0]),
-        'predicted_date': df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1),
-        'model_name': "LSTM"
+        'predicted_sales': float(predicted_sales),
+        'predicted_date': predicted_date,
+        'model_name': "LSTM",
+        'mse': mse,
+        'mae': mae,
+        'mape': mape,
     })
 
 if __name__ == '__main__':

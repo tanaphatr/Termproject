@@ -10,7 +10,7 @@ from flask import Flask, jsonify
 from tensorflow.keras.models import Sequential  # type: ignore
 from tensorflow.keras.layers import LSTM, Dense  # type: ignore
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error,mean_absolute_error, mean_absolute_percentage_error
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
@@ -45,7 +45,7 @@ def prepare_data(df):
     df['sales_amount_scaled'] = scaler.fit_transform(df[['sales_amount']])
 
     # เตรียมข้อมูลสำหรับ LSTM
-    sequence_length = 10  # จำนวนวันใน sequence
+    sequence_length = 20  # จำนวนวันใน sequence
     X, y = [], []
     for i in range(sequence_length, len(df)):
         X.append(df['sales_amount_scaled'].iloc[i-sequence_length:i].values)
@@ -110,14 +110,15 @@ def create_dataset(data, time_step=30):
     return np.array(X), np.array(y)
 
 #===============================================Stock=========================================
-def train_lstm_model2(X_train, y_train, input_shape=None):
-    model_path2 = r'E:\Term project\PJ\PJML\LSTM\ModelLstm\lstm_model2.pkl'
-     # ตรวจสอบว่าไฟล์โมเดลมีอยู่หรือไม่
+def train_lstm_model2(X_train, y_train, product_code, input_shape=None):
+    model_path2 = f'E:/Term project/PJ/PJML/LSTM/ModelLstm/lstm_model_{product_code}.pkl'
+    
+    # ตรวจสอบว่าไฟล์โมเดลมีอยู่หรือไม่
     if os.path.exists(model_path2):
         # ถ้ามีไฟล์โมเดลให้โหลดไฟล์ที่มีอยู่
         model = joblib.load(model_path2)
-        print("โหลดโมเดลจากไฟล์ที่เก็บไว้")
-        last_trained_date = joblib.load(r'E:\Term project\PJ\PJML\LSTM\ModelLstm\last_trained_date2.pkl')
+        print(f"โหลดโมเดลจากไฟล์ที่เก็บไว้สำหรับ Product_code: {product_code}")
+        last_trained_date = joblib.load(f'E:/Term project/PJ/PJML/LSTM/ModelLstm/last_trained_date_{product_code}.pkl')
         
         # เช็คว่าเวลาผ่านไป 30 วันหรือยัง
         if datetime.now() - last_trained_date < timedelta(days=30):
@@ -133,15 +134,15 @@ def train_lstm_model2(X_train, y_train, input_shape=None):
             Dense(1)
         ])
         model.compile(optimizer='adam', loss='mse')
-        print("สร้างโมเดลใหม่")
+        print(f"สร้างโมเดลใหม่สำหรับ Product_code: {product_code}")
     
     # เทรนโมเดล
     model.fit(X_train, y_train, epochs=20, batch_size=32, verbose=1)
     
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path2)
-    joblib.dump(datetime.now(), r'E:\Term project\PJ\PJML\LSTM\ModelLstm\last_trained_date2.pkl')
-    print("บันทึกโมเดลและวันที่เทรนล่าสุด")
+    joblib.dump(datetime.now(), f'E:/Term project/PJ/PJML/LSTM/ModelLstm/last_trained_date_{product_code}.pkl')
+    print(f"บันทึกโมเดลและวันที่เทรนล่าสุดสำหรับ Product_code: {product_code}")
     
     return model
 
@@ -172,7 +173,7 @@ def predict_sales():
     X = X.reshape(X.shape[0], X.shape[1], 1)
 
     # แบ่งข้อมูลเป็น training และ testing set (80/20)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
     # ฝึกโมเดล
     model = train_lstm_model1(X_train, y_train)
@@ -183,7 +184,8 @@ def predict_sales():
 
     # คำนวณ mse สำหรับ Testing Data
     mse = mean_squared_error(y_test, predicted_sales)
-
+    mae = mean_absolute_error(y_test, predicted_sales)
+    mape = mean_absolute_percentage_error(y_test, predicted_sales)
     # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()
     dfps = preprocess_dataps(dfps)
@@ -207,13 +209,13 @@ def predict_sales():
             X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
             X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
 
-            model = train_lstm_model2(X_train, y_train, input_shape=(X_train.shape[1], X_train.shape[2]))
+            model = train_lstm_model2(X_train, y_train, product_code, input_shape=(X_train.shape[1], X_train.shape[2]))
 
             next_month_prediction = predict_next_month(model, scaled_product_data, scaler)
 
-            # สร้างวันที่ถัดไป
-            last_month = int(product_data['Month'].iloc[-1])
-            last_year = int(product_data['Year'].iloc[-1])
+            # สร้างเดือนถัดไป
+            last_month = int(dfps['Month'].iloc[-1])
+            last_year = int(dfps['Year'].iloc[-1])
             next_month = (last_month % 12) + 1
             next_year = last_year if next_month != 1 else last_year + 1
 
@@ -228,12 +230,14 @@ def predict_sales():
             print(f"Error processing Product_code {product_code}: {e}")
             continue
 
+
     # รวมข้อมูลเพื่อส่งกลับ
     response_data = {
         'predicted_sales': float(predicted_sales[-1][0]),
         'predicted_date': str(df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)),
         'model_name': "LSTM",
-        'mse': mse,
+        'mae': mae,
+        'mape': mape,
         'predictions': [
             {"Next_Year": next_year, "Next_Month": next_month}
         ] + [
