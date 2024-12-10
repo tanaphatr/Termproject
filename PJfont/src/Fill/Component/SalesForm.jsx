@@ -74,6 +74,7 @@ const SalesForm = () => {
         if (product && qty > 0) {  // Validate quantity
             const newProduct = {
                 product_id: product.product_id,
+                product_code:product.product_code,
                 name: product.name,
                 quantity: qty,
                 unit_price: product.unit_price,
@@ -112,12 +113,12 @@ const SalesForm = () => {
     const handleSave = async () => {
         // ดึง employee_id จาก localStorage
         const employee = JSON.parse(localStorage.getItem("loggedInUser"));
-        const employeeId = employee ? employee.user_id : null;
+        const employeeId = employee ? employee.Employees_id : null;
         if (!employeeId) {
             alert("Employee ID not found in localStorage.");
             return;
         }
-
+        console.log(employeeId)
         const today = new Date().toISOString();
         // คำนวณยอดขายรวม
         const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
@@ -149,10 +150,10 @@ const SalesForm = () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        product_id: product.product_id,
-                        date: today,
-                        quantity_sold: product.quantity,
-                        sale_amount: product.total,
+                        Product_code: product.product_code,
+                        Date: today,
+                        Quantity: product.quantity,
+                        Total_Sale: product.total,
                     }),
                 });
 
