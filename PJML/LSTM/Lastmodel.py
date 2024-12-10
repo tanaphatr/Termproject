@@ -57,13 +57,28 @@ def prepare_data(df):
     return np.array(X), np.array(y), scaler, df
 #===============================================Dalisale=========================================
 def train_lstm_model1(X, y):
-    model_path1 = r'E:\Term project\PJ\PJML\LSTM\ModelLstm\lstm_model1.pkl'
+    # ระบุ path ของโฟลเดอร์ปัจจุบัน
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_dir = os.path.join(base_dir, 'ModelLstm')
+    
+    # สร้าง path ของไฟล์โมเดลและวันที่เทรน
+    model_path1 = os.path.join(model_dir, 'lstm_model1.pkl')
+    date_path = os.path.join(model_dir, 'last_trained_date1.pkl')
+    
+    # ตรวจสอบว่าโฟลเดอร์สำหรับเก็บโมเดลมีอยู่หรือไม่ ถ้าไม่มีให้สร้างใหม่
+    os.makedirs(model_dir, exist_ok=True)
+    
     # ตรวจสอบว่าไฟล์โมเดลมีอยู่หรือไม่
     if os.path.exists(model_path1):
         # ถ้ามีไฟล์โมเดลให้โหลดไฟล์ที่มีอยู่
         model = joblib.load(model_path1)
         print("โหลดโมเดลจากไฟล์ที่เก็บไว้")
-        last_trained_date = joblib.load(r'E:\Term project\PJ\PJML\LSTM\ModelLstm\last_trained_date1.pkl')
+        
+        # โหลดวันที่เทรนล่าสุด
+        if os.path.exists(date_path):
+            last_trained_date = joblib.load(date_path)
+        else:
+            last_trained_date = datetime.min  # กำหนดค่าเริ่มต้นหากไม่มีไฟล์วันที่
         
         # เช็คว่าเวลาผ่านไป 30 วันหรือยัง
         if datetime.now() - last_trained_date < timedelta(days=30):
@@ -86,7 +101,7 @@ def train_lstm_model1(X, y):
     
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path1)
-    joblib.dump(datetime.now(), r'E:\Term project\PJ\PJML\LSTM\ModelLstm\last_trained_date1.pkl')
+    joblib.dump(datetime.now(), date_path)
     print("บันทึกโมเดลและวันที่เทรนล่าสุด")
     
     return model
@@ -111,14 +126,28 @@ def create_dataset(data, time_step=30):
 
 #===============================================Stock=========================================
 def train_lstm_model2(X_train, y_train, product_code, input_shape=None):
-    model_path2 = f'E:/Term project/PJ/PJML/LSTM/ModelLstm/lstm_model_{product_code}.pkl'
+    # ระบุโฟลเดอร์ปัจจุบัน
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_dir = os.path.join(base_dir, 'ModelLstm')
+    
+    # สร้าง path ของไฟล์โมเดลและวันที่เทรน
+    model_path2 = os.path.join(model_dir, f'lstm_model_{product_code}.pkl')
+    date_path = os.path.join(model_dir, f'last_trained_date_{product_code}.pkl')
+    
+    # ตรวจสอบว่าโฟลเดอร์สำหรับเก็บโมเดลมีอยู่หรือไม่ ถ้าไม่มีให้สร้างใหม่
+    os.makedirs(model_dir, exist_ok=True)
     
     # ตรวจสอบว่าไฟล์โมเดลมีอยู่หรือไม่
     if os.path.exists(model_path2):
         # ถ้ามีไฟล์โมเดลให้โหลดไฟล์ที่มีอยู่
         model = joblib.load(model_path2)
         print(f"โหลดโมเดลจากไฟล์ที่เก็บไว้สำหรับ Product_code: {product_code}")
-        last_trained_date = joblib.load(f'E:/Term project/PJ/PJML/LSTM/ModelLstm/last_trained_date_{product_code}.pkl')
+        
+        # โหลดวันที่เทรนล่าสุด
+        if os.path.exists(date_path):
+            last_trained_date = joblib.load(date_path)
+        else:
+            last_trained_date = datetime.min  # กำหนดค่าเริ่มต้นหากไม่มีไฟล์วันที่
         
         # เช็คว่าเวลาผ่านไป 30 วันหรือยัง
         if datetime.now() - last_trained_date < timedelta(days=30):
@@ -141,7 +170,7 @@ def train_lstm_model2(X_train, y_train, product_code, input_shape=None):
     
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path2)
-    joblib.dump(datetime.now(), f'E:/Term project/PJ/PJML/LSTM/ModelLstm/last_trained_date_{product_code}.pkl')
+    joblib.dump(datetime.now(), date_path)
     print(f"บันทึกโมเดลและวันที่เทรนล่าสุดสำหรับ Product_code: {product_code}")
     
     return model
