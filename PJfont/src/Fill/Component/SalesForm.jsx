@@ -22,7 +22,7 @@ import {
     Paper,
 } from '@mui/material';
 
-const SalesForm = (onTotalSaleChange ) => {
+const SalesForm = () => {
     const [products, setProducts] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState('');
