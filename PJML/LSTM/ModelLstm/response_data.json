@@ -1,0 +1,224 @@
+{
+    "date": "2024-12-10",
+    "response_data": {
+        "predicted_sales": 8573.0654296875,
+        "predicted_date": "2024-10-11 00:00:00",
+        "model_name": "LSTM",
+        "mae": 9729.644802638302,
+        "mape": 3.283580241089764e+17,
+        "predictions": [
+            {
+                "Next_Year": 2567,
+                "Next_Month": 10
+            },
+            {
+                "Product_code": "A1001",
+                "Prediction": 28.0
+            },
+            {
+                "Product_code": "A1002",
+                "Prediction": 76.0
+            },
+            {
+                "Product_code": "A1003",
+                "Prediction": 75.0
+            },
+            {
+                "Product_code": "A1004",
+                "Prediction": 59.0
+            },
+            {
+                "Product_code": "A1005",
+                "Prediction": 40.0
+            },
+            {
+                "Product_code": "A1006",
+                "Prediction": 18.0
+            },
+            {
+                "Product_code": "A1007",
+                "Prediction": 19.0
+            },
+            {
+                "Product_code": "A1008",
+                "Prediction": 50.0
+            },
+            {
+                "Product_code": "A1009",
+                "Prediction": 45.0
+            },
+            {
+                "Product_code": "A1010",
+                "Prediction": 17.0
+            },
+            {
+                "Product_code": "A1011",
+                "Prediction": 56.0
+            },
+            {
+                "Product_code": "A1012",
+                "Prediction": 12.0
+            },
+            {
+                "Product_code": "A1013",
+                "Prediction": 26.0
+            },
+            {
+                "Product_code": "A1014",
+                "Prediction": 21.0
+            },
+            {
+                "Product_code": "A1015",
+                "Prediction": 23.0
+            },
+            {
+                "Product_code": "A1016",
+                "Prediction": 18.0
+            },
+            {
+                "Product_code": "A1017",
+                "Prediction": 11.0
+            },
+            {
+                "Product_code": "A1018",
+                "Prediction": 30.0
+            },
+            {
+                "Product_code": "A1019",
+                "Prediction": 2.0
+            },
+            {
+                "Product_code": "A1020",
+                "Prediction": 36.0
+            },
+            {
+                "Product_code": "A1021",
+                "Prediction": 19.0
+            },
+            {
+                "Product_code": "A1022",
+                "Prediction": 19.0
+            },
+            {
+                "Product_code": "A1023",
+                "Prediction": 27.0
+            },
+            {
+                "Product_code": "A1024",
+                "Prediction": 31.0
+            },
+            {
+                "Product_code": "A1025",
+                "Prediction": 8.0
+            },
+            {
+                "Product_code": "A1026",
+                "Prediction": 8.0
+            },
+            {
+                "Product_code": "A1027",
+                "Prediction": 38.0
+            },
+            {
+                "Product_code": "A1028",
+                "Prediction": 11.0
+            },
+            {
+                "Product_code": "A1029",
+                "Prediction": 45.0
+            },
+            {
+                "Product_code": "A1030",
+                "Prediction": 15.0
+            },
+            {
+                "Product_code": "A1031",
+                "Prediction": 50.0
+            },
+            {
+                "Product_code": "A1032",
+                "Prediction": 28.0
+            },
+            {
+                "Product_code": "A1033",
+                "Prediction": 9.0
+            },
+            {
+                "Product_code": "A1034",
+                "Prediction": 65.0
+            },
+            {
+                "Product_code": "A1035",
+                "Prediction": 24.0
+            },
+            {
+                "Product_code": "A1036",
+                "Prediction": 124.0
+            },
+            {
+                "Product_code": "A1037",
+                "Prediction": 11.0
+            },
+            {
+                "Product_code": "A1038",
+                "Prediction": 3.0
+            },
+            {
+                "Product_code": "A1039",
+                "Prediction": 52.0
+            },
+            {
+                "Product_code": "A1040",
+                "Prediction": 9.0
+            },
+            {
+                "Product_code": "A1041",
+                "Prediction": 19.0
+            },
+            {
+                "Product_code": "A1042",
+                "Prediction": 11.0
+            },
+            {
+                "Product_code": "B1001",
+                "Prediction": 5.0
+            },
+            {
+                "Product_code": "B1002",
+                "Prediction": 287.0
+            },
+            {
+                "Product_code": "B1003",
+                "Prediction": 469.0
+            },
+            {
+                "Product_code": "C1001",
+                "Prediction": 7.0
+            },
+            {
+                "Product_code": "D1001",
+                "Prediction": 34.0
+            },
+            {
+                "Product_code": "D1002",
+                "Prediction": 15.0
+            },
+            {
+                "Product_code": "D1003",
+                "Prediction": 179.0
+            },
+            {
+                "Product_code": "E1001",
+                "Prediction": 3.0
+            },
+            {
+                "Product_code": "F1001",
+                "Prediction": 21.0
+            },
+            {
+                "Product_code": "F1002",
+                "Prediction": 9.0
+            }
+        ]
+    }
+}
