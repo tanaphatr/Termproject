@@ -22,7 +22,7 @@ import {
     Paper,
 } from '@mui/material';
 
-const SalesForm = (props) => {
+const SalesForm = (onTotalSaleChange ) => {
     const [products, setProducts] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState('');
@@ -30,6 +30,9 @@ const SalesForm = (props) => {
     const [addedProducts, setAddedProducts] = useState([]);
 
     useEffect(() => {
+        // ดึงข้อมูลจาก localStorage เมื่อมีการรีเฟรชหรือเปิดหน้าใหม่
+        const storedProducts = JSON.parse(localStorage.getItem('addedProducts')) || [];
+        setAddedProducts(storedProducts);
         const fetchProducts = async () => {
             try {
                 const response = await fetch("http://localhost:8888/Products");
@@ -47,12 +50,13 @@ const SalesForm = (props) => {
     }, []);
 
     useEffect(() => {
-        // คำนวณยอดรวมเมื่อ addedProducts เปลี่ยนแปลง
-        const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
-        // ส่งยอดขายรวมไปที่ Report
-        props.onTotalSaleChange(totalSale);
-    }, [addedProducts, props]); // ติดตามการเปลี่ยนแปลงของ addedProducts
+        // เก็บข้อมูลลงใน localStorage ทุกครั้งที่ addedProducts เปลี่ยนแปลง
+        if (addedProducts.length > 0) {
+            localStorage.setItem('addedProducts', JSON.stringify(addedProducts));
+        }
 
+    }, [addedProducts]);
+    
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -66,49 +70,58 @@ const SalesForm = (props) => {
     const handleAddProduct = () => {
         const product = products.find(prod => prod.name === selectedProduct);
         const qty = parseInt(quantity);
-
+    
         if (product && qty > 0) {  // Validate quantity
             const newProduct = {
-                product_id: product.product_id, // Using product_id consistently
+                product_id: product.product_id,
                 name: product.name,
                 quantity: qty,
                 unit_price: product.unit_price,
                 total: product.unit_price * qty,
             };
-            console.log("Adding product:", newProduct); // Log the product being added
-            setAddedProducts(prevProducts => [...prevProducts, newProduct]);
+            setAddedProducts(prevProducts => {
+                const updatedProducts = [...prevProducts, newProduct];
+                console.log('Updated addedProducts:', updatedProducts);  // ตรวจสอบค่าของ addedProducts หลังจากเพิ่มสินค้า
+                return updatedProducts;
+            });
             handleClose();
         } else {
             alert("Please select a product and enter a valid quantity.");
         }
     };
+    
 
     const handleRemoveProduct = (product_id) => {
-        console.log("Removing product with id:", product_id); // Log the product ID being removed
-        setAddedProducts(prevProducts => prevProducts.filter(prod => prod.product_id !== product_id));
+        setAddedProducts(prevProducts => {
+            const updatedProducts = prevProducts.filter(prod => prod.product_id !== product_id);
+    
+            // อัพเดตข้อมูลลงใน localStorage หลังจากที่ลบสินค้า
+            localStorage.setItem('addedProducts', JSON.stringify(updatedProducts));
+    
+            return updatedProducts;
+        });
     };
 
     const handleReset = () => {
         setAddedProducts([]); // Clear added products
-        setSelectedProduct(''); // Reset selected product
-        setQuantity(''); // Reset quantity
+        localStorage.removeItem('addedProducts'); // ลบข้อมูลจาก localStorage
+        setSelectedProduct('');
+        setQuantity('');
     };
 
     const handleSave = async () => {
         // ดึง employee_id จาก localStorage
         const employee = JSON.parse(localStorage.getItem("loggedInUser"));
-        const employeeId = employee.user_id;
-        console.log(employeeId)
+        const employeeId = employee ? employee.user_id : null;
         if (!employeeId) {
             alert("Employee ID not found in localStorage.");
             return;
         }
 
         const today = new Date().toISOString();
-        console.log(today)
         // คำนวณยอดขายรวม
         const totalSale = addedProducts.reduce((total, product) => total + product.total, 0);
-        console.log(totalSale)
+
         // ส่งข้อมูลยอดขายรายวัน
         try {
             const dailySaleResponse = await fetch("http://localhost:8888/Daily_sales", {
@@ -117,9 +130,9 @@ const SalesForm = (props) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    sale_date: today, // หรือใช้วันที่ที่คุณต้องการ
+                    sale_date: today,
                     total_sales: totalSale,
-                    employee_id: employeeId, // ส่ง employee_id ที่ดึงมาจาก localStorage
+                    employee_id: employeeId,
                 }),
             });
 
@@ -127,8 +140,6 @@ const SalesForm = (props) => {
                 throw new Error("Failed to save daily sales.");
             }
 
-            const dailySaleData = await dailySaleResponse.json();
-            console.log("Daily Sales saved:", dailySaleData);
 
             // ส่งข้อมูลยอดขายของแต่ละผลิตภัณฑ์
             for (const product of addedProducts) {
@@ -148,15 +159,12 @@ const SalesForm = (props) => {
                 if (!productSaleResponse.ok) {
                     throw new Error(`Failed to save product sale for ${product.name}.`);
                 }
-
-                const productSaleData = await productSaleResponse.json();
-                console.log("Product Sale saved:", productSaleData);
             }
 
             alert("Sales data saved successfully!");
 
             // รีเซ็ตข้อมูลหลังจากการบันทึก
-            setAddedProducts([]);
+            handleReset();
         } catch (error) {
             console.error("Error saving sales data:", error);
             alert("There was an error saving the sales data.");
@@ -181,15 +189,15 @@ const SalesForm = (props) => {
                         <TableBody>
                             {addedProducts.map((product) => (
                                 <TableRow key={product.product_id}>
-                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.name}</TableCell>
-                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.quantity}</TableCell>
-                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.unit_price}</TableCell>
-                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>{product.total}</TableCell>
-                                    <TableCell align="center" style={{ verticalAlign: 'middle' }}>
+                                    <TableCell align="center">{product.name}</TableCell>
+                                    <TableCell align="center">{product.quantity}</TableCell>
+                                    <TableCell align="center">{product.unit_price}</TableCell>
+                                    <TableCell align="center">{product.total}</TableCell>
+                                    <TableCell align="center">
                                         <Button
                                             variant="outlined"
                                             color="error"
-                                            onClick={() => handleRemoveProduct(product.product_id)} // ส่ง product_id เพื่อลบ
+                                            onClick={() => handleRemoveProduct(product.product_id)}
                                         >
                                             Delete
                                         </Button>
@@ -223,14 +231,6 @@ const SalesForm = (props) => {
                             labelId="product-select-label"
                             value={selectedProduct}
                             onChange={(e) => setSelectedProduct(e.target.value)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 200, // สามารถปรับขนาดความสูงได้ตามต้องการ
-                                        width: 300, // ปรับขนาดให้เต็มความกว้างของ Select
-                                    },
-                                },
-                            }}
                         >
                             {products.map((product) => (
                                 <MenuItem key={product.product_id} value={product.name}>
@@ -241,7 +241,6 @@ const SalesForm = (props) => {
                                 </MenuItem>
                             ))}
                         </Select>
-
                     </FormControl>
                     <TextField
                         label="Quantity"
