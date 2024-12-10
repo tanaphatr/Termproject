@@ -111,9 +111,10 @@ def predict_next_sales(model, X, scaler, df):
     last_sequence = X[-1].reshape(1, -1, 1)
     prediction_scaled = model.predict(last_sequence)
     predicted_sales = scaler.inverse_transform(prediction_scaled)[0][0]
-    
-    # ดึงวันที่ล่าสุดจากคอลัมน์ 'sale_date' และเพิ่มวัน
-    predicted_date = df['sale_date'].iloc[-1] + pd.DateOffset(days=1)
+
+    # ใช้วันที่ปัจจุบันแทนที่ใช้วันที่จากข้อมูล
+    predicted_date = datetime.now().date()  # ใช้วันที่ปัจจุบัน
+
     return predicted_sales, predicted_date
 
 #===============================================Time series=========================================
@@ -215,6 +216,10 @@ def predict_sales():
     mse = mean_squared_error(y_test, predicted_sales)
     mae = mean_absolute_error(y_test, predicted_sales)
     mape = mean_absolute_percentage_error(y_test, predicted_sales)
+
+    # ทำนายยอดขายจากข้อมูลปัจจุบัน
+    predicted_sales_value, predicted_date = predict_next_sales(model, X, scaler, df_prepared)
+
     # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()
     dfps = preprocess_dataps(dfps)
@@ -262,8 +267,8 @@ def predict_sales():
 
     # รวมข้อมูลเพื่อส่งกลับ
     response_data = {
-        'predicted_sales': float(predicted_sales[-1][0]),
-        'predicted_date': str(df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)),
+        'predicted_sales': float(predicted_sales_value),
+        'predicted_date': str(predicted_date),
         'model_name': "LSTM",
         'mae': mae,
         'mape': mape,
