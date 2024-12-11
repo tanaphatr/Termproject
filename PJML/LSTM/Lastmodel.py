@@ -8,8 +8,12 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from flask import Flask, jsonify
 from tensorflow.keras.models import Sequential  # type: ignore
-from tensorflow.keras.layers import LSTM, Dense  # type: ignore
+from tensorflow.keras.layers import LSTM, Dense ,Dropout # type: ignore
+from tensorflow.keras.optimizers import Adam # type: ignore
+from tensorflow.keras import regularizers # type: ignore
+from tensorflow.keras.losses import Huber # type: ignore
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error,mean_absolute_error, mean_absolute_percentage_error
 
 # เพิ่ม path ของโปรเจค
@@ -29,7 +33,7 @@ from Datafile.load_data import load_data
 #===============================================เตรียมข้อมูล=========================================
 def prepare_data(df):
     # เติมค่าขาดหายไปในคอลัมน์เป้าหมาย
-    df['sales_amount'] = df['sales_amount'].fillna(df['sales_amount'].mean())
+    df['sales_amount'] = df['sales_amount'].fillna(df['sales_amount'].median())
 
     # แปลงวันที่จาก พ.ศ. เป็น ค.ศ.
     if 'sale_date' in df.columns:
@@ -41,7 +45,7 @@ def prepare_data(df):
         df = df.sort_values('sale_date')
 
     # สเกลข้อมูลให้อยู่ในช่วง [0, 1]
-    scaler = MinMaxScaler()
+    scaler = StandardScaler()
     df['sales_amount_scaled'] = scaler.fit_transform(df[['sales_amount']])
 
     # เตรียมข้อมูลสำหรับ LSTM
@@ -89,15 +93,16 @@ def train_lstm_model1(X, y):
     else:
         # ถ้าไม่มีไฟล์โมเดล จะสร้างโมเดลใหม่
         model = Sequential([
-            LSTM(50, return_sequences=True, input_shape=(X.shape[1], 1)),
-            LSTM(50),
-            Dense(1)
-        ])
-        model.compile(optimizer='adam', loss='mse')
-        print("สร้างโมเดลใหม่")
-    
+        LSTM(256, return_sequences=True, input_shape=(X.shape[1], 1), kernel_regularizer=regularizers.l2(0.01)),
+        Dropout(0.4),  # เพิ่มค่า Dropout เพื่อป้องกัน overfitting
+        LSTM(256),
+        Dense(1)
+    ])
+    model.compile(optimizer=Adam(learning_rate=0.0001), loss=Huber(), metrics=['mae', 'mape'])
+    print("สร้างโมเดลใหม่")
+
     # เทรนโมเดล
-    model.fit(X, y, epochs=20, batch_size=32, verbose=1)
+    model.fit(X, y, epochs=150, batch_size=32, verbose=1)
     
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path1)
