@@ -18,6 +18,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from Datafile.load_data import load_dataps
 from Preprocess.preprocess_data import preprocess_dataps
 from Datafile.load_data import load_data
+
 # prepare_data ทำความสะอาดข้อมูล, เติมค่าขาดหาย, แปลงวันที่, และสเกลข้อมูลสำหรับการฝึกโมเดล
 # train_lstm_model1 เทรนโมเดล LSTM สำหรับการทำนายยอดขาย
 # predict_next_sales ทำนายยอดขายในวันถัดไปโดยใช้โมเดล LSTM
@@ -110,10 +111,9 @@ def predict_next_sales(model, X, scaler, df):
     last_sequence = X[-1].reshape(1, -1, 1)
     prediction_scaled = model.predict(last_sequence)
     predicted_sales = scaler.inverse_transform(prediction_scaled)[0][0]
-
-    # ใช้วันที่ปัจจุบันแทนที่ใช้วันที่จากข้อมูล
-    predicted_date = datetime.now().date()  # ใช้วันที่ปัจจุบัน
-
+    
+    # ดึงวันที่ล่าสุดจากคอลัมน์ 'sale_date' และเพิ่มวัน
+    predicted_date = df['sale_date'].iloc[-1] + pd.DateOffset(days=1)
     return predicted_sales, predicted_date
 
 #===============================================Time series=========================================
@@ -176,7 +176,7 @@ def train_lstm_model2(X_train, y_train, product_code, input_shape=None):
     return model
 
 #===============================================predict_next_month=========================================
-def predict_next_month_from_current(model, scaled_data, scaler):
+def predict_next_month(model, scaled_data, scaler):
     latest_data = scaled_data[-30:]  # ใช้ข้อมูลจาก 30 วันสุดท้าย
     latest_data = latest_data.reshape((1, latest_data.shape[0], 1))  # ปรับรูปแบบข้อมูล
     next_month_prediction = model.predict(latest_data)
@@ -185,7 +185,7 @@ def predict_next_month_from_current(model, scaled_data, scaler):
     next_month_full = np.zeros((1, scaled_data.shape[1]))
     next_month_full[:, 0] = next_month_prediction[:, 0]
     return scaler.inverse_transform(next_month_full)
-
+    
 #===============================================API=========================================
 # Flask App
 app = Flask(__name__)
@@ -215,11 +215,7 @@ def predict_sales():
     mse = mean_squared_error(y_test, predicted_sales)
     mae = mean_absolute_error(y_test, predicted_sales)
     mape = mean_absolute_percentage_error(y_test, predicted_sales)
-
-    # ทำนายยอดขายจากข้อมูลปัจจุบัน
-    predicted_sales_value, predicted_date = predict_next_sales(model, X, scaler, df_prepared)
-
-   # เตรียมข้อมูลเพิ่มเติม
+    # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()
     dfps = preprocess_dataps(dfps)
     dfps = dfps[['Product_code', 'Year', 'Month', 'Monthly_Total_Quantity']]
@@ -244,14 +240,13 @@ def predict_sales():
 
             model = train_lstm_model2(X_train, y_train, product_code, input_shape=(X_train.shape[1], X_train.shape[2]))
 
-            next_month_prediction = predict_next_month_from_current(model, scaled_product_data, scaler)
+            next_month_prediction = predict_next_month(model, scaled_product_data, scaler)
 
-            # คำนวณปีและเดือนถัดไป
-            current_date = datetime.now()
-            current_year = current_date.year
-            current_month = current_date.month
-            next_month = (current_month % 12) + 1
-            next_year = current_year if next_month != 1 else current_year + 1
+            # สร้างเดือนถัดไป
+            last_month = int(dfps['Month'].iloc[-1])
+            last_year = int(dfps['Year'].iloc[-1])
+            next_month = (last_month % 12) + 1
+            next_year = last_year if next_month != 1 else last_year + 1
 
             predictions.append({
                 "Product_code": product_code,
@@ -264,10 +259,11 @@ def predict_sales():
             print(f"Error processing Product_code {product_code}: {e}")
             continue
 
+
     # รวมข้อมูลเพื่อส่งกลับ
     response_data = {
-        'predicted_sales': float(predicted_sales_value),
-        'predicted_date': str(predicted_date),
+        'predicted_sales': float(predicted_sales[-1][0]),
+        'predicted_date': str(df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)),
         'model_name': "LSTM",
         'mae': mae,
         'mape': mape,
