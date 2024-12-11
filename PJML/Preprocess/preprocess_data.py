@@ -12,10 +12,6 @@ def preprocess_data(df):
     df['sales_amount'].fillna(df['sales_amount'].mean(), inplace=True)
     df['profit_amount'].fillna(df['profit_amount'].mean(), inplace=True)
 
-    # แปลงข้อมูลหมวดหมู่เป็น One-Hot Encoding
-    categorical_features = ['event', 'festival', 'weather', 'Back_to_School_Period']
-    df = pd.get_dummies(df, columns=categorical_features, drop_first=True)
-
     # เพิ่มคอลัมน์ day_of_year
     df['day_of_year'] = df['sale_date'].dt.dayofyear
 

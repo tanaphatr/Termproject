@@ -14,7 +14,6 @@ def preprocess_dataps(dfps):
     # 2. เพิ่มคอลัมน์ 'Year' และ 'Month' โดยใช้ข้อมูลวันที่ที่มีอยู่
     dfps['Year'] = dfps['Date'].str[:4]  # ใช้ 4 หลักแรกของ 'Date' เพื่อดึงปี
     dfps['Month'] = dfps['Date'].str[5:7]  # ใช้หลักที่ 5 ถึง 7 เพื่อดึงเดือน
-    dfps['Day'] = dfps['Date'].str[8:10]  # ดึงข้อมูลวันที่
 
     # 3. ตรวจสอบข้อมูลเดือนสุดท้าย
     latest_year = dfps['Year'].max()
@@ -22,7 +21,7 @@ def preprocess_dataps(dfps):
 
     # ตรวจสอบจำนวนวันที่มีข้อมูลในเดือนสุดท้าย
     latest_month_data = dfps[(dfps['Year'] == latest_year) & (dfps['Month'] == latest_month)]
-    days_in_month = latest_month_data['Day'].astype(int).nunique()
+    days_in_month = latest_month_data['Date'].str[8:10].astype(int).nunique()
     total_days_in_month = monthrange(int(latest_year), int(latest_month))[1]
 
     # หากเดือนสุดท้ายมีข้อมูลไม่ครบเดือน ให้ลบข้อมูลเดือนนั้น
@@ -47,14 +46,11 @@ def preprocess_dataps(dfps):
     # 7. รวมข้อมูลทั้งหมดกลับไปที่ DataFrame
     dfps = dfps.merge(monthly_total_quantity, on=['Year', 'Month', 'Product_code'], how='left')
 
-    # 8. สร้างคอลัมน์ 'Date' โดยการรวมปี, เดือน, และวัน
-    dfps['Date'] = dfps['Year'] + '-' + dfps['Month'] + '-' + dfps['Day']
+    # 8. เลือกคอลัมน์ที่ต้องการแสดงผล
+    dfps = dfps[['Year', 'Month', 'Product_code', 'Monthly_Total_Quantity']]
 
-    # 9. เลือกคอลัมน์ที่ต้องการแสดงผล
-    dfps = dfps[['Date', 'Year', 'Month', 'Product_code', 'Monthly_Total_Quantity']]
-
-    # 10. ตัดแถวที่ Product_code ซ้ำในวันที่เดียวกัน
-    dfps = dfps.drop_duplicates(subset=['Date', 'Product_code'])
+    # 9. ตัดแถวที่ Product_code ซ้ำในปีและเดือนเดียวกัน
+    dfps = dfps.drop_duplicates(subset=['Year', 'Month', 'Product_code'])
 
     return dfps
 
