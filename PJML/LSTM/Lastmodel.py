@@ -63,7 +63,7 @@ def prepare_data(df):
 def train_lstm_model1(X, y):
     # ระบุ path ของโฟลเดอร์ปัจจุบัน
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    model_dir = os.path.join(base_dir, 'ModelLstm')
+    model_dir = os.path.join(base_dir, 'ModelLstm1')
     
     # สร้าง path ของไฟล์โมเดลและวันที่เทรน
     model_path1 = os.path.join(model_dir, 'lstm_model1.pkl')
@@ -122,18 +122,18 @@ def predict_next_sales(model, X, scaler, df):
     return predicted_sales, predicted_date
 
 #===============================================Time series=========================================
-def create_dataset(data, time_step=30):
+def create_dataset(data, time_step=12):
     X, y = [], []
     for i in range(len(data) - time_step):
-        X.append(data[i:(i+time_step)])
-        y.append(data[i + time_step, 0])  # ปริมาณสินค้าที่ต้องเตรียม
+        X.append(data[i:(i + time_step)])
+        y.append(data[i + time_step, 0])  # ใช้ Monthly_Total_Quantity
     return np.array(X), np.array(y)
 
 #===============================================Stock=========================================
 def train_lstm_model2(X_train, y_train, product_code, input_shape=None):
     # ระบุโฟลเดอร์ปัจจุบัน
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    model_dir = os.path.join(base_dir, 'ModelLstm')
+    model_dir = os.path.join(base_dir, 'ModelLstm2')
     
     # สร้าง path ของไฟล์โมเดลและวันที่เทรน
     model_path2 = os.path.join(model_dir, f'lstm_model_{product_code}.pkl')
@@ -182,7 +182,7 @@ def train_lstm_model2(X_train, y_train, product_code, input_shape=None):
 
 #===============================================predict_next_month=========================================
 def predict_next_month(model, scaled_data, scaler):
-    latest_data = scaled_data[-30:]  # ใช้ข้อมูลจาก 30 วันสุดท้าย
+    latest_data = scaled_data[-12:]  # ใช้ข้อมูล 12 เดือนสุดท้าย
     latest_data = latest_data.reshape((1, latest_data.shape[0], 1))  # ปรับรูปแบบข้อมูล
     next_month_prediction = model.predict(latest_data)
 
@@ -190,7 +190,6 @@ def predict_next_month(model, scaled_data, scaler):
     next_month_full = np.zeros((1, scaled_data.shape[1]))
     next_month_full[:, 0] = next_month_prediction[:, 0]
     return scaler.inverse_transform(next_month_full)
-    
 #===============================================API=========================================
 # Flask App
 app = Flask(__name__)
@@ -220,10 +219,18 @@ def predict_sales():
     mse = mean_squared_error(y_test, predicted_sales)
     mae = mean_absolute_error(y_test, predicted_sales)
     mape = mean_absolute_percentage_error(y_test, predicted_sales)
+
     # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()
     dfps = preprocess_dataps(dfps)
     dfps = dfps[['Product_code', 'Year', 'Month', 'Monthly_Total_Quantity']]
+
+    # สร้างเดือนถัดไป
+    last_row = dfps.iloc[-1]
+    last_month, last_year = int(last_row['Month']), int(last_row['Year'])
+    next_month = (last_month % 12) + 1
+    next_year = last_year if next_month != 1 else last_year + 1
+
 
     scaler = MinMaxScaler(feature_range=(0, 1))
     predictions = []
@@ -231,6 +238,8 @@ def predict_sales():
     grouped = dfps.groupby('Product_code')
     for product_code, product_data in grouped:
         try:
+            # เรียงลำดับข้อมูลตามปีและเดือน
+            product_data = product_data.sort_values(by=['Year', 'Month'])
             scaled_product_data = scaler.fit_transform(product_data[['Monthly_Total_Quantity']])
             X, y = create_dataset(scaled_product_data)
             if len(X) == 0:
@@ -247,16 +256,8 @@ def predict_sales():
 
             next_month_prediction = predict_next_month(model, scaled_product_data, scaler)
 
-            # สร้างเดือนถัดไป
-            last_month = int(dfps['Month'].iloc[-1])
-            last_year = int(dfps['Year'].iloc[-1])
-            next_month = (last_month % 12) + 1
-            next_year = last_year if next_month != 1 else last_year + 1
-
             predictions.append({
                 "Product_code": product_code,
-                "Next_Year": next_year,
-                "Next_Month": next_month,
                 "Prediction": next_month_prediction[0, 0]
             })
 
@@ -264,14 +265,13 @@ def predict_sales():
             print(f"Error processing Product_code {product_code}: {e}")
             continue
 
-
     # รวมข้อมูลเพื่อส่งกลับ
     response_data = {
         'predicted_sales': float(predicted_sales[-1][0]),
         'predicted_date': str(df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)),
         'model_name': "LSTM",
         'mae': mae,
-        'mape': mape,
+        'mape':mape,
         'predictions': [
             {"Next_Year": next_year, "Next_Month": next_month}
         ] + [

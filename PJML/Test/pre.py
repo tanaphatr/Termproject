@@ -43,13 +43,22 @@ def preprocess_dataps(dfps):
     monthly_total_quantity = monthly_total_quantity.set_index(['Year', 'Month', 'Product_code'])
     monthly_total_quantity = monthly_total_quantity.reindex(all_combinations, fill_value=0).reset_index()
 
-    # 7. รวมข้อมูลทั้งหมดกลับไปที่ DataFrame
-    dfps = dfps.merge(monthly_total_quantity, on=['Year', 'Month', 'Product_code'], how='left')
+    # 7. คำนวณค่าเฉลี่ยของ Monthly_Total_Quantity สำหรับแต่ละ Year และ Month
+    monthly_avg_quantity = monthly_total_quantity.groupby(['Year', 'Month'])['Monthly_Total_Quantity'].mean().reset_index()
+    monthly_avg_quantity.rename(columns={'Monthly_Total_Quantity': 'Monthly_Avg_Quantity'}, inplace=True)
 
-    # 8. เลือกคอลัมน์ที่ต้องการแสดงผล
+    # 8. เติมค่า Monthly_Total_Quantity ที่หายไปด้วยค่าเฉลี่ย
+    monthly_total_quantity = monthly_total_quantity.merge(monthly_avg_quantity, on=['Year', 'Month'], how='left')
+    monthly_total_quantity['Monthly_Total_Quantity'] = monthly_total_quantity['Monthly_Total_Quantity'].replace(0, monthly_total_quantity['Monthly_Avg_Quantity'])
+
+    # 9. รวมข้อมูลทั้งหมดกลับไปที่ DataFrame
+    dfps = dfps.merge(monthly_total_quantity[['Year', 'Month', 'Product_code', 'Monthly_Total_Quantity']], 
+                      on=['Year', 'Month', 'Product_code'], how='left')
+
+    # 10. เลือกคอลัมน์ที่ต้องการแสดงผล
     dfps = dfps[['Year', 'Month', 'Product_code', 'Monthly_Total_Quantity']]
 
-    # 9. ตัดแถวที่ Product_code ซ้ำในปีและเดือนเดียวกัน
+    # 11. ตัดแถวที่ Product_code ซ้ำในปีและเดือนเดียวกัน
     dfps = dfps.drop_duplicates(subset=['Year', 'Month', 'Product_code'])
 
     return dfps
