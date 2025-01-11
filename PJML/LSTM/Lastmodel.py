@@ -19,10 +19,10 @@ from sklearn.metrics import mean_squared_error,mean_absolute_error, mean_absolut
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
 
-from Datafile.load_data import load_dataps
-from Preprocess.preprocess_data import preprocess_dataps
 from Datafile.load_data import load_data
-
+from Datafile.load_data import load_dataps
+from Preprocess.preprocess_data import preprocess_data
+from Preprocess.preprocess_data import preprocess_dataps
 # prepare_data ทำความสะอาดข้อมูล, เติมค่าขาดหาย, แปลงวันที่, และสเกลข้อมูลสำหรับการฝึกโมเดล
 # train_lstm_model1 เทรนโมเดล LSTM สำหรับการทำนายยอดขาย
 # predict_next_sales ทำนายยอดขายในวันถัดไปโดยใช้โมเดล LSTM
@@ -32,35 +32,47 @@ from Datafile.load_data import load_data
 # predict_sales API endpoint สำหรับทำนายยอดขายจากข้อมูลที่มี โดยใช้ LSTM
 #===============================================เตรียมข้อมูล=========================================
 def prepare_data(df):
-    # เติมค่าขาดหายไปในคอลัมน์เป้าหมาย
-    df['sales_amount'] = df['sales_amount'].fillna(df['sales_amount'].median())
+    # ตรวจสอบและจัดการค่า NaT ใน sale_date
+    df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')
+    df = df.dropna(subset=['sale_date'])
 
-    # แปลงวันที่จาก พ.ศ. เป็น ค.ศ.
-    if 'sale_date' in df.columns:
-        df['sale_date'] = df['sale_date'].astype(str)  # แปลงเป็น string
-        df['sale_date'] = df['sale_date'].apply(lambda x: str(int(x[:4]) - 543) + x[4:] if len(x) == 10 else x)
+    # แยก sale_date เป็น Day, Month, Year
+    df['Day'] = df['sale_date'].dt.day
+    df['Month'] = df['sale_date'].dt.month
+    df['Year'] = df['sale_date'].dt.year
 
-        # แปลงวันที่ให้เป็น datetime และเรียงลำดับ
-        df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')
-        df = df.sort_values('sale_date')
+    # แปลงค่าฟีเจอร์ weather และ event ให้อยู่ในรูปของตัวเลข
+    weather_columns = ['weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower']
+    event_column = ['event_Normal Day']
 
-    # สเกลข้อมูลให้อยู่ในช่วง [0, 1]
-    scaler = StandardScaler()
+    df[weather_columns] = df[weather_columns].astype(int)
+    df[event_column] = df[event_column].astype(int)
+
+    # กรอง outliers
+    Q1 = df['sales_amount'].quantile(0.25)
+    Q3 = df['sales_amount'].quantile(0.75)
+    IQR = Q3 - Q1
+    df = df[(df['sales_amount'] >= (Q1 - 1.5 * IQR)) & (df['sales_amount'] <= (Q3 + 1.5 * IQR))]
+
+    # สเกลข้อมูลให้อยู่ในช่วง [0, 1] สำหรับคอลัมน์ sales_amount
+    scaler = MinMaxScaler()
     df['sales_amount_scaled'] = scaler.fit_transform(df[['sales_amount']])
 
+    # เติมค่าขาดหายไปในคอลัมน์ Temperature (ถ้ามี)
+    if 'Temperature' in df.columns:
+        df['Temperature'] = df['Temperature'].fillna(df['Temperature'].mean())
+
     # เตรียมข้อมูลสำหรับ LSTM
-    sequence_length = 20  # จำนวนวันใน sequence
+    sequence_length = 60
     X, y = [], []
     for i in range(sequence_length, len(df)):
-        X.append(df['sales_amount_scaled'].iloc[i-sequence_length:i].values)
+        features = ['Temperature', 'Day', 'Month', 'Year'] + weather_columns + event_column
+        X.append(df.iloc[i-sequence_length:i][features].values)
         y.append(df['sales_amount_scaled'].iloc[i])
-
-    # บันทึกคอลัมน์ sale_date เป็นไฟล์ CSV
-    df[['sale_date']].to_csv('sale_dates.csv', index=False)
 
     return np.array(X), np.array(y), scaler, df
 #===============================================Dalisale=========================================
-def train_lstm_model1(X, y):
+def train_lstm_model1(X_train, y_train):
     # ระบุ path ของโฟลเดอร์ปัจจุบัน
     base_dir = os.path.dirname(os.path.abspath(__file__))
     model_dir = os.path.join(base_dir, 'ModelLstm1')
@@ -93,16 +105,16 @@ def train_lstm_model1(X, y):
     else:
         # ถ้าไม่มีไฟล์โมเดล จะสร้างโมเดลใหม่
         model = Sequential([
-        LSTM(256, return_sequences=True, input_shape=(X.shape[1], 1), kernel_regularizer=regularizers.l2(0.01)),
-        Dropout(0.4),  # เพิ่มค่า Dropout เพื่อป้องกัน overfitting
-        LSTM(256),
+        LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=regularizers.l2(0.01)),
+        Dropout(0.3),  # ใช้อัตรา Dropout ที่ต่ำลง
+        LSTM(128),  # ลดขนาดของ LSTM layer
         Dense(1)
     ])
     model.compile(optimizer=Adam(learning_rate=0.0001), loss=Huber(), metrics=['mae', 'mape'])
     print("สร้างโมเดลใหม่")
 
     # เทรนโมเดล
-    model.fit(X, y, epochs=150, batch_size=32, verbose=1)
+    model.fit(X_train, y_train, epochs=50, batch_size=32, verbose=1)
     
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path1)
@@ -196,29 +208,36 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def predict_sales():
-    # โหลดข้อมูล
-    df = load_data()
+    df = load_data()  # เรียกใช้ข้อมูลจาก load_data
+    
+    # ส่ง df ไปยังฟังก์ชัน preprocess_data
+    df_preprocessed = preprocess_data(df)  # ตอนนี้ข้อมูล df จะถูก preprocess แล้ว
 
-    # เตรียมข้อมูล
-    X, y, scaler, df_prepared = prepare_data(df)
+    # เตรียมข้อมูลให้เหมาะสมสำหรับ LSTM
+    X, y, scaler, df_prepared = prepare_data(df_preprocessed)
+
+    # แบ่งข้อมูลเป็น Train และ Test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False)
 
     # ปรับรูปร่างข้อมูลให้เหมาะสมกับ LSTM
-    X = X.reshape(X.shape[0], X.shape[1], 1)
-
-    # แบ่งข้อมูลเป็น training และ testing set (80/20)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
+    X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2])
 
     # ฝึกโมเดล
     model = train_lstm_model1(X_train, y_train)
-
+    
     # ทำนายยอดขายในวันถัดไปโดยใช้ข้อมูล testing
     predicted_sales = model.predict(X_test)
     predicted_sales = scaler.inverse_transform(predicted_sales)
 
+    # แปลง y_test กลับจากการสเกล
+    y_test_original = scaler.inverse_transform(y_test.reshape(-1, 1))
+
+
     # คำนวณ mse สำหรับ Testing Data
-    mse = mean_squared_error(y_test, predicted_sales)
-    mae = mean_absolute_error(y_test, predicted_sales)
-    mape = mean_absolute_percentage_error(y_test, predicted_sales)
+    mse = mean_squared_error(y_test_original, predicted_sales)
+    mae = mean_absolute_error(y_test_original, predicted_sales)
+    mape = mean_absolute_percentage_error(y_test_original, predicted_sales)
 
     # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()

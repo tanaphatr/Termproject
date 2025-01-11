@@ -23,35 +23,42 @@ from Preprocess.preprocess_data import preprocess_data
 #===============================================เตรียมข้อมูล=========================================
 def prepare_data(df):
     # ตรวจสอบและจัดการค่า NaT ใน sale_date
-    df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')  # แปลงค่า sale_date ให้เป็น datetime ถ้ามีค่าไม่ถูกต้องจะถูกตั้งเป็น NaT
-    df = df.dropna(subset=['sale_date'])  # ลบแถวที่มีค่า NaT ใน sale_date
+    df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')
+    df = df.dropna(subset=['sale_date'])
+
+    # แยก sale_date เป็น Day, Month, Year
+    df['Day'] = df['sale_date'].dt.day
+    df['Month'] = df['sale_date'].dt.month
+    df['Year'] = df['sale_date'].dt.year
 
     # แปลงค่าฟีเจอร์ weather และ event ให้อยู่ในรูปของตัวเลข
     weather_columns = ['weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower']
     event_column = ['event_Normal Day']
-    
-    # ตรวจสอบว่าฟีเจอร์เหล่านี้มีใน DataFrame และแปลงเป็น 1 หรือ 0 (ใช้การแปลงแบบ One-Hot Encoding หรือแบบอื่นๆ)
+
     df[weather_columns] = df[weather_columns].astype(int)
     df[event_column] = df[event_column].astype(int)
+
+    # กรอง outliers
+    Q1 = df['sales_amount'].quantile(0.25)
+    Q3 = df['sales_amount'].quantile(0.75)
+    IQR = Q3 - Q1
+    df = df[(df['sales_amount'] >= (Q1 - 1.5 * IQR)) & (df['sales_amount'] <= (Q3 + 1.5 * IQR))]
 
     # สเกลข้อมูลให้อยู่ในช่วง [0, 1] สำหรับคอลัมน์ sales_amount
     scaler = MinMaxScaler()
     df['sales_amount_scaled'] = scaler.fit_transform(df[['sales_amount']])
 
-    # เติมค่าขาดหายไปในคอลัมน์ Temperature (หากมี)
+    # เติมค่าขาดหายไปในคอลัมน์ Temperature (ถ้ามี)
     if 'Temperature' in df.columns:
         df['Temperature'] = df['Temperature'].fillna(df['Temperature'].mean())
 
     # เตรียมข้อมูลสำหรับ LSTM
-    sequence_length = 120
+    sequence_length = 60
     X, y = [], []
     for i in range(sequence_length, len(df)):
-        # เลือกเฉพาะคอลัมน์ที่จำเป็นสำหรับ X รวมถึงฟีเจอร์ใหม่ที่เพิ่มเข้ามา
-        X.append(df.iloc[i-sequence_length:i][['sales_amount_scaled', 'Temperature'] + weather_columns + event_column].values)
+        features = ['Temperature', 'Day', 'Month', 'Year'] + weather_columns + event_column
+        X.append(df.iloc[i-sequence_length:i][features].values)
         y.append(df['sales_amount_scaled'].iloc[i])
-
-    # บันทึกคอลัมน์ sale_date เป็นไฟล์ CSV
-    df[['sale_date']].to_csv('sale_dates.csv', index=False)
 
     return np.array(X), np.array(y), scaler, df
 
@@ -59,22 +66,21 @@ def prepare_data(df):
 def train_lstm_model(X_train, y_train):
     # สร้างโมเดล LSTM
     model = Sequential([
-        LSTM(1024, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), 
-             kernel_regularizer=regularizers.l2(0.01)),
-        Dropout(0.4),  # เพิ่ม Dropout rate
-        LSTM(512    ),  # เพิ่ม LSTM layer ที่สอง
+        LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=regularizers.l2(0.01)),
+        Dropout(0.3),  # ใช้อัตรา Dropout ที่ต่ำลง
+        LSTM(128),  # ลดขนาดของ LSTM layer
         Dense(1)
     ])
-    
+
     # ใช้ learning rate ที่ต่ำลง
-    model.compile(optimizer=Adam(learning_rate=0.0005), loss=Huber(), metrics=['mae', 'mape'])
+    model.compile(optimizer=Adam(learning_rate=0.0001), loss=Huber(), metrics=['mae', 'mape'])
     print("สร้างโมเดลใหม่")
 
     # ใช้ EarlyStopping เพื่อหยุดการฝึกเมื่อโมเดลไม่พัฒนา
     early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
 
     # เทรนโมเดล
-    model.fit(X_train, y_train, epochs=20, batch_size=16, validation_split=0.3, callbacks=[early_stopping])
+    model.fit(X_train, y_train, epochs=3, batch_size=32, validation_split=0.3, callbacks=[early_stopping])
     return model
 
 #===============================================ทำนาย=========================================
@@ -87,6 +93,7 @@ def predict_sales(model, X, scaler, df):
     return predicted_sales, predicted_date
 
 #===============================================API=========================================
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
@@ -100,7 +107,7 @@ def predict_sales_api():
     X, y, scaler, df_prepared = prepare_data(df_preprocessed)
 
     # แบ่งข้อมูลเป็น Train และ Test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=False)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
     # ปรับรูปร่างข้อมูลให้เหมาะสมกับ LSTM
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
@@ -112,10 +119,13 @@ def predict_sales_api():
     # ทำนายค่า sales สำหรับ test data
     predicted_sales_all = model.predict(X_test)
     predicted_sales_all = scaler.inverse_transform(predicted_sales_all)
+    
+    # แปลง y_test กลับจากการสเกล
+    y_test_original = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-    # คำนวณค่า MAE และ MAPE
-    mae = mean_absolute_error(y_test, predicted_sales_all)
-    mape = mean_absolute_percentage_error(y_test, predicted_sales_all)
+    # คำนวณ MAE และ MAPE
+    mae = mean_absolute_error(y_test_original, predicted_sales_all)
+    mape = mean_absolute_percentage_error(y_test_original, predicted_sales_all)
 
     # ทำนายวันถัดไป
     predicted_sales, predicted_date = predict_sales(model, X, scaler, df_prepared)

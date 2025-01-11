@@ -17,6 +17,11 @@ def preprocess_data(df):
     # เพิ่มคอลัมน์ day_of_year
     df['day_of_year'] = df['sale_date'].dt.dayofyear
 
+    # แยกวันที่เป็น Date, Month, Year
+    df['Date'] = df['sale_date'].dt.day
+    df['Month'] = df['sale_date'].dt.month
+    df['Year'] = df['sale_date'].dt.year
+
     # เปลี่ยนชื่อคอลัมน์ที่มีช่องว่างเป็นชื่อที่ใช้ _ แทนช่องว่าง
     df.columns = df.columns.str.replace(' ', '_')
 
@@ -25,8 +30,9 @@ def preprocess_data(df):
     df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)  # ทำ One-Hot Encoding
 
     # สร้างไฟล์ CSV หลังจากประมวลผลข้อมูล
-    df.to_csv("processed_data.csv", index=False)
+    df.to_csv("processed_data111.csv", index=False)
     return df
+
 
 
 def preprocess_dataps(dfps):
