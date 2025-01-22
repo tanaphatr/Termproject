@@ -12,6 +12,8 @@ const Product_stock_history = require('./Route/Table/Product_stock_history')
 const Sales_prediction = require('./Route/Table/Sales_prediction')
 const Salesdata = require('./Route/Table/Salesdata')
 const Predictive = require('./Route/Table/ML/Predictive')
+const Best_product = require('./Route/Table/Best_product');
+
 
 const app = express();
 const path = require('path') // เรียกใช้งาน path module
@@ -36,6 +38,7 @@ app.use('/Product_stock_history', Product_stock_history);
 app.use('/Sales_prediction', Sales_prediction);
 app.use('/Salesdata', Salesdata);
 app.use('/Predictive', Predictive);
+app.use('/Best_product', Best_product);
 
 
 // Start the server

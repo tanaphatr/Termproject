@@ -42,6 +42,7 @@ router.get('/', (req, res) => {
                     <button onclick="navigateTo('/Product_stock_history/html')" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in" style="animation-delay: 0.6s;" onmouseover="applyHoverEffect(this)" onmouseout="removeHoverEffect(this)">Product Stock History</button>
                     <button onclick="navigateTo('/Sales_prediction/html')" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in" style="animation-delay: 0.7s;" onmouseover="applyHoverEffect(this)" onmouseout="removeHoverEffect(this)">Sales Prediction</button>
                     <button onclick="navigateTo('/Salesdata/html')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in" style="animation-delay: 0.8s;" onmouseover="applyHoverEffect(this)" onmouseout="removeHoverEffect(this)">Sales Data</button>
+                    <button onclick="navigateTo('/Best_product')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 fade-in">Best products</button>
                 </div>
             </div>
         </body>
