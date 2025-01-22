@@ -149,9 +149,9 @@ const Dashboard = () => {
                     <SalesGraph data={data} />
                     <ProductTable products={filteredProducts} mount={Predictive.predictions}/>
                 </div>
-                {/* <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
                     <HistoryTable historyData={Salesprediction} />
-                </div> */}
+                </div>
             </div>
         </div>
     );
