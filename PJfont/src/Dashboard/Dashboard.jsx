@@ -76,16 +76,16 @@ const Dashboard = () => {
                 // สร้างข้อมูลสำหรับกราฟ
                 const graphData = latestData.map(item => ({
                     name: new Date(item.sale_date).toLocaleString('default', { month: 'short', year: 'numeric' }), // แยกปีและเดือน
-                    actual: isNaN(Number(item.sales_amount)) ? 0 : Number(item.sales_amount),  // แปลง sales_amount เป็นตัวเลข ถ้าไม่ใช่จะใช้ค่า 0
+                    Sales: isNaN(Number(item.sales_amount)) ? 0 : Number(item.sales_amount),  // แปลง sales_amount เป็นตัวเลข ถ้าไม่ใช่จะใช้ค่า 0
                     profit: isNaN(Number(item.profit_amount)) ? 0 : Number(item.profit_amount)   // แปลง profit_amount เป็นตัวเลข ถ้าไม่ใช่จะใช้ค่า 0
                 }));
         
                 // รวมยอดขายและกำไรตามเดือน
                 const monthlyData = graphData.reduce((acc, item) => {
                     if (!acc[item.name]) {
-                        acc[item.name] = { name: item.name, actual: 0, profit: 0 };
+                        acc[item.name] = { name: item.name, Sales: 0, profit: 0 };
                     }
-                    acc[item.name].actual += item.actual;  // รวมยอดขาย
+                    acc[item.name].Sales += item.Sales;  // รวมยอดขาย
                     acc[item.name].profit += item.profit;  // รวมกำไร
                     return acc;
                 }, {});
