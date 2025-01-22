@@ -10,7 +10,7 @@ def preprocess_data(df):
     # Log จำนวนวันที่ขาดหาย
     print(f"Missing sale_date entries: {df['sale_date'].isnull().sum()}")
 
-    # แทนที่ค่าที่ขาดหายใน sales_amount และ profit_amount ด้วยค่าเฉลี่ย
+    # แทนที่ค่าที่ขาดหายใน profit_amount ด้วยค่าเฉลี่ย (ไม่ต้องเติมค่าเฉลี่ยใน sales_amount เพราะ 0 หมายถึงร้านปิด)
     df['sales_amount'].fillna(df['sales_amount'].mean(), inplace=True)
     df['profit_amount'].fillna(df['profit_amount'].mean(), inplace=True)
 
@@ -22,6 +22,9 @@ def preprocess_data(df):
     df['Month'] = df['sale_date'].dt.month
     df['Year'] = df['sale_date'].dt.year
 
+    # เพิ่มคอลัมน์ 'is_closed' ระบุว่าร้านปิดหรือไม่ (ร้านปิดถ้ายอดขาย = 0)
+    df['is_closed'] = df['sales_amount'].apply(lambda x: 1 if x == 0 else 0)
+
     # เปลี่ยนชื่อคอลัมน์ที่มีช่องว่างเป็นชื่อที่ใช้ _ แทนช่องว่าง
     df.columns = df.columns.str.replace(' ', '_')
 
@@ -32,6 +35,7 @@ def preprocess_data(df):
     # สร้างไฟล์ CSV หลังจากประมวลผลข้อมูล
     df.to_csv("processed_data111.csv", index=False)
     return df
+
 
 
 
