@@ -18,7 +18,7 @@ def preprocess_data(df):
     df['day_of_year'] = df['sale_date'].dt.dayofyear
 
     # แยกวันที่เป็น Date, Month, Year
-    df['Date'] = df['sale_date'].dt.day
+    df['Day'] = df['sale_date'].dt.day
     df['Month'] = df['sale_date'].dt.month
     df['Year'] = df['sale_date'].dt.year
 

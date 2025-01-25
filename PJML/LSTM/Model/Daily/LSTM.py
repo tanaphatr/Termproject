@@ -47,7 +47,7 @@ def prepare_data(df):
     sequence_length = 60
     X, y = [], []
     for i in range(sequence_length, len(df)):
-        features = ['Temperature', 'Date', 'Month', 'Year' ] + weather_columns + event_column
+        features = ['Temperature', 'Day', 'Month', 'Year' ] + weather_columns + event_column
         X.append(df.iloc[i-sequence_length:i][features].values)
         y.append(df['sales_amount_scaled'].iloc[i])
 
