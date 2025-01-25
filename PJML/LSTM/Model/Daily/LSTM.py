@@ -4,23 +4,20 @@ import pandas as pd
 import numpy as np
 import joblib
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
-from flask import Flask, jsonify
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import regularizers
 from tensorflow.keras.losses import Huber
 from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'PJML')))
 
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
+from Predic import create_app  # Import app จากไฟล์ api.py
 
 #===============================================เตรียมข้อมูล=========================================
 def prepare_data(df):
@@ -85,19 +82,27 @@ def train_lstm_model1(X_train, y_train):
         else:
             print("ถึงเวลาในการเทรนใหม่")
     else:
-        # ถ้าไม่มีไฟล์โมเดล จะสร้างโมเดลใหม่
-       model = Sequential([
-            LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=regularizers.l2(0.001)),
-            Dropout(0.3),  # อาจปรับเป็น 0.5 หรือ 0.2 ดูผล
-            LSTM(128),
-            Dense(1)
-        ])
+        early_stopping = EarlyStopping(
+        monitor='loss',          # ติดตามค่าความสูญเสีย (loss)
+        patience=5,              # หยุดการฝึกหากไม่มีการปรับปรุงใน 5 epochs ติดต่อกัน
+        restore_best_weights=True  # คืนค่าน้ำหนักของโมเดลที่ดีที่สุด
+    )
+
+    model = Sequential([
+        LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=regularizers.l2(0.001)),
+        Dropout(0.3),
+        LSTM(128, return_sequences=True),
+        Dropout(0.3),
+        LSTM(64),
+        Dense(32, activation='relu'),
+        Dense(1)
+    ])
 
     model.compile(optimizer=Adam(learning_rate=0.0005), loss=Huber(), metrics=['mae', 'mape'])
     print("สร้างโมเดลใหม่")
 
-    # เทรนโมเดล
-    model.fit(X_train, y_train, epochs=30, batch_size=32, verbose=1)
+    # เทรนโมเดลพร้อมกับ EarlyStopping
+    model.fit(X_train, y_train, epochs=30, batch_size=32, verbose=1, callbacks=[early_stopping])
 
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path1)
@@ -117,51 +122,6 @@ def predict_next_sales(model, X, scaler, df):
     predicted_date = df['sale_date'].iloc[-1] + pd.DateOffset(days=1)
     return predicted_sales, predicted_date
 
-#===============================================API=========================================
-
-app = Flask(__name__)
-
-@app.route('/', methods=['GET'])
-def predict_sales_api():
-    df = load_data()  # เรียกใช้ข้อมูลจาก load_data
-    
-    # ส่ง df ไปยังฟังก์ชัน preprocess_data
-    df_preprocessed = preprocess_data(df)  # ตอนนี้ข้อมูล df จะถูก preprocess แล้ว
-
-    # เตรียมข้อมูลให้เหมาะสมสำหรับ LSTM
-    X, y, scaler, df_prepared = prepare_data(df_preprocessed)
-
-    # แบ่งข้อมูลเป็น Train และ Test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False)
-
-    # ปรับรูปร่างข้อมูลให้เหมาะสมกับ LSTM
-    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
-    X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2])
-
-    # ฝึกโมเดล
-    model = train_lstm_model1(X_train, y_train)
-    
-    # ทำนายยอดขายในวันถัดไปโดยใช้ข้อมูล testing
-    predicted_sales = model.predict(X_test)
-    predicted_sales = scaler.inverse_transform(predicted_sales)
-
-    # แปลง y_test กลับจากการสเกล
-    y_test_original = scaler.inverse_transform(y_test.reshape(-1, 1))
-
-    # คำนวณ mse สำหรับ Testing Data
-    mae = mean_absolute_error(predicted_sales,y_test_original)
-    mape = mean_absolute_percentage_error(predicted_sales,y_test_original)
-
-    # ตรวจสอบวันที่ล่าสุด
-    predicted_date = df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)
-
-    return jsonify({
-        'predicted_sales': float(predicted_sales[-1][0]),
-        'predicted_date': str(predicted_date),
-        'model_name': "LSTM",
-        'mae': mae,
-        'mape': mape,
-    })
-
 if __name__ == '__main__':
+    app = create_app()
     app.run(host='localhost', port=8885, debug=True)
