@@ -17,8 +17,8 @@ const SalesGraph = ({ data }) => {
                         />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="actual" fill="#8884d8">
-                            <LabelList dataKey="actual" position="top" />
+                        <Bar dataKey="Sales" fill="#8884d8">
+                            <LabelList dataKey="Sales" position="top" />
                         </Bar>
                         <Bar dataKey="profit" fill="#82ca9d">
                             <LabelList dataKey="profit" position="top" />

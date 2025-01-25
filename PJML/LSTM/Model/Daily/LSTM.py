@@ -149,8 +149,8 @@ def predict_sales_api():
     y_test_original = scaler.inverse_transform(y_test.reshape(-1, 1))
 
     # คำนวณ mse สำหรับ Testing Data
-    mae = mean_absolute_error(y_test_original, predicted_sales)
-    mape = mean_absolute_percentage_error(y_test_original, predicted_sales)
+    mae = mean_absolute_error(predicted_sales,y_test_original)
+    mape = mean_absolute_percentage_error(predicted_sales,y_test_original)
 
     # ตรวจสอบวันที่ล่าสุด
     predicted_date = df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)

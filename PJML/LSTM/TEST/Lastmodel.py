@@ -230,11 +230,10 @@ def predict_sales():
     # แปลง y_test กลับจากการสเกล
     y_test_original = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-
     # คำนวณ mse สำหรับ Testing Data
-    mse = mean_squared_error(y_test_original, predicted_sales)
-    mae = mean_absolute_error(y_test_original, predicted_sales)
-    mape = mean_absolute_percentage_error(y_test_original, predicted_sales)
+    mae = mean_absolute_error(predicted_sales,y_test_original)
+    mape = mean_absolute_percentage_error(predicted_sales,y_test_original)
+
 
     # เตรียมข้อมูลเพิ่มเติม
     dfps = load_dataps()
