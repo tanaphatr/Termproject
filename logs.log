@@ -16329,3 +16329,40 @@ Increase the number of iterations (max_iter) or scale the data as shown in:
 'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
 2025-01-25 19:43:54,452:WARNING:
 'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:30,918:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:30,918:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:30,918:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:30,918:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:34,173:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:34,174:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:34,174:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:34,174:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2025-01-25 19:44:34,879:INFO:Initializing load_model()
+2025-01-25 19:44:34,879:INFO:load_model(model_name=c:\Users\WHITEPERx\Desktop\Termproject\PJML\Pycaret\ModelPyCaret\pycaret_model, platform=None, authentication=None, verbose=True)
+2025-01-25 19:44:34,913:INFO:Initializing predict_model()
+2025-01-25 19:44:34,913:INFO:predict_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000002D26A6DC890>, estimator=Pipeline(memory=Memory(location=None),
+         steps=[('numerical_imputer',
+                 TransformerWrapper(include=['Temperature', 'Year', 'Month',
+                                             'Day', 'weather_Mostly Sunny',
+                                             'weather_Partly Cloudy',
+                                             'weather_Scattered Shower',
+                                             'event_Normal Day'],
+                                    transformer=SimpleImputer())),
+                ('categorical_imputer',
+                 TransformerWrapper(include=[],
+                                    transformer=SimpleImputer(strategy='most_frequent'))),
+                ('clean_column_names',
+                 TransformerWrapper(transformer=CleanColumnNames())),
+                ('trained_model', LGBMRegressor(n_jobs=-1, random_state=123))]), probability_threshold=None, encoded_labels=False, raw_score=False, round=4, verbose=True, ml_usecase=None, preprocess=True, encode_labels=<function _SupervisedExperiment.predict_model.<locals>.encode_labels at 0x000002D2630B3A60>)
+2025-01-25 19:44:34,913:INFO:Checking exceptions
+2025-01-25 19:44:34,913:INFO:Preloading libraries
+2025-01-25 19:44:34,913:INFO:Set up data.
+2025-01-25 19:44:34,919:INFO:Set up index.
