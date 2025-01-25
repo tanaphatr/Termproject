@@ -17,7 +17,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error,mean_absolute_error, mean_absolute_percentage_error
 
 # เพิ่ม path ของโปรเจค
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..','..','PJML')))
 
 from Datafile.load_data import load_data
 from Datafile.load_data import load_dataps
