@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from flask import Flask, jsonify
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras import regularizers
-from tensorflow.keras.losses import Huber
-from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
+from tensorflow.keras.models import Sequential # type: ignore
+from tensorflow.keras.layers import LSTM, Dense, Dropout # type: ignore
+from tensorflow.keras.optimizers import Adam # type: ignore
+from tensorflow.keras import regularizers # type: ignore
+from tensorflow.keras.losses import Huber # type: ignore
+from tensorflow.keras.callbacks import EarlyStopping # type: ignore
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error ,r2_score
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'PJML')))
@@ -85,19 +85,28 @@ def train_lstm_model1(X_train, y_train):
         else:
             print("ถึงเวลาในการเทรนใหม่")
     else:
-        # ถ้าไม่มีไฟล์โมเดล จะสร้างโมเดลใหม่
-       model = Sequential([
+        # สร้าง EarlyStopping callback
+        early_stopping = EarlyStopping(
+            monitor='loss',          # ติดตามค่าความสูญเสีย (loss)
+            patience=3,              # หยุดการฝึกหากไม่มีการปรับปรุงใน 3 epochs ติดต่อกัน
+            restore_best_weights=True  # คืนค่าน้ำหนักของโมเดลที่ดีที่สุด
+        )
+
+        model = Sequential([
             LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=regularizers.l2(0.001)),
-            Dropout(0.3),  # อาจปรับเป็น 0.5 หรือ 0.2 ดูผล
-            LSTM(128),
+            Dropout(0.3),
+            LSTM(128, return_sequences=True),
+            Dropout(0.3),
+            LSTM(64),
+            Dense(32, activation='relu'),
             Dense(1)
         ])
 
-    model.compile(optimizer=Adam(learning_rate=0.0005), loss=Huber(), metrics=['mae', 'mape'])
-    print("สร้างโมเดลใหม่")
+        model.compile(optimizer=Adam(learning_rate=0.0005), loss=Huber(), metrics=['mae', 'mape'])
+        print("สร้างโมเดลใหม่")
 
-    # เทรนโมเดล
-    model.fit(X_train, y_train, epochs=30, batch_size=32, verbose=1)
+        # เทรนโมเดลพร้อมกับ EarlyStopping
+        model.fit(X_train, y_train, epochs=30, batch_size=32, verbose=1, callbacks=[early_stopping])
 
     # บันทึกโมเดลและวันที่เทรนล่าสุด
     joblib.dump(model, model_path1)
@@ -151,6 +160,7 @@ def predict_sales_api():
     # คำนวณ mse สำหรับ Testing Data
     mae = mean_absolute_error(predicted_sales,y_test_original)
     mape = mean_absolute_percentage_error(predicted_sales,y_test_original)
+    r2 = r2_score(y_test_original, predicted_sales)
 
     # ตรวจสอบวันที่ล่าสุด
     predicted_date = df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)
@@ -161,6 +171,7 @@ def predict_sales_api():
         'model_name': "LSTM",
         'mae': mae,
         'mape': mape,
+        'r2': r2
     })
 
 if __name__ == '__main__':
