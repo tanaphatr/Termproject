@@ -29,8 +29,8 @@ def prepare_data(df):
     df = df.dropna(subset=['sale_date'])
 
     # แปลงค่าฟีเจอร์ weather และ event ให้อยู่ในรูปของตัวเลข
-    weather_columns = ['weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower']
-    event_column = ['event_Normal Day']
+    weather_columns = ['weather_Mostly_Sunny', 'weather_Partly_Cloudy', 'weather_Scattered_Shower']
+    event_column = ['event_Normal_Day']
 
     df[weather_columns] = df[weather_columns].astype(int)
     df[event_column] = df[event_column].astype(int)
@@ -141,7 +141,7 @@ def predict_sales_api():
     X, y, scaler, df_prepared = prepare_data(df_preprocessed)
 
     # แบ่งข้อมูลเป็น Train และ Test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
     # ปรับรูปร่างข้อมูลให้เหมาะสมกับ LSTM
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
