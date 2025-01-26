@@ -59,7 +59,7 @@ def forecast_sales():
         prediction = predict_model(tuned_model, data=data)
 
         # ดึงข้อมูลการพยากรณ์ตัวอย่าง (บรรทัดแรก)
-        predicted_sales = prediction.loc[0, 'prediction_label']  # 'Label' เป็นผลลัพธ์ที่ PyCaret สร้างหลังพยากรณ์
+        predicted_sales = prediction.loc[0, 'prediction_label']  # 'prediction_label' เป็นผลลัพธ์ที่ PyCaret สร้างหลังพยากรณ์
 
         # คำนวณวันที่ถัดไป
         last_date = data['sale_date'].iloc[-1]  # วันสุดท้ายในข้อมูล (ใช้ sale_date แทน index)
