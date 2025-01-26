@@ -12,12 +12,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
 
-# กำหนดฟีเจอร์และตัวแปรเป้าหมาย
-FEATURES = [
-    'weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower',
-    'event_Normal Day',
-]
-TARGET = 'sales_amount'
 
 # สร้าง Flask Application
 app = Flask(__name__)
@@ -30,22 +24,19 @@ def forecast_sales():
 
         # ทำการ preprocess ข้อมูล
         data = preprocess_data(data)
-
         # ตรวจสอบและจัดการค่า NaT ใน sale_date
         data['sale_date'] = pd.to_datetime(data['sale_date'], errors='coerce')  # แปลงคอลัมน์ sale_date เป็น datetime และทำให้ค่าที่แปลงไม่ได้เป็น NaT
         data = data.dropna(subset=['sale_date'])  # ลบแถวที่มี NaT ในคอลัมน์ sale_date
 
-        # ตรวจสอบว่าฟีเจอร์ที่ต้องการมีในข้อมูลหรือไม่
-        for feature in FEATURES + [TARGET]:
-            if feature not in data.columns:
-                return jsonify({"error": f"Missing required feature: {feature}"}), 400
-
         # สร้าง PyCaret Setup
-        reg = setup(
+        setup(
             data=data,
-            target=TARGET,
-            train_size=0.8,
+            target='sales_amount',
             session_id=123,
+            feature_selection=True,
+            train_size=0.8,
+            normalize=True,
+            remove_outliers=True,
             verbose=False
         )
 

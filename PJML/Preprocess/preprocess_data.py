@@ -12,8 +12,10 @@ def preprocess_data(df):
 
     # แทนที่ค่าที่ขาดหายใน profit_amount ด้วยค่าเฉลี่ย (ไม่ต้องเติมค่าเฉลี่ยใน sales_amount เพราะ 0 หมายถึงร้านปิด)
     df['sales_amount'].fillna(df['sales_amount'].mean(), inplace=True)
-    df['profit_amount'].fillna(df['profit_amount'].mean(), inplace=True)
 
+    # ลบคอลัมน์ profit_amount
+    df.drop(columns=['profit_amount'], inplace=True)
+    
     # เพิ่มคอลัมน์ day_of_year
     df['day_of_year'] = df['sale_date'].dt.dayofyear
 
@@ -25,13 +27,13 @@ def preprocess_data(df):
     # เพิ่มคอลัมน์ 'is_closed' ระบุว่าร้านปิดหรือไม่ (ร้านปิดถ้ายอดขาย = 0)
     df['is_closed'] = df['sales_amount'].apply(lambda x: 1 if x == 0 else 0)
 
-    # เปลี่ยนชื่อคอลัมน์ที่มีช่องว่างเป็นชื่อที่ใช้ _ แทนช่องว่าง
-    df.columns = df.columns.str.replace(' ', '_')
-
     # ทำ One-Hot Encoding สำหรับทุกคอลัมน์ที่เป็น categorical
     categorical_cols = df.select_dtypes(include=['object']).columns  # เลือกคอลัมน์ประเภท object (string/categorical)
     df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)  # ทำ One-Hot Encoding
 
+    # เปลี่ยนชื่อคอลัมน์ที่มีช่องว่างเป็นชื่อที่ใช้ _ แทนช่องว่าง
+    df.columns = df.columns.str.replace(' ', '_')
+    
     # สร้างไฟล์ CSV หลังจากประมวลผลข้อมูล
     df.to_csv("processed_data111.csv", index=False)
     return df
