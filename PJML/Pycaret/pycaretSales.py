@@ -1,116 +1,94 @@
 import os
 import sys
-import pandas as pd
-import joblib
 from flask import Flask, jsonify
-from pycaret.regression import setup, compare_models, pull, save_model, load_model, predict_model
+from pycaret.regression import *
+import pandas as pd
+from datetime import datetime, timedelta
 
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
 
+# นำเข้าโมดูลที่กำหนด
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
 
-#===============================================เตรียมข้อมูล=========================================
-def prepare_data(df):
-    df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')
-    df = df.dropna(subset=['sale_date'])
+# กำหนดฟีเจอร์และตัวแปรเป้าหมาย
+FEATURES = [
+    'weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower',
+    'event_Normal Day',
+]
+TARGET = 'sales_amount'
 
-    # แปลงค่าฟีเจอร์ weather และ event ให้อยู่ในรูปของตัวเลข
-    weather_columns = ['weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower']
-    event_column = ['event_Normal Day']
-
-    df[weather_columns] = df[weather_columns].astype(int)
-    df[event_column] = df[event_column].astype(int)
-
-    # เติมค่าขาดหายไปในคอลัมน์ Temperature (ถ้ามี)
-    if 'Temperature' in df.columns:
-        df['Temperature'] = df['Temperature'].fillna(df['Temperature'].mean())
-
-    # เพิ่มฟีเจอร์ปี เดือน วัน
-    df['Year'] = df['sale_date'].dt.year
-    df['Month'] = df['sale_date'].dt.month
-    df['Day'] = df['sale_date'].dt.day
-
-    return df
-
-#===============================================เทรน=========================================
-def train_pycaret_model(df):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    model_dir = os.path.join(base_dir, 'ModelPyCaret')
-    model_path = os.path.join(model_dir, 'pycaret_model')
-
-    # ตรวจสอบและสร้างโฟลเดอร์เก็บโมเดล
-    os.makedirs(model_dir, exist_ok=True)
-
-    # เช็คว่าโมเดลมีอยู่หรือไม่
-    if os.path.exists(model_path + '.pkl'):
-        print("โหลดโมเดลจากไฟล์ที่มีอยู่")
-        return load_model(model_path)
-
-    # กำหนดฟีเจอร์และตัวแปรเป้าหมาย
-    target = 'sales_amount'
-    features = ['Temperature', 'Year', 'Month', 'Day', 'weather_Mostly Sunny', 'weather_Partly Cloudy',
-                'weather_Scattered Shower', 'event_Normal Day']
-
-    df = df[features + [target]].dropna()
-
-    # ตั้งค่าด้วย PyCaret
-    reg_setup = setup(data=df, target=target, session_id=123, fold=5)
-
-    # เลือกโมเดลที่ดีที่สุด
-    best_model = compare_models()
-
-    # ประเมินผลโมเดล
-    model_results = pull()
-    
-    # คำนวณ R2, MAE, MAPE
-    r2_score = model_results.loc[best_model.iloc[0], 'R2']
-    mae_score = model_results.loc[best_model.iloc[0], 'MAE']
-    mape_score = model_results.loc[best_model.iloc[0], 'MAPE']
-
-    print(f"R2 Score: {r2_score}")
-    print(f"MAE Score: {mae_score}")
-    print(f"MAPE Score: {mape_score}")
-
-    # บันทึกโมเดล
-    save_model(best_model, model_path)
-    print("โมเดล PyCaret ถูกบันทึกแล้ว")
-
-    return best_model
-
-#===============================================API=========================================
+# สร้าง Flask Application
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
-def predict_sales_api():
-    df = load_data()
+def forecast_sales():
+    try:
+        # โหลดข้อมูล
+        data = load_data()
 
-    # ส่ง df ไปยังฟังก์ชัน preprocess_data
-    df_preprocessed = preprocess_data(df)
+        # ทำการ preprocess ข้อมูล
+        data = preprocess_data(data)
 
-    # เตรียมข้อมูล
-    df_prepared = prepare_data(df_preprocessed)
+        # ตรวจสอบและจัดการค่า NaT ใน sale_date
+        data['sale_date'] = pd.to_datetime(data['sale_date'], errors='coerce')  # แปลงคอลัมน์ sale_date เป็น datetime และทำให้ค่าที่แปลงไม่ได้เป็น NaT
+        data = data.dropna(subset=['sale_date'])  # ลบแถวที่มี NaT ในคอลัมน์ sale_date
 
-    # เทรนโมเดล
-    model = train_pycaret_model(df_prepared)
+        # ตรวจสอบว่าฟีเจอร์ที่ต้องการมีในข้อมูลหรือไม่
+        for feature in FEATURES + [TARGET]:
+            if feature not in data.columns:
+                return jsonify({"error": f"Missing required feature: {feature}"}), 400
 
-    # ทำนายยอดขายในวันถัดไป
-    last_row = df_prepared.iloc[[-1]].copy()
-    last_row['sale_date'] += pd.DateOffset(days=1)
+        # สร้าง PyCaret Setup
+        reg = setup(
+            data=data,
+            target=TARGET,
+            train_size=0.8,
+            session_id=123,
+            verbose=False
+        )
 
-    prediction = predict_model(model, data=last_row)
+        # เปรียบเทียบโมเดลและเลือกโมเดลที่ดีที่สุด
+        best_model = compare_models()
 
-    # ใช้คอลัมน์ 'prediction_label' ที่ได้จากการทำนาย
-    predicted_sales = prediction['prediction_label'].iloc[0]
-    predicted_date = last_row['sale_date'].iloc[0]
+        # ทดสอบโมเดลที่เลือกและเพิ่มการปรับแต่ง hyperparameters (รวมถึง epochs ถ้าเป็นไปได้)
+        tuned_model = tune_model(best_model)
 
-    return jsonify({
-        'predicted_sales': float(predicted_sales),
-        'predicted_date': str(predicted_date),
-        'model_name': "PyCaret",
-    })
+        # ทำนายด้วยโมเดลที่ได้รับการปรับแต่งแล้ว
+        prediction = predict_model(tuned_model, data=data)
 
+        # ดึงข้อมูลการพยากรณ์ตัวอย่าง (บรรทัดแรก)
+        predicted_sales = prediction.loc[0, 'prediction_label']  # 'Label' เป็นผลลัพธ์ที่ PyCaret สร้างหลังพยากรณ์
+
+        # คำนวณวันที่ถัดไป
+        last_date = data['sale_date'].iloc[-1]  # วันสุดท้ายในข้อมูล (ใช้ sale_date แทน index)
+        if isinstance(last_date, pd.Timestamp):  # หาก last_date เป็น Timestamp
+            predicted_date = last_date + timedelta(days=1)  # เพิ่ม 1 วัน
+        else:
+            # ถ้าไม่ใช่ Timestamp ให้แปลงเป็น datetime ก่อน
+            last_date = pd.to_datetime(last_date)
+            predicted_date = last_date + timedelta(days=1)
+
+        predicted_date = predicted_date.strftime("%Y-%m-%d")  # แปลงให้เป็น string format
+
+        # ดึงค่า MAE, MSE, RMSE และ R²
+        r2 = pull().loc[0, "R2"]
+        mae = pull().loc[0, "MAE"]
+        mape = pull().loc[0, "MAPE"]
+
+        # ส่งผลลัพธ์ผ่าน API
+        return jsonify({
+            "r2": r2,
+            "mae": mae,
+            "mape": mape,
+            "best_model": str(best_model),
+            "predicted_date": predicted_date,
+            "predicted_sales": predicted_sales
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8885, debug=True)
