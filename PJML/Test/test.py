@@ -30,7 +30,7 @@ def train_modeltest():
     for column in categorical_features:
         df[column] = df[column].str.replace(' ', '_', regex=True)
 
-    categorical = ['event', 'festival', 'weather', 'Back_to_School_Period']
+    categorical = ['event', 'weather']
     # # ตั้งค่าการเตรียมข้อมูลใน PyCaret
 
     setup(
