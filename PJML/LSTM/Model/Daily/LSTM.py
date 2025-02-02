@@ -146,9 +146,14 @@ def predict_sales_api():
 
     X, y, scaler, df_prepared = prepare_data(df_preprocessed)
 
+<<<<<<< HEAD
     # ✅ แบ่งข้อมูลเป็น Train, Validation และ Test
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.2, shuffle=False)
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, shuffle=False)
+=======
+    # แบ่งข้อมูลเป็น Train และ Test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+>>>>>>> 5a8c55dd4335f0ff13cf6d49a6dc7523735097e7
 
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
     X_val = X_val.reshape(X_val.shape[0], X_val.shape[1], X_val.shape[2])

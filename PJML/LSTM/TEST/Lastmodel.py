@@ -42,8 +42,8 @@ def prepare_data(df):
     df['Year'] = df['sale_date'].dt.year
 
     # แปลงค่าฟีเจอร์ weather และ event ให้อยู่ในรูปของตัวเลข
-    weather_columns = ['weather_Mostly Sunny', 'weather_Partly Cloudy', 'weather_Scattered Shower']
-    event_column = ['event_Normal Day']
+    weather_columns = ['weather_Mostly_Sunny', 'weather_Partly_Cloudy', 'weather_Scattered_Shower']
+    event_column = ['event_Normal_Day']
 
     df[weather_columns] = df[weather_columns].astype(int)
     df[event_column] = df[event_column].astype(int)
