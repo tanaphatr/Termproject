@@ -41497,3 +41497,776 @@ Alternately, you can install this by running `pip install pycaret[models]`
 2025-02-02 17:49:30,043:INFO:Linear Regression Imported successfully
 2025-02-02 17:49:30,043:INFO:Starting cross validation
 2025-02-02 17:49:30,074:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:35,172:INFO:Calculating mean and std
+2025-02-02 17:49:35,173:INFO:Creating metrics dataframe
+2025-02-02 17:49:35,175:INFO:Uploading results into container
+2025-02-02 17:49:35,176:INFO:Uploading model into container now
+2025-02-02 17:49:35,177:INFO:_master_model_container: 1
+2025-02-02 17:49:35,177:INFO:_display_container: 2
+2025-02-02 17:49:35,177:INFO:LinearRegression(n_jobs=-1)
+2025-02-02 17:49:35,177:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:35,309:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:35,309:INFO:Creating metrics dataframe
+2025-02-02 17:49:35,312:INFO:Initializing Lasso Regression
+2025-02-02 17:49:35,312:INFO:Total runtime is 0.08789291779200235 minutes
+2025-02-02 17:49:35,312:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:35,312:INFO:Initializing create_model()
+2025-02-02 17:49:35,312:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=lasso, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:35,312:INFO:Checking exceptions
+2025-02-02 17:49:35,312:INFO:Importing libraries
+2025-02-02 17:49:35,312:INFO:Copying training dataset
+2025-02-02 17:49:35,315:INFO:Defining folds
+2025-02-02 17:49:35,315:INFO:Declaring metric variables
+2025-02-02 17:49:35,315:INFO:Importing untrained model
+2025-02-02 17:49:35,315:INFO:Lasso Regression Imported successfully
+2025-02-02 17:49:35,317:INFO:Starting cross validation
+2025-02-02 17:49:35,323:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:39,074:INFO:Calculating mean and std
+2025-02-02 17:49:39,075:INFO:Creating metrics dataframe
+2025-02-02 17:49:39,078:INFO:Uploading results into container
+2025-02-02 17:49:39,079:INFO:Uploading model into container now
+2025-02-02 17:49:39,079:INFO:_master_model_container: 2
+2025-02-02 17:49:39,079:INFO:_display_container: 2
+2025-02-02 17:49:39,079:INFO:Lasso(random_state=123)
+2025-02-02 17:49:39,079:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:39,199:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:39,199:INFO:Creating metrics dataframe
+2025-02-02 17:49:39,205:INFO:Initializing Ridge Regression
+2025-02-02 17:49:39,205:INFO:Total runtime is 0.1527686317761739 minutes
+2025-02-02 17:49:39,206:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:39,206:INFO:Initializing create_model()
+2025-02-02 17:49:39,206:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=ridge, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:39,206:INFO:Checking exceptions
+2025-02-02 17:49:39,206:INFO:Importing libraries
+2025-02-02 17:49:39,206:INFO:Copying training dataset
+2025-02-02 17:49:39,210:INFO:Defining folds
+2025-02-02 17:49:39,210:INFO:Declaring metric variables
+2025-02-02 17:49:39,210:INFO:Importing untrained model
+2025-02-02 17:49:39,210:INFO:Ridge Regression Imported successfully
+2025-02-02 17:49:39,210:INFO:Starting cross validation
+2025-02-02 17:49:39,219:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:39,854:INFO:Calculating mean and std
+2025-02-02 17:49:39,855:INFO:Creating metrics dataframe
+2025-02-02 17:49:39,857:INFO:Uploading results into container
+2025-02-02 17:49:39,858:INFO:Uploading model into container now
+2025-02-02 17:49:39,858:INFO:_master_model_container: 3
+2025-02-02 17:49:39,858:INFO:_display_container: 2
+2025-02-02 17:49:39,858:INFO:Ridge(random_state=123)
+2025-02-02 17:49:39,858:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:40,005:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:40,005:INFO:Creating metrics dataframe
+2025-02-02 17:49:40,008:INFO:Initializing Elastic Net
+2025-02-02 17:49:40,008:INFO:Total runtime is 0.1661497910817464 minutes
+2025-02-02 17:49:40,008:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:40,008:INFO:Initializing create_model()
+2025-02-02 17:49:40,009:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=en, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:40,009:INFO:Checking exceptions
+2025-02-02 17:49:40,009:INFO:Importing libraries
+2025-02-02 17:49:40,009:INFO:Copying training dataset
+2025-02-02 17:49:40,011:INFO:Defining folds
+2025-02-02 17:49:40,011:INFO:Declaring metric variables
+2025-02-02 17:49:40,011:INFO:Importing untrained model
+2025-02-02 17:49:40,012:INFO:Elastic Net Imported successfully
+2025-02-02 17:49:40,012:INFO:Starting cross validation
+2025-02-02 17:49:40,018:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:40,673:INFO:Calculating mean and std
+2025-02-02 17:49:40,674:INFO:Creating metrics dataframe
+2025-02-02 17:49:40,675:INFO:Uploading results into container
+2025-02-02 17:49:40,676:INFO:Uploading model into container now
+2025-02-02 17:49:40,676:INFO:_master_model_container: 4
+2025-02-02 17:49:40,676:INFO:_display_container: 2
+2025-02-02 17:49:40,676:INFO:ElasticNet(random_state=123)
+2025-02-02 17:49:40,676:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:40,792:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:40,792:INFO:Creating metrics dataframe
+2025-02-02 17:49:40,795:INFO:Initializing Least Angle Regression
+2025-02-02 17:49:40,795:INFO:Total runtime is 0.17927679618199666 minutes
+2025-02-02 17:49:40,795:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:40,795:INFO:Initializing create_model()
+2025-02-02 17:49:40,795:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=lar, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:40,795:INFO:Checking exceptions
+2025-02-02 17:49:40,795:INFO:Importing libraries
+2025-02-02 17:49:40,795:INFO:Copying training dataset
+2025-02-02 17:49:40,799:INFO:Defining folds
+2025-02-02 17:49:40,799:INFO:Declaring metric variables
+2025-02-02 17:49:40,799:INFO:Importing untrained model
+2025-02-02 17:49:40,799:INFO:Least Angle Regression Imported successfully
+2025-02-02 17:49:40,799:INFO:Starting cross validation
+2025-02-02 17:49:40,806:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:41,415:INFO:Calculating mean and std
+2025-02-02 17:49:41,415:INFO:Creating metrics dataframe
+2025-02-02 17:49:41,417:INFO:Uploading results into container
+2025-02-02 17:49:41,418:INFO:Uploading model into container now
+2025-02-02 17:49:41,418:INFO:_master_model_container: 5
+2025-02-02 17:49:41,418:INFO:_display_container: 2
+2025-02-02 17:49:41,419:INFO:Lars(random_state=123)
+2025-02-02 17:49:41,419:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:41,534:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:41,534:INFO:Creating metrics dataframe
+2025-02-02 17:49:41,537:INFO:Initializing Lasso Least Angle Regression
+2025-02-02 17:49:41,537:INFO:Total runtime is 0.19163668950398763 minutes
+2025-02-02 17:49:41,537:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:41,537:INFO:Initializing create_model()
+2025-02-02 17:49:41,537:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=llar, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:41,537:INFO:Checking exceptions
+2025-02-02 17:49:41,537:INFO:Importing libraries
+2025-02-02 17:49:41,537:INFO:Copying training dataset
+2025-02-02 17:49:41,540:INFO:Defining folds
+2025-02-02 17:49:41,540:INFO:Declaring metric variables
+2025-02-02 17:49:41,540:INFO:Importing untrained model
+2025-02-02 17:49:41,540:INFO:Lasso Least Angle Regression Imported successfully
+2025-02-02 17:49:41,540:INFO:Starting cross validation
+2025-02-02 17:49:41,553:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:42,236:INFO:Calculating mean and std
+2025-02-02 17:49:42,237:INFO:Creating metrics dataframe
+2025-02-02 17:49:42,239:INFO:Uploading results into container
+2025-02-02 17:49:42,240:INFO:Uploading model into container now
+2025-02-02 17:49:42,240:INFO:_master_model_container: 6
+2025-02-02 17:49:42,241:INFO:_display_container: 2
+2025-02-02 17:49:42,241:INFO:LassoLars(random_state=123)
+2025-02-02 17:49:42,241:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:42,377:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:42,377:INFO:Creating metrics dataframe
+2025-02-02 17:49:42,380:INFO:Initializing Orthogonal Matching Pursuit
+2025-02-02 17:49:42,380:INFO:Total runtime is 0.20568235715230307 minutes
+2025-02-02 17:49:42,381:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:42,381:INFO:Initializing create_model()
+2025-02-02 17:49:42,381:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=omp, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:42,381:INFO:Checking exceptions
+2025-02-02 17:49:42,381:INFO:Importing libraries
+2025-02-02 17:49:42,381:INFO:Copying training dataset
+2025-02-02 17:49:42,384:INFO:Defining folds
+2025-02-02 17:49:42,385:INFO:Declaring metric variables
+2025-02-02 17:49:42,385:INFO:Importing untrained model
+2025-02-02 17:49:42,385:INFO:Orthogonal Matching Pursuit Imported successfully
+2025-02-02 17:49:42,385:INFO:Starting cross validation
+2025-02-02 17:49:42,401:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:43,040:INFO:Calculating mean and std
+2025-02-02 17:49:43,040:INFO:Creating metrics dataframe
+2025-02-02 17:49:43,042:INFO:Uploading results into container
+2025-02-02 17:49:43,043:INFO:Uploading model into container now
+2025-02-02 17:49:43,043:INFO:_master_model_container: 7
+2025-02-02 17:49:43,043:INFO:_display_container: 2
+2025-02-02 17:49:43,043:INFO:OrthogonalMatchingPursuit()
+2025-02-02 17:49:43,044:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:43,178:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:43,178:INFO:Creating metrics dataframe
+2025-02-02 17:49:43,181:INFO:Initializing Bayesian Ridge
+2025-02-02 17:49:43,181:INFO:Total runtime is 0.21903229157129925 minutes
+2025-02-02 17:49:43,181:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:43,181:INFO:Initializing create_model()
+2025-02-02 17:49:43,181:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=br, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:43,181:INFO:Checking exceptions
+2025-02-02 17:49:43,181:INFO:Importing libraries
+2025-02-02 17:49:43,181:INFO:Copying training dataset
+2025-02-02 17:49:43,184:INFO:Defining folds
+2025-02-02 17:49:43,184:INFO:Declaring metric variables
+2025-02-02 17:49:43,184:INFO:Importing untrained model
+2025-02-02 17:49:43,184:INFO:Bayesian Ridge Imported successfully
+2025-02-02 17:49:43,184:INFO:Starting cross validation
+2025-02-02 17:49:43,199:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:43,904:INFO:Calculating mean and std
+2025-02-02 17:49:43,904:INFO:Creating metrics dataframe
+2025-02-02 17:49:43,907:INFO:Uploading results into container
+2025-02-02 17:49:43,907:INFO:Uploading model into container now
+2025-02-02 17:49:43,908:INFO:_master_model_container: 8
+2025-02-02 17:49:43,908:INFO:_display_container: 2
+2025-02-02 17:49:43,908:INFO:BayesianRidge()
+2025-02-02 17:49:43,908:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:44,029:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:44,029:INFO:Creating metrics dataframe
+2025-02-02 17:49:44,031:INFO:Initializing Passive Aggressive Regressor
+2025-02-02 17:49:44,031:INFO:Total runtime is 0.2332098444302877 minutes
+2025-02-02 17:49:44,031:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:44,032:INFO:Initializing create_model()
+2025-02-02 17:49:44,032:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=par, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:44,032:INFO:Checking exceptions
+2025-02-02 17:49:44,032:INFO:Importing libraries
+2025-02-02 17:49:44,032:INFO:Copying training dataset
+2025-02-02 17:49:44,034:INFO:Defining folds
+2025-02-02 17:49:44,034:INFO:Declaring metric variables
+2025-02-02 17:49:44,034:INFO:Importing untrained model
+2025-02-02 17:49:44,034:INFO:Passive Aggressive Regressor Imported successfully
+2025-02-02 17:49:44,034:INFO:Starting cross validation
+2025-02-02 17:49:44,042:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:44,676:INFO:Calculating mean and std
+2025-02-02 17:49:44,676:INFO:Creating metrics dataframe
+2025-02-02 17:49:44,678:INFO:Uploading results into container
+2025-02-02 17:49:44,679:INFO:Uploading model into container now
+2025-02-02 17:49:44,679:INFO:_master_model_container: 9
+2025-02-02 17:49:44,679:INFO:_display_container: 2
+2025-02-02 17:49:44,680:INFO:PassiveAggressiveRegressor(random_state=123)
+2025-02-02 17:49:44,680:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:44,793:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:44,793:INFO:Creating metrics dataframe
+2025-02-02 17:49:44,795:INFO:Initializing Huber Regressor
+2025-02-02 17:49:44,795:INFO:Total runtime is 0.24594332377115888 minutes
+2025-02-02 17:49:44,795:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:44,795:INFO:Initializing create_model()
+2025-02-02 17:49:44,797:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=huber, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:44,797:INFO:Checking exceptions
+2025-02-02 17:49:44,797:INFO:Importing libraries
+2025-02-02 17:49:44,797:INFO:Copying training dataset
+2025-02-02 17:49:44,799:INFO:Defining folds
+2025-02-02 17:49:44,799:INFO:Declaring metric variables
+2025-02-02 17:49:44,799:INFO:Importing untrained model
+2025-02-02 17:49:44,799:INFO:Huber Regressor Imported successfully
+2025-02-02 17:49:44,799:INFO:Starting cross validation
+2025-02-02 17:49:44,809:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:45,478:INFO:Calculating mean and std
+2025-02-02 17:49:45,479:INFO:Creating metrics dataframe
+2025-02-02 17:49:45,480:INFO:Uploading results into container
+2025-02-02 17:49:45,481:INFO:Uploading model into container now
+2025-02-02 17:49:45,481:INFO:_master_model_container: 10
+2025-02-02 17:49:45,482:INFO:_display_container: 2
+2025-02-02 17:49:45,482:INFO:HuberRegressor()
+2025-02-02 17:49:45,482:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:45,615:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:45,615:INFO:Creating metrics dataframe
+2025-02-02 17:49:45,619:INFO:Initializing K Neighbors Regressor
+2025-02-02 17:49:45,619:INFO:Total runtime is 0.25966763496398926 minutes
+2025-02-02 17:49:45,619:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:45,620:INFO:Initializing create_model()
+2025-02-02 17:49:45,620:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=knn, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:45,620:INFO:Checking exceptions
+2025-02-02 17:49:45,620:INFO:Importing libraries
+2025-02-02 17:49:45,620:INFO:Copying training dataset
+2025-02-02 17:49:45,622:INFO:Defining folds
+2025-02-02 17:49:45,623:INFO:Declaring metric variables
+2025-02-02 17:49:45,623:INFO:Importing untrained model
+2025-02-02 17:49:45,623:INFO:K Neighbors Regressor Imported successfully
+2025-02-02 17:49:45,623:INFO:Starting cross validation
+2025-02-02 17:49:45,629:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:46,327:INFO:Calculating mean and std
+2025-02-02 17:49:46,328:INFO:Creating metrics dataframe
+2025-02-02 17:49:46,329:INFO:Uploading results into container
+2025-02-02 17:49:46,331:INFO:Uploading model into container now
+2025-02-02 17:49:46,331:INFO:_master_model_container: 11
+2025-02-02 17:49:46,331:INFO:_display_container: 2
+2025-02-02 17:49:46,332:INFO:KNeighborsRegressor(n_jobs=-1)
+2025-02-02 17:49:46,332:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:46,450:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:46,451:INFO:Creating metrics dataframe
+2025-02-02 17:49:46,455:INFO:Initializing Decision Tree Regressor
+2025-02-02 17:49:46,455:INFO:Total runtime is 0.2736096103986104 minutes
+2025-02-02 17:49:46,455:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:46,457:INFO:Initializing create_model()
+2025-02-02 17:49:46,457:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=dt, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:46,457:INFO:Checking exceptions
+2025-02-02 17:49:46,458:INFO:Importing libraries
+2025-02-02 17:49:46,458:INFO:Copying training dataset
+2025-02-02 17:49:46,467:INFO:Defining folds
+2025-02-02 17:49:46,467:INFO:Declaring metric variables
+2025-02-02 17:49:46,468:INFO:Importing untrained model
+2025-02-02 17:49:46,468:INFO:Decision Tree Regressor Imported successfully
+2025-02-02 17:49:46,469:INFO:Starting cross validation
+2025-02-02 17:49:46,492:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:47,201:INFO:Calculating mean and std
+2025-02-02 17:49:47,202:INFO:Creating metrics dataframe
+2025-02-02 17:49:47,204:INFO:Uploading results into container
+2025-02-02 17:49:47,204:INFO:Uploading model into container now
+2025-02-02 17:49:47,205:INFO:_master_model_container: 12
+2025-02-02 17:49:47,205:INFO:_display_container: 2
+2025-02-02 17:49:47,205:INFO:DecisionTreeRegressor(random_state=123)
+2025-02-02 17:49:47,205:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:47,341:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:47,341:INFO:Creating metrics dataframe
+2025-02-02 17:49:47,343:INFO:Initializing Random Forest Regressor
+2025-02-02 17:49:47,343:INFO:Total runtime is 0.28840898275375365 minutes
+2025-02-02 17:49:47,343:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:47,344:INFO:Initializing create_model()
+2025-02-02 17:49:47,344:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=rf, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:47,344:INFO:Checking exceptions
+2025-02-02 17:49:47,344:INFO:Importing libraries
+2025-02-02 17:49:47,344:INFO:Copying training dataset
+2025-02-02 17:49:47,347:INFO:Defining folds
+2025-02-02 17:49:47,347:INFO:Declaring metric variables
+2025-02-02 17:49:47,347:INFO:Importing untrained model
+2025-02-02 17:49:47,348:INFO:Random Forest Regressor Imported successfully
+2025-02-02 17:49:47,348:INFO:Starting cross validation
+2025-02-02 17:49:47,354:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:48,302:INFO:Calculating mean and std
+2025-02-02 17:49:48,302:INFO:Creating metrics dataframe
+2025-02-02 17:49:48,304:INFO:Uploading results into container
+2025-02-02 17:49:48,305:INFO:Uploading model into container now
+2025-02-02 17:49:48,305:INFO:_master_model_container: 13
+2025-02-02 17:49:48,305:INFO:_display_container: 2
+2025-02-02 17:49:48,305:INFO:RandomForestRegressor(n_jobs=-1, random_state=123)
+2025-02-02 17:49:48,305:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:48,431:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:48,431:INFO:Creating metrics dataframe
+2025-02-02 17:49:48,434:INFO:Initializing Extra Trees Regressor
+2025-02-02 17:49:48,435:INFO:Total runtime is 0.306598158677419 minutes
+2025-02-02 17:49:48,435:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:48,435:INFO:Initializing create_model()
+2025-02-02 17:49:48,435:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=et, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:48,435:INFO:Checking exceptions
+2025-02-02 17:49:48,435:INFO:Importing libraries
+2025-02-02 17:49:48,435:INFO:Copying training dataset
+2025-02-02 17:49:48,438:INFO:Defining folds
+2025-02-02 17:49:48,438:INFO:Declaring metric variables
+2025-02-02 17:49:48,438:INFO:Importing untrained model
+2025-02-02 17:49:48,438:INFO:Extra Trees Regressor Imported successfully
+2025-02-02 17:49:48,439:INFO:Starting cross validation
+2025-02-02 17:49:48,450:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:49,389:INFO:Calculating mean and std
+2025-02-02 17:49:49,389:INFO:Creating metrics dataframe
+2025-02-02 17:49:49,392:INFO:Uploading results into container
+2025-02-02 17:49:49,392:INFO:Uploading model into container now
+2025-02-02 17:49:49,392:INFO:_master_model_container: 14
+2025-02-02 17:49:49,392:INFO:_display_container: 2
+2025-02-02 17:49:49,393:INFO:ExtraTreesRegressor(n_jobs=-1, random_state=123)
+2025-02-02 17:49:49,393:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:49,498:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:49,498:INFO:Creating metrics dataframe
+2025-02-02 17:49:49,502:INFO:Initializing AdaBoost Regressor
+2025-02-02 17:49:49,502:INFO:Total runtime is 0.3243813673655192 minutes
+2025-02-02 17:49:49,502:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:49,502:INFO:Initializing create_model()
+2025-02-02 17:49:49,502:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=ada, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:49,502:INFO:Checking exceptions
+2025-02-02 17:49:49,502:INFO:Importing libraries
+2025-02-02 17:49:49,502:INFO:Copying training dataset
+2025-02-02 17:49:49,506:INFO:Defining folds
+2025-02-02 17:49:49,506:INFO:Declaring metric variables
+2025-02-02 17:49:49,506:INFO:Importing untrained model
+2025-02-02 17:49:49,506:INFO:AdaBoost Regressor Imported successfully
+2025-02-02 17:49:49,506:INFO:Starting cross validation
+2025-02-02 17:49:49,515:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:50,396:INFO:Calculating mean and std
+2025-02-02 17:49:50,397:INFO:Creating metrics dataframe
+2025-02-02 17:49:50,399:INFO:Uploading results into container
+2025-02-02 17:49:50,400:INFO:Uploading model into container now
+2025-02-02 17:49:50,400:INFO:_master_model_container: 15
+2025-02-02 17:49:50,400:INFO:_display_container: 2
+2025-02-02 17:49:50,400:INFO:AdaBoostRegressor(random_state=123)
+2025-02-02 17:49:50,400:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:50,522:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:50,522:INFO:Creating metrics dataframe
+2025-02-02 17:49:50,525:INFO:Initializing Gradient Boosting Regressor
+2025-02-02 17:49:50,525:INFO:Total runtime is 0.3414459228515625 minutes
+2025-02-02 17:49:50,525:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:50,525:INFO:Initializing create_model()
+2025-02-02 17:49:50,525:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=gbr, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:50,525:INFO:Checking exceptions
+2025-02-02 17:49:50,525:INFO:Importing libraries
+2025-02-02 17:49:50,525:INFO:Copying training dataset
+2025-02-02 17:49:50,529:INFO:Defining folds
+2025-02-02 17:49:50,529:INFO:Declaring metric variables
+2025-02-02 17:49:50,529:INFO:Importing untrained model
+2025-02-02 17:49:50,529:INFO:Gradient Boosting Regressor Imported successfully
+2025-02-02 17:49:50,529:INFO:Starting cross validation
+2025-02-02 17:49:50,536:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:51,405:INFO:Calculating mean and std
+2025-02-02 17:49:51,406:INFO:Creating metrics dataframe
+2025-02-02 17:49:51,409:INFO:Uploading results into container
+2025-02-02 17:49:51,409:INFO:Uploading model into container now
+2025-02-02 17:49:51,409:INFO:_master_model_container: 16
+2025-02-02 17:49:51,410:INFO:_display_container: 2
+2025-02-02 17:49:51,410:INFO:GradientBoostingRegressor(random_state=123)
+2025-02-02 17:49:51,410:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:51,539:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:51,539:INFO:Creating metrics dataframe
+2025-02-02 17:49:51,541:INFO:Initializing Extreme Gradient Boosting
+2025-02-02 17:49:51,542:INFO:Total runtime is 0.3583930253982544 minutes
+2025-02-02 17:49:51,542:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:51,542:INFO:Initializing create_model()
+2025-02-02 17:49:51,542:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=xgboost, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:51,542:INFO:Checking exceptions
+2025-02-02 17:49:51,542:INFO:Importing libraries
+2025-02-02 17:49:51,542:INFO:Copying training dataset
+2025-02-02 17:49:51,545:INFO:Defining folds
+2025-02-02 17:49:51,545:INFO:Declaring metric variables
+2025-02-02 17:49:51,545:INFO:Importing untrained model
+2025-02-02 17:49:51,547:INFO:Extreme Gradient Boosting Imported successfully
+2025-02-02 17:49:51,547:INFO:Starting cross validation
+2025-02-02 17:49:51,559:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:52,938:INFO:Calculating mean and std
+2025-02-02 17:49:52,938:INFO:Creating metrics dataframe
+2025-02-02 17:49:52,940:INFO:Uploading results into container
+2025-02-02 17:49:52,940:INFO:Uploading model into container now
+2025-02-02 17:49:52,942:INFO:_master_model_container: 17
+2025-02-02 17:49:52,942:INFO:_display_container: 2
+2025-02-02 17:49:52,942:INFO:XGBRegressor(base_score=None, booster='gbtree', callbacks=None,
+             colsample_bylevel=None, colsample_bynode=None,
+             colsample_bytree=None, device='cpu', early_stopping_rounds=None,
+             enable_categorical=False, eval_metric=None, feature_types=None,
+             gamma=None, grow_policy=None, importance_type=None,
+             interaction_constraints=None, learning_rate=None, max_bin=None,
+             max_cat_threshold=None, max_cat_to_onehot=None,
+             max_delta_step=None, max_depth=None, max_leaves=None,
+             min_child_weight=None, missing=nan, monotone_constraints=None,
+             multi_strategy=None, n_estimators=None, n_jobs=-1,
+             num_parallel_tree=None, random_state=123, ...)
+2025-02-02 17:49:52,942:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:53,054:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:53,054:INFO:Creating metrics dataframe
+2025-02-02 17:49:53,056:INFO:Initializing Light Gradient Boosting Machine
+2025-02-02 17:49:53,056:INFO:Total runtime is 0.3836160937945048 minutes
+2025-02-02 17:49:53,057:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:53,057:INFO:Initializing create_model()
+2025-02-02 17:49:53,057:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=lightgbm, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:53,057:INFO:Checking exceptions
+2025-02-02 17:49:53,057:INFO:Importing libraries
+2025-02-02 17:49:53,057:INFO:Copying training dataset
+2025-02-02 17:49:53,060:INFO:Defining folds
+2025-02-02 17:49:53,060:INFO:Declaring metric variables
+2025-02-02 17:49:53,060:INFO:Importing untrained model
+2025-02-02 17:49:53,061:INFO:Light Gradient Boosting Machine Imported successfully
+2025-02-02 17:49:53,061:INFO:Starting cross validation
+2025-02-02 17:49:53,069:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:54,383:INFO:Calculating mean and std
+2025-02-02 17:49:54,383:INFO:Creating metrics dataframe
+2025-02-02 17:49:54,385:INFO:Uploading results into container
+2025-02-02 17:49:54,386:INFO:Uploading model into container now
+2025-02-02 17:49:54,386:INFO:_master_model_container: 18
+2025-02-02 17:49:54,386:INFO:_display_container: 2
+2025-02-02 17:49:54,387:INFO:LGBMRegressor(n_jobs=-1, random_state=123)
+2025-02-02 17:49:54,387:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:54,511:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:54,511:INFO:Creating metrics dataframe
+2025-02-02 17:49:54,513:INFO:Initializing Dummy Regressor
+2025-02-02 17:49:54,513:INFO:Total runtime is 0.4079046885172526 minutes
+2025-02-02 17:49:54,513:INFO:SubProcess create_model() called ==================================
+2025-02-02 17:49:54,513:INFO:Initializing create_model()
+2025-02-02 17:49:54,513:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=dummy, fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=True, predict=True, fit_kwargs={}, groups=None, refit=False, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=<pycaret.internal.display.display.CommonDisplay object at 0x000001E6B4422510>, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:54,513:INFO:Checking exceptions
+2025-02-02 17:49:54,513:INFO:Importing libraries
+2025-02-02 17:49:54,513:INFO:Copying training dataset
+2025-02-02 17:49:54,516:INFO:Defining folds
+2025-02-02 17:49:54,516:INFO:Declaring metric variables
+2025-02-02 17:49:54,516:INFO:Importing untrained model
+2025-02-02 17:49:54,516:INFO:Dummy Regressor Imported successfully
+2025-02-02 17:49:54,517:INFO:Starting cross validation
+2025-02-02 17:49:54,522:INFO:Cross validating with KFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+2025-02-02 17:49:55,256:INFO:Calculating mean and std
+2025-02-02 17:49:55,257:INFO:Creating metrics dataframe
+2025-02-02 17:49:55,258:INFO:Uploading results into container
+2025-02-02 17:49:55,259:INFO:Uploading model into container now
+2025-02-02 17:49:55,259:INFO:_master_model_container: 19
+2025-02-02 17:49:55,259:INFO:_display_container: 2
+2025-02-02 17:49:55,260:INFO:DummyRegressor()
+2025-02-02 17:49:55,260:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:55,374:INFO:SubProcess create_model() end ==================================
+2025-02-02 17:49:55,374:INFO:Creating metrics dataframe
+2025-02-02 17:49:55,378:WARNING:C:\Users\tanap\AppData\Local\Programs\Python\Python311\Lib\site-packages\pycaret\internal\pycaret_experiment\supervised_experiment.py:339: FutureWarning: Styler.applymap has been deprecated. Use Styler.map instead.
+  .applymap(highlight_cols, subset=["TT (Sec)"])
+
+2025-02-02 17:49:55,379:INFO:Initializing create_model()
+2025-02-02 17:49:55,379:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=GradientBoostingRegressor(random_state=123), fold=KFold(n_splits=10, random_state=None, shuffle=False), round=4, cross_validation=False, predict=False, fit_kwargs={}, groups=None, refit=True, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=True, metrics=None, display=None, model_only=True, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:55,379:INFO:Checking exceptions
+2025-02-02 17:49:55,381:INFO:Importing libraries
+2025-02-02 17:49:55,381:INFO:Copying training dataset
+2025-02-02 17:49:55,384:INFO:Defining folds
+2025-02-02 17:49:55,385:INFO:Declaring metric variables
+2025-02-02 17:49:55,385:INFO:Importing untrained model
+2025-02-02 17:49:55,385:INFO:Declaring custom model
+2025-02-02 17:49:55,386:INFO:Gradient Boosting Regressor Imported successfully
+2025-02-02 17:49:55,395:INFO:Cross validation set to False
+2025-02-02 17:49:55,395:INFO:Fitting Model
+2025-02-02 17:49:55,439:INFO:[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.000216 seconds.
+2025-02-02 17:49:55,439:INFO:You can set `force_row_wise=true` to remove the overhead.
+2025-02-02 17:49:55,439:INFO:And if memory is not enough, you can set `force_col_wise=true`.
+2025-02-02 17:49:55,439:INFO:[LightGBM] [Info] Total Bins 400
+2025-02-02 17:49:55,439:INFO:[LightGBM] [Info] Number of data points in the train set: 564, number of used features: 6
+2025-02-02 17:49:55,439:INFO:[LightGBM] [Info] Start training from score 10518.776881
+2025-02-02 17:49:55,439:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,440:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,440:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,440:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,440:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,441:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,441:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,442:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,442:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,442:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,442:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,442:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,442:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,443:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,443:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,443:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,443:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,444:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,444:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,444:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,445:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,445:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,445:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,445:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,445:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,445:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,447:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,447:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,447:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,448:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,448:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,448:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,448:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,449:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,449:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,449:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,449:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,449:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,449:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,450:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,450:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,450:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,451:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,451:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,451:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,451:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,453:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,453:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,453:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,453:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,454:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,454:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,454:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,454:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,455:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,455:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,455:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,455:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,456:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,456:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,456:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,457:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,457:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,457:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,457:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,458:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,458:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,458:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,459:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,459:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,459:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,459:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,460:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,461:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,461:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,461:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,461:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,461:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,462:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,462:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,463:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,463:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,463:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,464:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,464:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,464:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,465:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,465:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,465:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,465:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,465:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,467:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,467:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,467:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,467:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,468:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,468:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,469:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,469:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,469:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,529:INFO:GradientBoostingRegressor(random_state=123)
+2025-02-02 17:49:55,529:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:55,658:INFO:_master_model_container: 19
+2025-02-02 17:49:55,658:INFO:_display_container: 2
+2025-02-02 17:49:55,659:INFO:GradientBoostingRegressor(random_state=123)
+2025-02-02 17:49:55,659:INFO:compare_models() successfully completed......................................
+2025-02-02 17:49:55,660:INFO:Initializing finalize_model()
+2025-02-02 17:49:55,660:INFO:finalize_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=GradientBoostingRegressor(random_state=123), fit_kwargs=None, groups=None, model_only=False, experiment_custom_tags=None)
+2025-02-02 17:49:55,660:INFO:Finalizing GradientBoostingRegressor(random_state=123)
+2025-02-02 17:49:55,662:INFO:Initializing create_model()
+2025-02-02 17:49:55,662:INFO:create_model(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, estimator=GradientBoostingRegressor(random_state=123), fold=None, round=4, cross_validation=False, predict=False, fit_kwargs={}, groups=None, refit=True, probability_threshold=None, experiment_custom_tags=None, verbose=False, system=False, add_to_model_list=False, metrics=None, display=None, model_only=False, return_train_score=False, error_score=0.0, kwargs={})
+2025-02-02 17:49:55,662:INFO:Checking exceptions
+2025-02-02 17:49:55,663:INFO:Importing libraries
+2025-02-02 17:49:55,663:INFO:Copying training dataset
+2025-02-02 17:49:55,663:INFO:Defining folds
+2025-02-02 17:49:55,663:INFO:Declaring metric variables
+2025-02-02 17:49:55,663:INFO:Importing untrained model
+2025-02-02 17:49:55,663:INFO:Declaring custom model
+2025-02-02 17:49:55,664:INFO:Gradient Boosting Regressor Imported successfully
+2025-02-02 17:49:55,673:INFO:Cross validation set to False
+2025-02-02 17:49:55,673:INFO:Fitting Model
+2025-02-02 17:49:55,731:INFO:[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.000135 seconds.
+2025-02-02 17:49:55,731:INFO:You can set `force_row_wise=true` to remove the overhead.
+2025-02-02 17:49:55,731:INFO:And if memory is not enough, you can set `force_col_wise=true`.
+2025-02-02 17:49:55,731:INFO:[LightGBM] [Info] Total Bins 496
+2025-02-02 17:49:55,731:INFO:[LightGBM] [Info] Number of data points in the train set: 705, number of used features: 7
+2025-02-02 17:49:55,731:INFO:[LightGBM] [Info] Start training from score 10612.535860
+2025-02-02 17:49:55,732:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,733:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,734:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,737:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,739:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,740:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,741:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,742:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,742:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,743:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,743:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,744:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,745:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,745:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,747:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,748:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,749:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,749:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,750:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,750:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,750:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,751:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,751:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,751:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,751:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,752:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,752:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,753:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,753:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,754:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,754:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,754:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,755:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,755:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,755:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,755:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,757:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,757:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,758:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,758:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,758:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,759:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,759:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,760:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,761:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,762:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,763:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,764:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,764:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,765:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,765:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,765:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,766:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,766:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,766:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,767:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,767:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,767:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,768:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,769:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,769:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,770:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,770:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,771:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,771:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,771:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,772:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,772:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,772:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,773:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,773:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,773:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,774:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,774:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,774:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,775:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,775:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,775:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,775:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,775:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,777:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,777:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,777:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,778:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,778:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,778:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,779:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,779:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,779:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,779:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,779:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,780:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,780:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,780:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,781:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,782:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,782:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,782:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,783:INFO:[LightGBM] [Warning] No further splits with positive gain, best gain: -inf
+2025-02-02 17:49:55,872:INFO:Pipeline(memory=Memory(location=None),
+         steps=[('date_feature_extractor',
+                 TransformerWrapper(include=['sale_date'],
+                                    transformer=ExtractDateTimeFeatures())),
+                ('numerical_imputer',
+                 TransformerWrapper(include=['sales_data_id', 'profit_amount',
+                                             'Temperature'],
+                                    transformer=SimpleImputer())),
+                ('categorical_imputer',
+                 TransformerWrapper(include=['event', 'weather'],
+                                    tr...
+                ('onehot_encoding',
+                 TransformerWrapper(include=['weather'],
+                                    transformer=OneHotEncoder(cols=['weather'],
+                                                              handle_missing='return_nan',
+                                                              use_cat_names=True))),
+                ('feature_selection',
+                 TransformerWrapper(exclude=[],
+                                    transformer=SelectFromModel(estimator=LGBMRegressor(),
+                                                                max_features=1,
+                                                                threshold=-inf))),
+                ('actual_estimator',
+                 GradientBoostingRegressor(random_state=123))])
+2025-02-02 17:49:55,873:INFO:create_model() successfully completed......................................
+2025-02-02 17:49:55,982:INFO:_master_model_container: 19
+2025-02-02 17:49:55,983:INFO:_display_container: 2
+2025-02-02 17:49:56,005:INFO:Pipeline(memory=Memory(location=None),
+         steps=[('date_feature_extractor',
+                 TransformerWrapper(include=['sale_date'],
+                                    transformer=ExtractDateTimeFeatures())),
+                ('numerical_imputer',
+                 TransformerWrapper(include=['sales_data_id', 'profit_amount',
+                                             'Temperature'],
+                                    transformer=SimpleImputer())),
+                ('categorical_imputer',
+                 TransformerWrapper(include=['event', 'weather'],
+                                    tr...
+                ('onehot_encoding',
+                 TransformerWrapper(include=['weather'],
+                                    transformer=OneHotEncoder(cols=['weather'],
+                                                              handle_missing='return_nan',
+                                                              use_cat_names=True))),
+                ('feature_selection',
+                 TransformerWrapper(exclude=[],
+                                    transformer=SelectFromModel(estimator=LGBMRegressor(),
+                                                                max_features=1,
+                                                                threshold=-inf))),
+                ('actual_estimator',
+                 GradientBoostingRegressor(random_state=123))])
+2025-02-02 17:49:56,005:INFO:finalize_model() successfully completed......................................
+2025-02-02 17:49:56,141:INFO:Initializing get_config()
+2025-02-02 17:49:56,141:INFO:get_config(self=<pycaret.regression.oop.RegressionExperiment object at 0x000001E6B3EE3F10>, variable=X_train)
+2025-02-02 17:49:56,141:INFO:Variable: 'X_train' used to return the transformed values in PyCaret 2.x. From PyCaret 3.x, this will return the raw values. If you need the transformed values, call get_config with 'X_train_transformed' instead.
+2025-02-02 17:49:56,141:WARNING:C:\Users\tanap\AppData\Local\Programs\Python\Python311\Lib\site-packages\pycaret\internal\pycaret_experiment\pycaret_experiment.py:321: UserWarning: Variable: 'X_train' used to return the transformed values in PyCaret 2.x. From PyCaret 3.x, this will return the raw values. If you need the transformed values, call get_config with 'X_train_transformed' instead.
+  warnings.warn(msg)  # print on screen
+
+2025-02-02 17:49:56,150:INFO:Variable:  returned as      sales_data_id sale_date  ...        weather Temperature
+311            312       NaT  ...  Mostly_Cloudy        33.0
+185            186       NaT  ...   Mostly_Sunny        37.0
+581            601       NaT  ...   Mostly_Sunny        34.0
+203            204       NaT  ...   Mostly_Sunny        37.0
+352            353       NaT  ...  Partly_Cloudy        33.0
+..             ...       ...  ...            ...         ...
+98              99       NaT  ...   Mostly_Sunny        35.0
+322            323       NaT  ...   Mostly_Sunny        33.0
+382            383       NaT  ...   Mostly_Sunny        33.0
+365            366       NaT  ...   Mostly_Sunny        34.0
+510            530       NaT  ...   Mostly_Sunny        38.0
+
+[564 rows x 6 columns]
+2025-02-02 17:49:56,150:INFO:get_config() successfully completed......................................
+2025-02-02 17:49:56,281:WARNING:e:\Term project\Termproject\PJML\Test\test.py:100: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  model_metrics_filtered = model_metrics_filtered.applymap(float)  # แปลงค่าทั้งหมดเป็น float
+
