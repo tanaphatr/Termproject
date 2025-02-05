@@ -6,14 +6,14 @@ import numpy as np
 import joblib
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from flask import Flask, jsonify
-from tensorflow.keras.models import Sequential  # type: ignore
-from tensorflow.keras.layers import LSTM, Dense, Dropout # type: ignore
-from tensorflow.keras.optimizers import Adam # type: ignore
-from tensorflow.keras import regularizers # type: ignore
-from tensorflow.keras.losses import Huber # type: ignore
-from tensorflow.keras.callbacks import EarlyStopping, Callback, ReduceLROnPlateau # type: ignore
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout, BatchNormalization
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.losses import Huber
+from tensorflow.keras.callbacks import EarlyStopping, Callback, ReduceLROnPlateau
 from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, r2_score
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'PJML')))
@@ -21,70 +21,194 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from Datafile.load_data import load_data
 from Preprocess.preprocess_data import preprocess_data
 
+def add_time_features(df):
+    df['day_of_week'] = df['sale_date'].dt.dayofweek
+    df['month'] = df['sale_date'].dt.month
+    df['quarter'] = df['sale_date'].dt.quarter
+    df['year'] = df['sale_date'].dt.year
+    df['day_of_year'] = df['sale_date'].dt.dayofyear
+    
+    # Add cyclical encoding for seasonal features
+    df['month_sin'] = np.sin(2 * np.pi * df['month']/12)
+    df['month_cos'] = np.cos(2 * np.pi * df['month']/12)
+    df['day_of_week_sin'] = np.sin(2 * np.pi * df['day_of_week']/7)
+    df['day_of_week_cos'] = np.cos(2 * np.pi * df['day_of_week']/7)
+    return df
+
+def add_lag_features(df, lags=[1, 2, 3, 7, 14, 30]):
+    for lag in lags:
+        df[f'sales_lag_{lag}'] = df['sales_amount'].shift(lag)
+    return df
+
+def add_rolling_features(df):
+    windows = [7, 14, 30]
+    for window in windows:
+        df[f'sales_ma_{window}'] = df['sales_amount'].rolling(window=window).mean()
+        df[f'sales_std_{window}'] = df['sales_amount'].rolling(window=window).std()
+        df[f'sales_min_{window}'] = df['sales_amount'].rolling(window=window).min()
+        df[f'sales_max_{window}'] = df['sales_amount'].rolling(window=window).max()
+    return df
+
+def augment_time_series(df):
+    augmented_data = pd.DataFrame()
+    
+    # Time shift augmentation
+    for shift in [-3, -2, -1, 1, 2, 3]:
+        shifted = df.copy()
+        shifted['sales_amount'] = shifted['sales_amount'].shift(shift)
+        augmented_data = pd.concat([augmented_data, shifted.dropna()])
+    
+    # Random noise augmentation with different intensities
+    noise_scales = [0.03, 0.05, 0.07]
+    for scale in noise_scales:
+        noisy = df.copy()
+        noise = np.random.normal(0, df['sales_amount'].std() * scale, len(df))
+        noisy['sales_amount'] += noise
+        augmented_data = pd.concat([augmented_data, noisy])
+    
+    # Scaling augmentation
+    for scale in [0.9, 0.95, 1.05, 1.1]:
+        scaled = df.copy()
+        scaled['sales_amount'] = scaled['sales_amount'] * scale
+        augmented_data = pd.concat([augmented_data, scaled])
+    
+    # Trend augmentation
+    trend = df.copy()
+    trend['sales_amount'] = trend['sales_amount'] * (1 + np.linspace(0, 0.1, len(df)))
+    augmented_data = pd.concat([augmented_data, trend])
+    
+    return pd.concat([df, augmented_data]).sort_values('sale_date').reset_index(drop=True)
+
 def prepare_data(df):
+    print("🔄 เริ่มการเตรียมข้อมูล...")
+    
     df['sale_date'] = pd.to_datetime(df['sale_date'], errors='coerce')
     df = df.dropna(subset=['sale_date'])
     
+    print("➕ กำลังเพิ่ม features...")
+    df = add_time_features(df)
+    df = add_lag_features(df)
+    df = add_rolling_features(df)
+    df = df.dropna()
+    
+    print("🔄 กำลังทำ Data Augmentation...")
+    df_augmented = augment_time_series(df)
+    
+    # Scale features
+    scaler = MinMaxScaler()
+    features = ['Temperature', 'day_of_week', 'month', 'quarter', 'year', 
+                'day_of_year', 'month_sin', 'month_cos', 'day_of_week_sin', 
+                'day_of_week_cos'] + \
+              [col for col in df.columns if 'sales_lag_' in col or 
+                                          'sales_ma_' in col or 
+                                          'sales_std_' in col or 
+                                          'sales_min_' in col or 
+                                          'sales_max_' in col]
+    
+    df_augmented[features] = scaler.fit_transform(df_augmented[features])
+    
     sequence_length = 60
     X, y = [], []
-    features = ['Temperature', 'Day', 'Month', 'Year', 'day_of_year']
-    for i in range(sequence_length, len(df)):
-        X.append(df.iloc[i-sequence_length:i][features].values)
-        y.append(df['sales_amount'].iloc[i])
+    
+    print("🎯 กำลังสร้าง sequences...")
+    for i in range(sequence_length, len(df_augmented)):
+        X.append(df_augmented.iloc[i-sequence_length:i][features].values)
+        y.append(df_augmented['sales_amount'].iloc[i])
+    
+    return np.array(X), np.array(y), df_augmented, scaler
 
-    return np.array(X), np.array(y), df
-
-def train_lstm_model1(X_train, y_train, X_val, y_val):
+def train_lstm_model(X_train, y_train, X_val, y_val):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     model_dir = os.path.join(base_dir, 'ModelLstm1')
-    model_path1 = os.path.join(model_dir, 'lstm_model1.pkl')
+    model_path = os.path.join(model_dir, 'lstm_model1.pkl')
     date_path = os.path.join(model_dir, 'last_trained_date1.pkl')
-
+    
     os.makedirs(model_dir, exist_ok=True)
-
-    if os.path.exists(model_path1):
-        model = joblib.load(model_path1)
+    
+    if os.path.exists(model_path):
+        model = joblib.load(model_path)
         print("📥 โหลดโมเดลจากไฟล์ที่เก็บไว้แล้ว")
-
+        
         if os.path.exists(date_path):
             last_trained_date = joblib.load(date_path)
         else:
             last_trained_date = datetime.min
-
+        
         if datetime.now() - last_trained_date < timedelta(days=30):
             print("⏳ ยังไม่ถึงเวลาเทรนใหม่ (ต้องรออย่างน้อย 30 วัน)")
             return model
-        else:
-            print("🔄 ถึงเวลาเทรนโมเดลใหม่!")
     
-    class EarlyStoppingLogger(Callback):
-        def on_train_end(self, logs=None):
-            print("⚠️ การฝึกโมเดลหยุดก่อนครบกำหนด เนื่องจากโมเดลอาจเกิดการ Overfitting!")
-
-    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=1e-5, verbose=1)
-
+    print("🛠️ กำลังสร้างโมเดลใหม่...")
+    
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=10,
+        restore_best_weights=True,
+        mode='min'
+    )
+    
+    reduce_lr = ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.5,
+        patience=5,
+        min_lr=1e-6,
+        verbose=1
+    )
+    
     model = Sequential([
-        LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=regularizers.l2(0.1)),
-        Dropout(0.3),
-        LSTM(128, return_sequences=True, kernel_regularizer=regularizers.l2(0.1)),
-        Dropout(0.3),
-        LSTM(64, kernel_regularizer=regularizers.l2(0.1)),
-        Dropout(0.3),
-        Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.1)),
+        LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])),
+        BatchNormalization(),
+        Dropout(0.4),
+        LSTM(128, return_sequences=True),
+        BatchNormalization(),
+        Dropout(0.4),
+        LSTM(64),
+        BatchNormalization(),
+        Dropout(0.4),
+        Dense(32, activation='relu'),
         Dense(1)
     ])
-
-    model.compile(optimizer=Adam(learning_rate=0.3), loss=Huber(), metrics=['mae', 'mape'])
-    print("🛠️ กำลังสร้างโมเดลใหม่...")
-
-    model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=30, batch_size=32, verbose=1, 
-              callbacks=[early_stopping, reduce_lr, EarlyStoppingLogger()])
-
-    joblib.dump(model, model_path1)
+    
+    model.compile(
+        optimizer=Adam(learning_rate=0.001),
+        loss=Huber(),
+        metrics=['mae', 'mape']
+    )
+    
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=50,
+        batch_size=32,
+        callbacks=[early_stopping, reduce_lr],
+        verbose=1
+    )
+    
+    # Plot training history
+    plt.figure(figsize=(12, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.title('Model Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['mae'], label='Training MAE')
+    plt.plot(history.history['val_mae'], label='Validation MAE')
+    plt.title('Model MAE')
+    plt.xlabel('Epoch')
+    plt.ylabel('MAE')
+    plt.legend()
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(model_dir, 'training_history.png'))
+    
+    joblib.dump(model, model_path)
     joblib.dump(datetime.now(), date_path)
     print("✅ บันทึกโมเดลและวันที่เทรนล่าสุดเรียบร้อยแล้ว")
-
+    
     return model
 
 def predict_next_sales(model, X, df):
@@ -97,34 +221,39 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def predict_sales_api():
+    print("🔄 กำลังโหลดข้อมูล...")
     df = load_data()
     df_preprocessed = preprocess_data(df)
-
-    X, y, df_prepared = prepare_data(df_preprocessed)
+    
+    X, y, df_prepared, scaler = prepare_data(df_preprocessed)
     
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, shuffle=False)
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, shuffle=False)
-
-    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
-    X_val = X_val.reshape(X_val.shape[0], X_val.shape[1], X_val.shape[2])
-    X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2])
-
-    model = train_lstm_model1(X_train, y_train, X_val, y_val)
     
+    model = train_lstm_model(X_train, y_train, X_val, y_val)
+    
+    print("🔮 กำลังทำนายผล...")
     predicted_sales = model.predict(X_test)
     mae = mean_absolute_error(predicted_sales, y_test)
     mape = mean_absolute_percentage_error(predicted_sales, y_test)
     r2 = r2_score(y_test, predicted_sales)
-
-    predicted_date = df_prepared['sale_date'].iloc[-1] + pd.DateOffset(days=1)
-
+    
+    next_day_prediction, predicted_date = predict_next_sales(model, X, df_prepared)
+    
+    print(f"📊 ผลการประเมิน:")
+    print(f"MAE: {mae:.2f}")
+    print(f"MAPE: {mape:.2f}%")
+    print(f"R²: {r2:.4f}")
+    
     return jsonify({
-        'predicted_sales': float(predicted_sales[-1][0]),
+        'predicted_sales': float(next_day_prediction),
         'predicted_date': str(predicted_date),
-        'model_name': "LSTM",
-        'mae': mae,
-        'mape': mape,
-        'r2': r2
+        'model_name': "LSTM with Augmentation",
+        'metrics': {
+            'mae': float(mae),
+            'mape': float(mape),
+            'r2': float(r2)
+        }
     })
 
 if __name__ == '__main__':

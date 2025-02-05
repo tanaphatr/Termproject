@@ -39,6 +39,8 @@ def train_modeltest():
         session_id=123,
         categorical_features=categorical,
         feature_selection=True,
+        normalize=True,
+        remove_outliers=True,
         train_size=0.8,
     )
 
