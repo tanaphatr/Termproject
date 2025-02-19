@@ -4,37 +4,98 @@ import os
 # เพิ่ม path ของโปรเจค
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'PJML')))
 
+import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 from Datafile.load_data import load_data
 from pycaret.regression import *
+
+def add_lag_features(df, columns=['sales_amount'], lags=[1, 7, 30]):
+    """สร้าง lag features"""
+    for col in columns:
+        for lag in lags:
+            df[f'{col}_lag_{lag}'] = df[col].shift(lag)
+    return df
+
+def add_rolling_statistics(df, columns=['sales_amount'], windows=[30, 60]):
+    """สร้าง rolling statistics features"""
+    for col in columns:
+        for window in windows:
+            df[f'{col}_ma_{window}'] = df[col].rolling(window=window).mean()
+            df[f'{col}_std_{window}'] = df[col].rolling(window=window).std()
+    return df
+
+def add_cyclical_features(df, date_column='sale_date'):
+    """สร้าง cyclical features"""
+    df['month_sin'] = np.sin(2 * np.pi * df[date_column].dt.month/12)
+    df['month_cos'] = np.cos(2 * np.pi * df[date_column].dt.month/12)
+    df['day_of_week_sin'] = np.sin(2 * np.pi * df[date_column].dt.dayofweek/7)
+    df['day_of_week_cos'] = np.cos(2 * np.pi * df[date_column].dt.dayofweek/7)
+    return df
+
+def add_noise(df, columns=['sales_amount'], noise_factor=0.01):
+    """เพิ่ม noise ให้กับข้อมูล"""
+    df_noise = df.copy()
+    for col in columns:
+        noise = np.random.normal(0, noise_factor * df[col].std(), size=len(df))
+        df_noise[col] = df[col] + noise
+    return df_noise
+
+def jitter_data(df, noise_level=0.02):
+    """เพิ่ม jitter ให้กับข้อมูลยอดขาย"""
+    df_jitter = df.copy()
+    df_jitter['sales_amount_jitter'] = df['sales_amount'] + np.random.normal(0, df['sales_amount'].std() * noise_level, len(df))
+    return df_jitter
+
+def time_shift(df, shift_days=1):
+    """สร้างข้อมูลด้วยการเลื่อนเวลา"""
+    df_shifted = df.copy()
+    df_shifted['sale_date'] = df_shifted['sale_date'] + pd.Timedelta(days=shift_days)
+    return df_shifted
+
+def scale_features(df, columns=['sales_amount'], scale_factor=1.1):
+    """ปรับสเกลข้อมูล"""
+    df_scaled = df.copy()
+    for col in columns:
+        df_scaled[col] = df[col] * scale_factor
+    return df_scaled
 
 def train_modeltest():
     # โหลดข้อมูล
     df = load_data()
 
-    # เติมค่าขาดหายไปในคอลัมน์เป้าหมาย
+    # เติมค่าขาดหายไป
     df['sales_amount'] = df['sales_amount'].fillna(df['sales_amount'].mean())
 
-    # ลบข้อมูลที่ไม่เกี่ยวข้อง
+    # แปลงวันที่
     if 'sale_date' in df.columns:
-        # แปลงจาก พ.ศ. เป็น ค.ศ. ก่อนทำการแปลงเป็น datetime
         df['sale_date'] = df['sale_date'].apply(
             lambda x: pd.to_datetime(str(int(x[:4]) - 543) + x[4:]) if isinstance(x, str) else pd.NaT
         )
 
-    # เลือกคอลัมน์ที่เป็น object (Categorical Features)
-    categorical_features = df.select_dtypes(include=['object']).columns.tolist()
-    print(categorical_features)
+    # เพิ่ม features ใหม่
+    df = add_lag_features(df)
+    df = add_rolling_statistics(df)
+    df = add_cyclical_features(df)
 
-    # เติม _ ในส่วนที่เป็นช่องว่างใน categorical features
+    # Data Augmentation
+    df_noise = add_noise(df)
+    df_shifted = time_shift(df)
+    df_scaled = scale_features(df)
+
+    # รวมข้อมูลที่เพิ่มขึ้น
+    df_augmented = pd.concat([df, df_noise, df_shifted, df_scaled], ignore_index=True)
+
+    # จัดการ categorical features
+    categorical_features = df_augmented.select_dtypes(include=['object']).columns.tolist()
     for column in categorical_features:
-        df[column] = df[column].str.replace(' ', '_', regex=True)
+        df_augmented[column] = df_augmented[column].str.replace(' ', '_', regex=True)
 
     categorical = ['event', 'weather']
-    # # ตั้งค่าการเตรียมข้อมูลใน PyCaret
 
+    # ตั้งค่า PyCaret
     setup(
-        data=df,
+        data=df_augmented,
         target='sales_amount',
         session_id=123,
         categorical_features=categorical,
@@ -44,23 +105,18 @@ def train_modeltest():
         train_size=0.8,
     )
 
-    # เปรียบเทียบโมเดลต่างๆ
+    # เปรียบเทียบและเลือกโมเดลที่ดีที่สุด
     best_model = compare_models()
-
-    # ฝึกโมเดลที่ดีที่สุด
     final_model = finalize_model(best_model)
 
-    # ดึงข้อมูลที่แปลงแล้วที่ใช้ในการฝึกโมเดล
+    # บันทึกข้อมูลที่ใช้ในการเทรน
     X_train = get_config('X_train')
-
-    # บันทึกข้อมูลที่ใช้ในการฝึกโมเดลลงในไฟล์ CSV
     X_train.to_csv('transformed_training_data.csv', index=False)
 
-    # ดึงผลลัพธ์ metrics
     model_metrics = pull()
     model_name = best_model.__class__.__name__
 
-    return final_model, model_metrics, model_name, df
+    return final_model, model_metrics, model_name, df_augmented
 
 from flask import Flask, jsonify
 
