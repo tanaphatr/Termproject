@@ -42,7 +42,6 @@ def add_time_features(df):
 def add_new_features(df):
     df['prev_day_diff'] = df['sales_amount'] - df['sales_amount'].shift(1)
     df['rolling_avg_60'] = df['sales_amount'].rolling(window=60).mean()
-    df['holiday_flag'] = df['event'].apply(lambda x: 1 if x == 'holiday' else 0)
     return df
 
 def add_lag_features(df, lags=[1, 2, 3, 7, 14, 30]):
@@ -93,6 +92,10 @@ def augment_time_series(df):
     
     return pd.concat([df, augmented_data]).sort_values('sale_date').reset_index(drop=True)
 
+def save_to_csv(df, filename):
+    df.to_csv(filename, index=False)
+    print(f"✅ Data saved to {filename}")
+
 def prepare_data(df):
     print("🔄 เริ่มการเตรียมข้อมูล...")
     
@@ -102,17 +105,30 @@ def prepare_data(df):
     print("➕ กำลังเพิ่ม features...")
     df = add_time_features(df)
     df = add_lag_features(df)
+    df = add_new_features(df)
     df = add_rolling_features(df)
     df = df.dropna()
     
     print("🔄 กำลังทำ Data Augmentation...")
     df_augmented = augment_time_series(df)
+
+    # Save augmented data
+    save_to_csv(df_augmented, 'augmented_data.csv')
+
+    # # Scale features
+    # scaler = StandardScaler()
+    # features = ['Temperature', 'day_of_week', 'month', 'quarter', 'year', 
+    #             'day_of_year', 'month_sin', 'month_cos', 'day_of_week_sin', 
+    #             'day_of_week_cos'] + \
+    #           [col for col in df.columns if 'sales_lag_' in col or 
+    #                                       'sales_ma_' in col or 
+    #                                       'sales_std_' in col or 
+    #                                       'sales_min_' in col or 
+    #                                       'sales_max_' in col]
     
     # Scale features
     scaler = StandardScaler()
-    features = ['Temperature', 'day_of_week', 'month', 'quarter', 'year', 
-                'day_of_year', 'month_sin', 'month_cos', 'day_of_week_sin', 
-                'day_of_week_cos'] + \
+    features = ['Temperature', 'prev_day_diff', 'rolling_avg_60'] + \
               [col for col in df.columns if 'sales_lag_' in col or 
                                           'sales_ma_' in col or 
                                           'sales_std_' in col or 
