@@ -38,62 +38,38 @@ def preprocess_data(df):
     df.to_csv("processed_data111.csv", index=False)
     return df
 
-
-
-
 def preprocess_dataps(dfps):
-    # 1. แปลงคอลัมน์ 'Date' ให้เป็น string (ถ้าคอลัมน์ 'Date' เป็น datetime)
-    dfps['Date'] = dfps['Date'].astype(str)
+    # ตรวจสอบและแปลงปี พ.ศ. เป็น ค.ศ.
+    dfps['Date'] = dfps['Date'].astype(str)  # แปลงให้เป็น string ก่อน
+    dfps['Date'] = dfps['Date'].apply(lambda x: str(int(x[:4]) - 543) + x[4:] if x[:4].isdigit() else x)
 
-    # 2. เพิ่มคอลัมน์ 'Year' และ 'Month' โดยใช้ข้อมูลวันที่ที่มีอยู่
-    dfps['Year'] = dfps['Date'].str[:4]  # ใช้ 4 หลักแรกของ 'Date' เพื่อดึงปี
-    dfps['Month'] = dfps['Date'].str[5:7]  # ใช้หลักที่ 5 ถึง 7 เพื่อดึงเดือน
+    # แปลงคอลัมน์ 'Date' เป็น datetime
+    dfps['Date'] = pd.to_datetime(dfps['Date'], errors='coerce')  # errors='coerce' ป้องกัน error ถ้ามีค่าที่แปลงไม่ได้
 
-    # 3. ตรวจสอบข้อมูลเดือนสุดท้าย
-    latest_year = dfps['Year'].max()
-    latest_month = dfps[dfps['Year'] == latest_year]['Month'].max()
+    # กรองข้อมูลที่ Date เป็น NaT ออกไป (ถ้ามี)
+    dfps = dfps.dropna(subset=['Date'])
 
-    # ตรวจสอบจำนวนวันที่มีข้อมูลในเดือนสุดท้าย
-    latest_month_data = dfps[(dfps['Year'] == latest_year) & (dfps['Month'] == latest_month)]
-    days_in_month = latest_month_data['Date'].str[8:10].astype(int).nunique()
-    total_days_in_month = monthrange(int(latest_year), int(latest_month))[1]
+    # รวมค่าจำนวน Quantity และ Total_Sale ถ้ามี Product_code และ Date ซ้ำกัน
+    dfps = dfps.groupby(['Date', 'Product_code'], as_index=False).agg({
+        'Quantity': 'sum',
+        'Total_Sale': 'sum'
+    })
 
-    # หากเดือนสุดท้ายมีข้อมูลไม่ครบเดือน ให้ลบข้อมูลเดือนนั้น
-    if days_in_month < total_days_in_month:
-        dfps = dfps[~((dfps['Year'] == latest_year) & (dfps['Month'] == latest_month))]
-
-    # 4. คำนวณยอดสินค้ารวมต่อเดือนตาม Product_code
-    monthly_total_quantity = dfps.groupby(['Year', 'Month', 'Product_code'])['Quantity'].sum().reset_index()
-    monthly_total_quantity.rename(columns={'Quantity': 'Monthly_Total_Quantity'}, inplace=True)
-
-    # 5. สร้าง DataFrame สำหรับ Product_code ทุกรายการในแต่ละเดือน
+    # สร้างลิสต์ของทุกๆ Date และ Product_code ที่เป็นไปได้
+    all_dates = pd.date_range(dfps['Date'].min(), dfps['Date'].max(), freq='D')
     all_product_codes = dfps['Product_code'].unique()
-    all_combinations = pd.MultiIndex.from_product(
-        [dfps['Year'].unique(), dfps['Month'].unique(), all_product_codes],
-        names=['Year', 'Month', 'Product_code']
-    )
 
-    # 6. รวมข้อมูล Monthly_Total_Quantity กับทุกการจับคู่ Year, Month, Product_code
-    monthly_total_quantity = monthly_total_quantity.set_index(['Year', 'Month', 'Product_code'])
-    monthly_total_quantity = monthly_total_quantity.reindex(all_combinations, fill_value=0).reset_index()
+    # สร้าง DataFrame เปล่าที่จะเติมข้อมูล
+    expanded_df = pd.DataFrame([(date, code) for date in all_dates for code in all_product_codes], columns=['Date', 'Product_code'])
 
-    # 7. คำนวณค่าเฉลี่ยของ Monthly_Total_Quantity สำหรับแต่ละ Year และ Month
-    monthly_avg_quantity = monthly_total_quantity.groupby(['Year', 'Month'])['Monthly_Total_Quantity'].mean().reset_index()
-    monthly_avg_quantity.rename(columns={'Monthly_Total_Quantity': 'Monthly_Avg_Quantity'}, inplace=True)
+    # ผสมข้อมูลเดิมกับ DataFrame ที่เติมค่าด้วยค่า 0
+    dfps_full = pd.merge(expanded_df, dfps, on=['Date', 'Product_code'], how='left').fillna({'Quantity': 0, 'Total_Sale': 0})
 
-    # 8. เติมค่า Monthly_Total_Quantity ที่หายไปด้วยค่าเฉลี่ย
-    monthly_total_quantity = monthly_total_quantity.merge(monthly_avg_quantity, on=['Year', 'Month'], how='left')
-    monthly_total_quantity['Monthly_Total_Quantity'] = monthly_total_quantity.apply(
-    lambda row: row['Monthly_Avg_Quantity'] if row['Monthly_Total_Quantity'] == 0 else row['Monthly_Total_Quantity'], axis=1)
+    # เรียงลำดับข้อมูลตาม Date และ Product_code
+    dfps_full = dfps_full.sort_values(by=['Date', 'Product_code']).reset_index(drop=True)
 
-    # 9. รวมข้อมูลทั้งหมดกลับไปที่ DataFrame
-    dfps = dfps.merge(monthly_total_quantity[['Year', 'Month', 'Product_code', 'Monthly_Total_Quantity']], 
-                      on=['Year', 'Month', 'Product_code'], how='left')
+    # บันทึกไฟล์ CSV
+    dfps_full.to_csv("product.csv", index=False)
 
-    # 10. เลือกคอลัมน์ที่ต้องการแสดงผล
-    dfps = dfps[['Year', 'Month', 'Product_code', 'Monthly_Total_Quantity']]
+    return dfps_full
 
-    # 11. ตัดแถวที่ Product_code ซ้ำในปีและเดือนเดียวกัน
-    dfps = dfps.drop_duplicates(subset=['Year', 'Month', 'Product_code'])
-
-    return dfps
