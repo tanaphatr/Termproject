@@ -65,6 +65,10 @@ def preprocess_dataps(dfps):
     # ผสมข้อมูลเดิมกับ DataFrame ที่เติมค่าด้วยค่า 0
     dfps_full = pd.merge(expanded_df, dfps, on=['Date', 'Product_code'], how='left').fillna({'Quantity': 0, 'Total_Sale': 0})
 
+    # กรองแสดงเฉพาะ Product_code ที่ต้องการ
+    product_codes_to_show = ['A1034', 'A1004', 'A1001', 'B1003', 'B1002', 'D1003', 'A1002']
+    dfps_full = dfps_full[dfps_full['Product_code'].isin(product_codes_to_show)]
+
     # เรียงลำดับข้อมูลตาม Date และ Product_code
     dfps_full = dfps_full.sort_values(by=['Date', 'Product_code']).reset_index(drop=True)
 
@@ -72,4 +76,3 @@ def preprocess_dataps(dfps):
     dfps_full.to_csv("product.csv", index=False)
 
     return dfps_full
-
