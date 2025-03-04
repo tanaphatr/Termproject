@@ -39,14 +39,16 @@ def preprocess_data(df):
     return df
 
 def preprocess_dataps(dfps):
+    import pandas as pd
+
     # ตรวจสอบและแปลงปี พ.ศ. เป็น ค.ศ.
-    dfps['Date'] = dfps['Date'].astype(str)  # แปลงให้เป็น string ก่อน
+    dfps['Date'] = dfps['Date'].astype(str)  
     dfps['Date'] = dfps['Date'].apply(lambda x: str(int(x[:4]) - 543) + x[4:] if x[:4].isdigit() else x)
 
     # แปลงคอลัมน์ 'Date' เป็น datetime
-    dfps['Date'] = pd.to_datetime(dfps['Date'], errors='coerce')  # errors='coerce' ป้องกัน error ถ้ามีค่าที่แปลงไม่ได้
+    dfps['Date'] = pd.to_datetime(dfps['Date'], errors='coerce')
 
-    # กรองข้อมูลที่ Date เป็น NaT ออกไป (ถ้ามี)
+    # กรองข้อมูลที่ Date เป็น NaT ออกไป
     dfps = dfps.dropna(subset=['Date'])
 
     # รวมค่าจำนวน Quantity และ Total_Sale ถ้ามี Product_code และ Date ซ้ำกัน
@@ -64,6 +66,13 @@ def preprocess_dataps(dfps):
 
     # ผสมข้อมูลเดิมกับ DataFrame ที่เติมค่าด้วยค่า 0
     dfps_full = pd.merge(expanded_df, dfps, on=['Date', 'Product_code'], how='left').fillna({'Quantity': 0, 'Total_Sale': 0})
+
+    # คำนวณค่าเฉลี่ยของ Quantity และ Total_Sale สำหรับแต่ละ Product_code
+    avg_values = dfps_full.groupby('Product_code')[['Quantity', 'Total_Sale']].mean().round(0).astype(int)
+
+    # แทนค่าที่เป็น 0 ด้วยค่าเฉลี่ยของแต่ละ Product_code (ไม่มีทศนิยม)
+    dfps_full.loc[dfps_full['Quantity'] == 0, 'Quantity'] = dfps_full['Product_code'].map(avg_values['Quantity'])
+    dfps_full.loc[dfps_full['Total_Sale'] == 0, 'Total_Sale'] = dfps_full['Product_code'].map(avg_values['Total_Sale'])
 
     # กรองแสดงเฉพาะ Product_code ที่ต้องการ
     product_codes_to_show = ['A1034', 'A1004', 'A1001', 'B1003', 'B1002', 'D1003', 'A1002']
