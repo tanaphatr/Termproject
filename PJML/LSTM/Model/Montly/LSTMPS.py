@@ -14,7 +14,7 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout, BatchNormalization, Bi
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import Huber
 from tensorflow.keras.callbacks import EarlyStopping, Callback, ReduceLROnPlateau
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, r2_score, root_mean_squared_error
 from tensorflow.keras.regularizers import l2
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'PJML')))
@@ -65,7 +65,7 @@ def augment_time_series(df, random_seed=42):
     # Time shift augmentation
     for shift in [-2, -1, 1, 2]:
         shifted = df.copy()
-        shifted['Quantity'] = shifted['Quantity'].shift(shift).fillna(method='bfill')  # แทนค่าหาย
+        shifted['Quantity'] = shifted['Quantity'].shift(shift).bfill()  # แทนค่าหาย
         augmented_data = pd.concat([augmented_data, shifted.dropna()])
     
     for _ in range(5):  # ทำซ้ำ 5 รอบ
@@ -97,6 +97,7 @@ def prepare_data(df):
 
     print("🔄 เริ่มการเตรียมข้อมูล...")
     
+    df = df.copy()
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
     df = df.dropna(subset=['Date'])
     
@@ -225,6 +226,22 @@ def predict_next_sales(model, X, df):
     predicted_date = df['Date'].iloc[-1] + pd.DateOffset(days=1)
     return prediction, predicted_date
 
+def get_product_name(product_code):
+    if product_code == "A1001":
+        return " Osida shoes"
+    elif product_code == "A1002":
+        return " Adda shoes"
+    elif product_code == "A1004":
+        return " Fashion shoes"
+    elif product_code == "A1034":
+        return " Court Shoes"
+    elif product_code == "B1002":
+        return " Long socks"
+    elif product_code == "B1003":
+        return " Short socks"
+    elif product_code == "D1003":
+        return " Mask pack"
+    
 app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def predict_sales_api():
@@ -255,22 +272,23 @@ def predict_sales_api():
         predicted_sales = model.predict(X_test)
         mae = mean_absolute_error(predicted_sales, y_test)
         mape = mean_absolute_percentage_error(predicted_sales, y_test)
-        mse = mean_squared_error(predicted_sales, y_test)
+        rmse = root_mean_squared_error(predicted_sales, y_test)
         r2 = r2_score(y_test, predicted_sales)
 
         next_day_prediction, predicted_date = predict_next_sales(model, X, df_prepared)
+        productname = get_product_name(product_code) 
 
         print(f"📊 ผลการประเมินสำหรับ {product_code}:")
-        print(f"MAE: {mae:.2f}, MAPE: {mape:.2f}%, R²: {r2:.4f}, MSE: {mse:.4f}")
+        print(f"MAE: {mae:.2f}, MAPE: {mape:.2f}%, R²: {r2:.4f}, MSE: {rmse:.4f}")
 
-        predictions[product_code] = {
-            'predicted_sales': float(next_day_prediction),
+        predictions[product_code + productname] = {
+            'predicted_sales': int(next_day_prediction),
             'predicted_date': str(predicted_date),
             'metrics': {
-                'mae': float(mae),
-                'mape': float(mape),
-                'r2': float(r2),
-                'mse': float(mse)
+                'mae': round(float(mae), 2),
+                'mape': round(float(mape), 2),
+                'r2': round(float(r2), 2),
+                'rmse': round(float(rmse), 2)
             }
         }
     return jsonify(predictions)
