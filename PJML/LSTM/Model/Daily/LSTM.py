@@ -17,7 +17,7 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout, BatchNormalization, Bi
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import Huber
 from tensorflow.keras.callbacks import EarlyStopping, Callback, ReduceLROnPlateau
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, r2_score, root_mean_squared_error
 from tensorflow.keras.regularizers import l2
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'PJML')))
@@ -48,10 +48,6 @@ def add_lag_features(df, lags=[1, 2, 3, 7, 14, 30]):
     for lag in lags:
         df[f'sales_lag_{lag}'] = df['sales_amount'].shift(lag)
     return df
-    
-def jitter_data(df, noise_level=0.02):
-    df['sales_amount_jitter'] = df['sales_amount'] + np.random.normal(0, df['sales_amount'].std() * noise_level, len(df))
-    return df
 
 def add_rolling_features(df):
     windows = [7, 14, 30]
@@ -62,7 +58,8 @@ def add_rolling_features(df):
         df[f'sales_max_{window}'] = df['sales_amount'].rolling(window=window).max()
     return df
 
-def augment_time_series(df):
+def augment_time_series(df, random_seed=42):
+    np.random.seed(random_seed)  # กำหนด seed ให้ noise คงที่ทุกครั้ง
     augmented_data = pd.DataFrame()
     
     # Time shift augmentation
@@ -128,7 +125,7 @@ def prepare_data(df):
     
     # Scale features
     scaler = StandardScaler()
-    features = ['Temperature', 'prev_day_diff', 'rolling_avg_60'] + \
+    features = ['Temperature', 'prev_day_diff', 'day_of_week', 'month','day_of_year','rolling_avg_60'] + \
               [col for col in df.columns if 'sales_lag_' in col or 
                                           'sales_ma_' in col or 
                                           'sales_std_' in col or 
@@ -172,7 +169,7 @@ def train_lstm_model(X_train, y_train, X_val, y_val):
     
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5,
+        patience=20,
         restore_best_weights=True,
         mode='min'
     )
@@ -188,11 +185,11 @@ def train_lstm_model(X_train, y_train, X_val, y_val):
     model = Sequential([
         Bidirectional(LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]), kernel_regularizer=l2(0.001))),
         BatchNormalization(),
-        Dropout(0.4),
+        Dropout(0.2),
 
         Bidirectional(LSTM(128, return_sequences=True, kernel_regularizer=l2(0.001))),
         BatchNormalization(),
-        Dropout(0.3),
+        Dropout(0.2),
 
         Bidirectional(LSTM(64, kernel_regularizer=l2(0.001))),
         BatchNormalization(),
@@ -213,7 +210,7 @@ def train_lstm_model(X_train, y_train, X_val, y_val):
         validation_data=(X_val, y_val),
         epochs=100,  # เพิ่ม epoch
         batch_size=32,
-        callbacks=[EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)]
+        callbacks=[EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)]
     )
     
     # Plot training history
@@ -259,7 +256,7 @@ def predict_sales_api():
     
     X, y, df_prepared, scaler = prepare_data(df_preprocessed)
     
-    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, shuffle=False)
+    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.45 , shuffle=False)
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.6, shuffle=False)
     
     model = train_lstm_model(X_train, y_train, X_val, y_val)
@@ -269,6 +266,7 @@ def predict_sales_api():
     mae = mean_absolute_error(predicted_sales, y_test)
     mape = mean_absolute_percentage_error(predicted_sales, y_test)
     r2 = r2_score(y_test, predicted_sales)
+    rmse = root_mean_squared_error(y_test, predicted_sales)
     
     next_day_prediction, predicted_date = predict_next_sales(model, X, df_prepared)
     
@@ -276,7 +274,8 @@ def predict_sales_api():
     print(f"MAE: {mae:.2f}")
     print(f"MAPE: {mape:.2f}%")
     print(f"R²: {r2:.4f}")
-    
+    print(f"RMSE: {rmse:.4f}")
+
     return jsonify({
         'predicted_sales': float(next_day_prediction),
         'predicted_date': str(predicted_date),
@@ -284,7 +283,8 @@ def predict_sales_api():
         'metrics': {
             'mae': float(mae),
             'mape': float(mape),
-            'r2': float(r2)
+            'r2': float(r2),
+            'rmse': float(rmse)
         }
     })
 
