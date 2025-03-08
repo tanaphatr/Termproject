@@ -1,15 +1,12 @@
 import os
 import sys
-from unicodedata import bidirectional
-
-from sklearn.discriminant_analysis import StandardScaler
 sys.stdout.reconfigure(encoding='utf-8')
 import pandas as pd
 import numpy as np
 import joblib
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from flask import Flask, app, jsonify
 from tensorflow.keras.models import Sequential
@@ -26,6 +23,7 @@ from Datafile.load_data import load_dataps
 from Preprocess.preprocess_data import preprocess_dataps
 
 product_codes = ["A1001", "A1002", "A1004", "A1034", "B1002", "B1003", "D1003"]
+# product_codes = ["A1001", "A1002", "A1004", "A1034", "B1002", "B1003", "D1003"]
 
 def add_time_features(df):
     df['day_of_week'] = df['Date'].dt.dayofweek
@@ -65,24 +63,24 @@ def augment_time_series(df, random_seed=42):
     augmented_data = pd.DataFrame()
     
     # Time shift augmentation
-    for shift in [-3, -2, -1, 1, 2, 3]:
+    for shift in [-2, -1, 1, 2]:
         shifted = df.copy()
-        shifted['Quantity'] = shifted['Quantity'].shift(shift)
+        shifted['Quantity'] = shifted['Quantity'].shift(shift).fillna(method='bfill')  # แทนค่าหาย
         augmented_data = pd.concat([augmented_data, shifted.dropna()])
     
-    # Random noise augmentation with different intensities
-    noise_scales = [0.03, 0.05, 0.07]
-    for scale in noise_scales:
+    for _ in range(5):  # ทำซ้ำ 5 รอบ
+        scale = np.random.uniform(0.02, 0.04)  # ปรับ Noise Scale ให้อยู่ในช่วงแคบลง
         noisy = df.copy()
         noise = np.random.normal(0, df['Quantity'].std() * scale, len(df))
-        noisy['Quantity'] += noise
+        noisy['Quantity'] = np.clip(noisy['Quantity'] + noise, 0, None)
         augmented_data = pd.concat([augmented_data, noisy])
-    
-    # Scaling augmentation
-    for scale in [0.9, 0.95, 1.05, 1.1]:
+
+    for _ in range(5):
+        scale = np.random.uniform(0.95, 1.05)  # ใช้ Scaling แบบสุ่ม
         scaled = df.copy()
         scaled['Quantity'] = scaled['Quantity'] * scale
         augmented_data = pd.concat([augmented_data, scaled])
+
     
     # Trend augmentation
     trend = df.copy()
@@ -175,15 +173,15 @@ def train_lstm_model(X_train, y_train, X_val, y_val, model_dir ,product_code):
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6, verbose=1)
 
     model = Sequential([
-        Bidirectional(LSTM(256, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]))),
+        Bidirectional(LSTM(128, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]))),
         BatchNormalization(),
-        Dropout(0.2),
+        Dropout(0.4),
 
-        Bidirectional(LSTM(128, return_sequences=True)),
+        Bidirectional(LSTM(64, return_sequences=True)),
         BatchNormalization(),
-        Dropout(0.2),
+        Dropout(0.3),
 
-        Bidirectional(LSTM(64)),
+        Bidirectional(LSTM(32)),
         BatchNormalization(),
         Dropout(0.2),
 
@@ -247,7 +245,7 @@ def predict_sales_api():
 
         X, y, df_prepared, scaler = prepare_data(df_product)
 
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.45, shuffle=False)
+        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, shuffle=False)
         X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.6, shuffle=False)
 
         model_dir = os.path.join('ModelLstm2', product_code)
