@@ -22,7 +22,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from Datafile.load_data import load_dataps
 from Preprocess.preprocess_data import preprocess_dataps
 
-product_codes = ["A1002"]
+product_codes = ["A1001", "A1002", "A1004", "A1034", "B1002", "B1003", "D1003"]
 # product_codes = ["A1001", "A1002", "A1004", "A1034", "B1002", "B1003", "D1003"]
 
 def add_time_features(df):
