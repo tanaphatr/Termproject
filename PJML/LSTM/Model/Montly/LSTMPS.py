@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from flask import Flask, app, jsonify
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout, BatchNormalization, Bidirectional
+from tensorflow.keras.layers import LSTM, Dense, Dropout, BatchNormalization, Bidirectional, Input
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import Huber
 from tensorflow.keras.callbacks import EarlyStopping, Callback, ReduceLROnPlateau
@@ -114,17 +114,6 @@ def prepare_data(df):
     # Save augmented data
     save_to_csv(df_augmented, 'augmented_data.csv')
 
-    # # Scale features
-    # scaler = StandardScaler()
-    # features = ['Temperature', 'day_of_week', 'month', 'quarter', 'year', 
-    #             'day_of_year', 'month_sin', 'month_cos', 'day_of_week_sin', 
-    #             'day_of_week_cos'] + \
-    #           [col for col in df.columns if 'sales_lag_' in col or 
-    #                                       'sales_ma_' in col or 
-    #                                       'sales_std_' in col or 
-    #                                       'sales_min_' in col or 
-    #                                       'sales_max_' in col]
-    
     # Scale features
     scaler = StandardScaler()
     features = ['prev_day_diff', 'day_of_week', 'month','day_of_year','rolling_avg_60'] + \
@@ -170,29 +159,91 @@ def train_lstm_model(X_train, y_train, X_val, y_val, model_dir ,product_code):
 
     print(f"🛠️ กำลังสร้างโมเดลใหม่สำหรับ {model_dir}...")
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True, mode='min')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6, verbose=1)
-
+    # เพิ่ม Grid Search แบบง่าย
+    print("🔍 กำลังทำ Grid Search เพื่อหาพารามิเตอร์ที่เหมาะสม...")
+    
+    # กำหนดพารามิเตอร์ที่ต้องการทดสอบ
+    param_grid = {
+        'lstm_units': [64, 128, 256],  # เพิ่ม 256 units
+        'dropout_rate': [0.2, 0.3, 0.4],
+        'learning_rate': [0.001, 0.0005]  # เพิ่ม 0.0001
+    }
+    
+    best_val_loss = float('inf')
+    best_params = {}
+    
+    # ทำ Grid Search แบบง่าย
+    for lstm_units in param_grid['lstm_units']:
+        for dropout_rate in param_grid['dropout_rate']:
+            for learning_rate in param_grid['learning_rate']:
+                print(f"ทดสอบ: lstm_units={lstm_units}, dropout_rate={dropout_rate}, learning_rate={learning_rate}")
+                # สร้างโมเดลด้วยพารามิเตอร์ปัจจุบัน แบบใหม่ที่ใช้ Input layer
+                model = Sequential([
+                    Input(shape=(X_train.shape[1], X_train.shape[2])),
+                    Bidirectional(LSTM(lstm_units, return_sequences=True)),
+                    BatchNormalization(),
+                    Dropout(dropout_rate),
+                    Bidirectional(LSTM(lstm_units//2, return_sequences=True)),
+                    BatchNormalization(),
+                    Dropout(dropout_rate-0.1),
+                    Bidirectional(LSTM(lstm_units//4)),
+                    BatchNormalization(),
+                    Dropout(dropout_rate-0.2),
+                    Dense(32, activation='relu'),
+                    Dense(1)
+                ])
+                model.compile(optimizer=Adam(learning_rate=learning_rate), loss=Huber(), metrics=['mae', 'mape'])
+                # ใช้ EarlyStopping เพื่อหยุดการเทรนเมื่อโมเดลไม่พัฒนา
+                early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True, mode='min')
+                # เทรนโมเดลด้วยจำนวน epochs น้อยลงเพื่อความเร็ว
+                history = model.fit(
+                    X_train, y_train,
+                    validation_data=(X_val, y_val),
+                    epochs=30,  # ลดจำนวน epochs ลงเพื่อความเร็วในการทำ Grid Search
+                    batch_size=32,
+                    callbacks=[early_stopping],
+                    verbose=0  # ปิดการแสดงผลระหว่างเทรน
+                )
+                # ดูค่า validation loss ที่ดีที่สุุด
+                val_loss = min(history.history['val_loss'])
+                # บันทึกพารามิเตอร์ที่ดีที่สุด
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    best_params = {
+                        'lstm_units': lstm_units,
+                        'dropout_rate': dropout_rate,
+                        'learning_rate': learning_rate
+                    }
+    # แสดงพารามิเตอร์ที่ดีที่สุด
+    print(f"🏆 พารามิเตอร์ที่ดีที่สุด: {best_params}")
+    print(f"🏆 ค่า validation loss ที่ดีที่สุด: {best_val_loss}")
+    # สร้างโมเดลสุดท้ายด้วยพารามิเตอร์ที่ดีที่สุด แบบใหม่ที่ใช้ Input layer
     model = Sequential([
-        Bidirectional(LSTM(128, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2]))),
+        Input(shape=(X_train.shape[1], X_train.shape[2])),
+        Bidirectional(LSTM(best_params['lstm_units'], return_sequences=True)),
         BatchNormalization(),
-        Dropout(0.4),
-
-        Bidirectional(LSTM(64, return_sequences=True)),
+        Dropout(best_params['dropout_rate']),
+        Bidirectional(LSTM(best_params['lstm_units']//2, return_sequences=True)),
         BatchNormalization(),
-        Dropout(0.3),
-
-        Bidirectional(LSTM(32)),
+        Dropout(best_params['dropout_rate']-0.1),
+        Bidirectional(LSTM(best_params['lstm_units']//4)),
         BatchNormalization(),
-        Dropout(0.2),
-
+        Dropout(best_params['dropout_rate']-0.2),
         Dense(32, activation='relu'),
         Dense(1)
     ])
-
-    model.compile(optimizer=Adam(learning_rate=0.001), loss=Huber(), metrics=['mae', 'mape'])
-
-    history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=100, batch_size=32, callbacks=[early_stopping])
+    model.compile(optimizer=Adam(learning_rate=best_params['learning_rate']), loss=Huber(), metrics=['mae', 'mape'])
+    # เทรนโมเดลสุดท้ายด้วยจำนวน epochs เต็ม
+    early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True, mode='min')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6, verbose=1)
+    
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=100,
+        batch_size=32,
+        callbacks=[early_stopping, reduce_lr]
+    )
 
     plt.figure(figsize=(12, 4))
     plt.subplot(1, 2, 1)
@@ -212,11 +263,17 @@ def train_lstm_model(X_train, y_train, X_val, y_val, model_dir ,product_code):
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(os.path.join(model_dir, 'training_history.png'))
+    plt.savefig(os.path.join(model_dir, f'training_history_{product_code}.png'))
 
+    # บันทึกโมเดลและวันที่เทรน
     joblib.dump(model, model_path2)
     joblib.dump(datetime.now(), date_path)
-    print(f"✅ บันทึกโมเดลของ {model_dir} และวันที่เทรนล่าสุดเรียบร้อยแล้ว")
+    
+    # บันทึกพารามิเตอร์ที่ดีที่สุุด
+    best_params_path = os.path.join(model_dir, f'best_params_{product_code}.pkl')
+    joblib.dump(best_params, best_params_path)
+    print(f"✅ บันทึกโมเดลของ {model_dir} และวันที่เทรนล่าสุุดเรียบร้อยแล้ว")
+    print(f"✅ บันทึกพารามิเตอร์ที่ดีที่สุดไว้ที่ {best_params_path}")
 
     return model
 
