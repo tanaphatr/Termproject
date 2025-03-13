@@ -299,6 +299,17 @@ def get_product_name(product_code):
     elif product_code == "D1003":
         return " Mask pack"
     
+def get_price(product_code, next_day_prediction):
+    prices = {
+        "A1001": 150,
+        "A1002": 100,
+        "A1004": 139,
+        "A1034": 350,
+        "B1002": 20,
+        "B1003": 15,
+        "D1003": 10
+    }
+    return prices.get(product_code, 0) * int(next_day_prediction)
 app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def predict_sales_api():
@@ -334,6 +345,7 @@ def predict_sales_api():
 
         next_day_prediction, predicted_date = predict_next_sales(model, X, df_prepared)
         productname = get_product_name(product_code) 
+        price = get_price(product_code, next_day_prediction)
 
         print(f"📊 ผลการประเมินสำหรับ {product_code}:")
         print(f"MAE: {mae:.2f}, MAPE: {mape:.2f}%, R²: {r2:.4f}, MSE: {rmse:.4f}")
@@ -341,6 +353,7 @@ def predict_sales_api():
         predictions[product_code + productname] = {
             'predicted_sales': int(next_day_prediction),
             'predicted_date': str(predicted_date),
+            'price': price,
             'metrics': {
                 'mae': round(float(mae), 2),
                 'mape': round(float(mape), 2),
