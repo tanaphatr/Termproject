@@ -196,6 +196,9 @@ def train_pycaret_model(df_augmented, product_code):
         model_metrics = pull()
         model_name = best_model.__class__.__name__
         
+        # ดึงพารามิเตอร์ของโมเดลที่ดีที่สุด
+        model_params = best_model.get_params()
+        
         # บันทึกโมเดลและข้อมูลที่เกี่ยวข้อง
         joblib.dump(final_model, model_path)
         model_metrics.to_csv(metrics_path, index=False)
@@ -204,9 +207,9 @@ def train_pycaret_model(df_augmented, product_code):
         
         print(f"✅ บันทึกโมเดลและข้อมูลที่เกี่ยวข้องเรียบร้อยแล้ว")
         
-        return final_model, model_metrics, model_name
+        return final_model, model_metrics, model_name, model_params
     else:
-        return model, model_metrics, model_name
+        return model, model_metrics, model_name, {}
 
 def predict_next_sales(model, df_augmented):
     """ทำนายยอดขายในวันถัดไป"""
@@ -246,7 +249,7 @@ def predict_sales_api():
         df_augmented = prepare_data(df_product)
         
         # เทรนโมเดล
-        model, model_metrics, model_name = train_pycaret_model(df_augmented, product_code)
+        model, model_metrics, model_name, model_params = train_pycaret_model(df_augmented, product_code)
         
         # ทำนายยอดขาย
         print(f"🔮 กำลังทำนายผลสำหรับ {product_code}...")
@@ -306,7 +309,8 @@ def predict_sales_api():
             'predicted_sales': int(next_day_prediction),
             'predicted_date': predicted_date.strftime("%Y-%m-%d"),
             'model_name': model_name,
-            'metrics': metrics_dict
+            'metrics': metrics_dict,
+            'model_params': model_params
         }
     
     return jsonify(predictions)
