@@ -24,13 +24,6 @@ def preprocess_data(df):
     df['Month'] = df['sale_date'].dt.month
     df['Year'] = df['sale_date'].dt.year
 
-    # เพิ่มคอลัมน์ 'is_closed' ระบุว่าร้านปิดหรือไม่ (ร้านปิดถ้ายอดขาย = 0)
-    df['is_closed'] = df['sales_amount'].apply(lambda x: 1 if x == 0 else 0)
-
-    # ทำ One-Hot Encoding สำหรับทุกคอลัมน์ที่เป็น categorical
-    categorical_cols = df.select_dtypes(include=['object']).columns  # เลือกคอลัมน์ประเภท object (string/categorical)
-    df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)  # ทำ One-Hot Encoding
-
     # เปลี่ยนชื่อคอลัมน์ที่มีช่องว่างเป็นชื่อที่ใช้ _ แทนช่องว่าง
     df.columns = df.columns.str.replace(' ', '_')
     
