@@ -25,7 +25,12 @@ router.get("/html", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM product_sales");
-    res.json(rows);
+    const adjustedRows = rows.map((row) => {
+      const date = new Date(row.Date);
+      date.setHours(date.getHours() + 7); // Adjust to UTC+7
+      return { ...row, Date: date.toISOString().split("T")[0] };
+    });
+    res.json(adjustedRows);
   } catch (err) {
     console.error("Error fetching product_sales:", err);
     res.status(500).json({ error: "Error fetching product_sales" });
@@ -65,11 +70,11 @@ router.post("/", async (req, res) => {
         if (!Product_code || !date || !Quantity || !Total_Sale) {
           throw new Error("Missing required fields");
         }
-    
+
         if (isNaN(Quantity) || isNaN(Total_Sale)) {
           throw new Error("Quantity and Total_Sale must be numbers");
         }
-    
+
         const formattedDate = new Date(date).toISOString().split("T")[0];
         return [Product_code, formattedDate, Quantity, Total_Sale];
       }
